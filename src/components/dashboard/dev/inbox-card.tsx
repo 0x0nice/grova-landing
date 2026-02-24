@@ -56,10 +56,36 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
       className="bg-surface border border-border rounded overflow-hidden [html[data-theme=light]_&]:bg-white"
     >
       {/* Main row */}
-      <div className="grid grid-cols-[64px_1fr_auto] gap-4 p-4 max-md:grid-cols-[40px_1fr] max-md:gap-3">
-        {/* Score */}
-        <div className="flex justify-center pt-1">
-          <ScoreDisplay score={es} size="lg" />
+      <div className="grid grid-cols-[64px_1fr_auto] gap-4 p-4 max-md:grid-cols-[66px_1fr] max-md:gap-3 max-md:p-3">
+        {/* Score + mobile actions (stacked) */}
+        <div className="flex flex-col items-center gap-2 pt-1">
+          {/* Score — lg on desktop, sm on mobile */}
+          <div className="max-md:hidden">
+            <ScoreDisplay score={es} size="lg" />
+          </div>
+          <div className="hidden max-md:block">
+            <ScoreDisplay score={es} size="sm" />
+          </div>
+
+          {/* Mobile-only compact approve/deny under score */}
+          <div className="hidden max-md:flex flex-col gap-1.5 w-full mt-1">
+            <button
+              onClick={() => handleAction("approve")}
+              className="w-full rounded py-1.5 font-mono text-[0.54rem] font-medium uppercase tracking-[0.04em]
+                         bg-accent-dim text-accent hover:bg-accent hover:text-black
+                         transition-all duration-[180ms] cursor-pointer text-center"
+            >
+              Approve
+            </button>
+            <button
+              onClick={() => handleAction("deny")}
+              className="w-full rounded py-1.5 font-mono text-[0.54rem] font-medium uppercase tracking-[0.04em]
+                         bg-orange-dim text-orange hover:bg-orange hover:text-white
+                         transition-all duration-[180ms] cursor-pointer text-center"
+            >
+              Deny
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -74,19 +100,19 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
             )}
             {item.page && (
               <span
-                className="font-mono text-micro text-text3 truncate max-w-[200px]"
+                className="font-mono text-micro text-text3 truncate max-w-[200px] max-md:max-w-[120px]"
                 title={item.page}
               >
                 {item.page}
               </span>
             )}
-            <span className="font-mono text-micro text-text3">
+            <span className="font-mono text-micro text-text3 ml-auto max-md:ml-0">
               {timeAgo(item.created_at)}
             </span>
           </div>
 
           {/* Message */}
-          <p className="font-mono text-callout text-text2 leading-[1.7] mb-2">
+          <p className="font-mono text-callout text-text2 leading-[1.7] mb-3">
             {item.message}
           </p>
 
@@ -107,8 +133,8 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
           </button>
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col gap-2 shrink-0 max-md:col-span-2 max-md:flex-row">
+        {/* Desktop-only actions column */}
+        <div className="flex flex-col gap-2 shrink-0 max-md:hidden">
           <Button
             variant="approve"
             onClick={() => handleAction("approve")}
