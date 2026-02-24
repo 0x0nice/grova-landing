@@ -66,7 +66,7 @@ const BIZ_TIERS = [
   {
     name: "Essentials",
     key: "biz_essentials",
-    price: "$29",
+    price: "$19",
     period: "/month",
     features: [
       "1 location",
@@ -80,7 +80,7 @@ const BIZ_TIERS = [
   {
     name: "Growth",
     key: "biz_growth",
-    price: "$79",
+    price: "$39",
     period: "/month",
     features: [
       "3 locations",
@@ -91,9 +91,9 @@ const BIZ_TIERS = [
     ],
   },
   {
-    name: "Multi",
+    name: "Multi-location",
     key: "biz_multi",
-    price: "$199",
+    price: "$99",
     period: "/month",
     features: [
       "Unlimited locations",
