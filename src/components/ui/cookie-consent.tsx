@@ -7,21 +7,25 @@ export function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("grova-cookie-consent");
-    if (!consent) {
-      // Small delay so it doesn't flash immediately on load
-      const timer = setTimeout(() => setVisible(true), 1500);
-      return () => clearTimeout(timer);
+    try {
+      const consent = localStorage.getItem("grova-cookie-consent");
+      if (!consent) {
+        // Small delay so it doesn't flash immediately on load
+        const timer = setTimeout(() => setVisible(true), 1500);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // localStorage may be blocked by corporate browser policies — silently skip
     }
   }, []);
 
   function handleAccept() {
-    localStorage.setItem("grova-cookie-consent", "accepted");
+    try { localStorage.setItem("grova-cookie-consent", "accepted"); } catch {}
     setVisible(false);
   }
 
   function handleDecline() {
-    localStorage.setItem("grova-cookie-consent", "declined");
+    try { localStorage.setItem("grova-cookie-consent", "declined"); } catch {}
     setVisible(false);
   }
 

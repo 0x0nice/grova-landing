@@ -15,7 +15,8 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
 
     // Only initialize if user has explicitly accepted cookies (GDPR)
-    const consent = localStorage.getItem("grova-cookie-consent");
+    let consent: string | null = null;
+    try { consent = localStorage.getItem("grova-cookie-consent"); } catch {}
     if (consent !== "accepted") return;
 
     // Dynamic import to avoid bundling when not configured

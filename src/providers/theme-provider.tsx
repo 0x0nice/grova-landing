@@ -31,23 +31,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Listen for OS preference changes (only if user hasn't set a preference)
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: light)");
-    const handler = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem("grova-theme")) {
-        const next = e.matches ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", next);
-        setTheme(next);
-      }
-    };
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    try {
+      const mq = window.matchMedia("(prefers-color-scheme: light)");
+      const handler = (e: MediaQueryListEvent) => {
+        try {
+          if (!localStorage.getItem("grova-theme")) {
+            const next = e.matches ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", next);
+            setTheme(next);
+          }
+        } catch {}
+      };
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    } catch {
+      // matchMedia not available — skip OS preference sync
+    }
   }, []);
 
   const toggle = useCallback(() => {
     setTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("grova-theme", next);
+      try { localStorage.setItem("grova-theme", next); } catch {}
       return next;
     });
   }, []);
