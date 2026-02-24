@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { TrackProvider } from "@/providers/track-provider";
 import { useTrack } from "@/hooks/use-track";
 import { Header } from "@/components/landing/header";
@@ -18,6 +19,13 @@ function Divider() {
   return <div className="h-px bg-border" />;
 }
 
+const sectionFade = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
+  transition: { duration: 0.32, ease: "easeOut" as const },
+};
+
 function LandingContent() {
   const { track } = useTrack();
 
@@ -29,49 +37,48 @@ function LandingContent() {
         <Hero />
       </div>
 
-      {/* Dev track content */}
-      {track === "dev" && (
-        <>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <PipelineSection />
-          </div>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <StepsSection />
-          </div>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <FeaturesGrid />
-          </div>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <PricingGrid />
-          </div>
-        </>
-      )}
-
-      {/* Biz track content */}
-      {track === "biz" && (
-        <>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <BizHowSection />
-          </div>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <BizFeaturesSection />
-          </div>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <BizExampleSection />
-          </div>
-          <Divider />
-          <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-            <PricingGrid />
-          </div>
-        </>
-      )}
+      {/* Track-specific content with crossfade */}
+      <AnimatePresence mode="wait">
+        {track === "dev" ? (
+          <motion.div key="dev-sections" {...sectionFade}>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <PipelineSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <StepsSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <FeaturesGrid />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <PricingGrid />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div key="biz-sections" {...sectionFade}>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <BizHowSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <BizFeaturesSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <BizExampleSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <PricingGrid />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Shared CTA + Footer */}
       <Divider />
