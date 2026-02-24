@@ -139,6 +139,9 @@ function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
   const accentPop = isBiz ? "text-orange" : "text-accent";
   const accentLine = isBiz ? "bg-orange" : "bg-accent";
   const fillBg = isBiz ? "bg-orange text-white" : "bg-accent text-black";
+  const outlineStyle = isBiz
+    ? "border-orange/40 text-text2 hover:border-orange hover:text-orange"
+    : "border-accent/40 text-text2 hover:border-accent hover:text-accent";
 
   return (
     <div
@@ -186,7 +189,7 @@ function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
           no-underline cursor-pointer tracking-[0.04em] transition-all duration-150
           ${t.fill
             ? `${fillBg} border-none hover:opacity-82`
-            : "bg-transparent border border-solid border-border2 text-text2 hover:border-[var(--track-accent)] hover:text-[var(--track-accent)]"
+            : `bg-transparent border border-solid ${outlineStyle}`
           }
         `}
       >
