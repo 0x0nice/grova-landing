@@ -183,10 +183,10 @@ function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
         href="#waitlist"
         className={`
           block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
-          no-underline cursor-pointer tracking-[0.04em] border-none transition-all duration-150
+          no-underline cursor-pointer tracking-[0.04em] transition-all duration-150
           ${t.fill
-            ? `${fillBg} hover:opacity-82`
-            : "bg-transparent border border-border2 text-text2 hover:border-text2 hover:text-text"
+            ? `${fillBg} border-none hover:opacity-82`
+            : "bg-transparent border border-solid border-border2 text-text2 hover:border-[var(--track-accent)] hover:text-[var(--track-accent)]"
           }
         `}
       >
