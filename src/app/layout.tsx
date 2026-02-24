@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
 import { instrumentSerif, geistMono } from "@/lib/fonts";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { AnalyticsProvider } from "@/providers/analytics-provider";
 import { ToastProvider } from "@/components/ui/toast";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { CookieConsent } from "@/components/ui/cookie-consent";
+import { initSentry } from "@/lib/sentry";
 import "./globals.css";
+
+// Initialize Sentry at module level (before any renders)
+initSentry();
 
 export const metadata: Metadata = {
   title: "Grova — Feedback triage for developers",
@@ -63,7 +70,14 @@ export default function RootLayout({
             Skip to main content
           </a>
           <ThemeProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <AnalyticsProvider>
+              <ErrorBoundary>
+                <ToastProvider>
+                  {children}
+                  <CookieConsent />
+                </ToastProvider>
+              </ErrorBoundary>
+            </AnalyticsProvider>
           </ThemeProvider>
         </body>
     </html>

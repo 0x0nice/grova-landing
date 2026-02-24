@@ -1,5 +1,5 @@
 /**
- * Grova Business Widget v1.0
+ * Grova Business Widget v1.1
  * Drop-in contact/feedback widget for small business websites.
  * Zero dependencies. Embeds via a single <script> tag.
  *
@@ -19,6 +19,8 @@
  *   data-name           — your business name, shown in widget header
  *   data-accent         — brand color for the trigger button & active states (default: #00c87a)
  *   data-position       — left | right (default: right)
+ *   data-api-url        — override the API endpoint (default: https://grova-api-production.up.railway.app/feedback)
+ *   data-key            — your Grova project API key for per-project routing
  *
  * Public API:
  *   window.GrovaContact.open()
@@ -27,9 +29,14 @@
 (function () {
   'use strict';
 
+  const GROVA_BIZ_WIDGET_VERSION = '1.1.0';
+
   // ── Guard — prevent double load ────────────────────────────────────────────
   if (window.__grovaContactWidget) return;
   window.__grovaContactWidget = true;
+
+  // ── Throttle state ────────────────────────────────────────────────────
+  let lastBizSubmitTime = 0;
 
   // ── Console error capture (ring buffer of last 10) ─────────────────────
 
@@ -100,9 +107,10 @@
   }
 
   // ── Config ─────────────────────────────────────────────────────────────────
-  const API    = 'https://grova-api-production.up.railway.app/feedback';
   const script = document.currentScript
               || document.querySelector('script[src*="grova-business-widget"]');
+  const API    = script?.getAttribute('data-api-url') || 'https://grova-api-production.up.railway.app/feedback';
+  const bizApiKey = script?.getAttribute('data-key') || null;
 
   const SOURCE      = script?.dataset.source    || window.location.hostname;
   const BIZ_TYPE    = script?.dataset.businessType || 'default';
@@ -723,6 +731,11 @@
   // ── Submit ─────────────────────────────────────────────────────────────────
 
   async function handleSubmit() {
+    // ── Throttle: 1 submission per 30 seconds ──
+    if (Date.now() - lastBizSubmitTime < 30000) {
+      return;
+    }
+
     const msgEl = panel.querySelector('#gb-msg');
     const subEl = panel.querySelector('#gb-sub');
     const msg   = msgEl?.value.trim();
@@ -782,9 +795,12 @@
     subEl.textContent = 'Sending…';
 
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (bizApiKey) headers['x-grova-key'] = bizApiKey;
+
       const res = await fetch(API, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           type:      selectedCategory || 'other',
           message:   msg,
@@ -793,11 +809,15 @@
           timestamp: new Date().toISOString(),
           source:    SOURCE,
           mode:      'business',
+          widget_version: GROVA_BIZ_WIDGET_VERSION,
+          ...(bizApiKey ? { api_key: bizApiKey } : {}),
           metadata,
           console_errors,
           screenshot,
         }),
       });
+
+      lastBizSubmitTime = Date.now();
 
       if (res.ok) {
         status = 'success';

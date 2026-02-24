@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
+import { trackEvent } from "@/providers/analytics-provider";
 
 interface NewProjectModalProps {
   open: boolean;
@@ -35,6 +36,7 @@ export function NewProjectModal({ open, onClose }: NewProjectModalProps) {
         { name: name.trim(), mode, source: source.trim() },
         session?.access_token || ""
       );
+      trackEvent("project_created", { project_id: project.id, mode: project.mode });
       setName("");
       setMode("developer");
       setSource("");

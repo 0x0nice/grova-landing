@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type KeyboardEvent } from "react";
+import { trackEvent } from "@/providers/analytics-provider";
 
 interface WaitlistFormProps {
   className?: string;
@@ -29,7 +30,12 @@ export function WaitlistForm({ className = "" }: WaitlistFormProps) {
           body: JSON.stringify({ email: trimmed }),
         }
       );
-      setStatus(res.ok ? "success" : "error");
+      if (res.ok) {
+        setStatus("success");
+        trackEvent("waitlist_submitted", { email: trimmed });
+      } else {
+        setStatus("error");
+      }
     } catch {
       setStatus("error");
     }

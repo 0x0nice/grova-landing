@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/providers/auth-provider";
+import { trackEvent } from "@/providers/analytics-provider";
 import Link from "next/link";
 
 type AuthMode = "signin" | "signup" | "forgot";
@@ -37,9 +38,11 @@ export function LoginScreen() {
     try {
       if (mode === "signin") {
         await signIn(email, password);
+        trackEvent("user_signed_in");
         router.push("/dashboard");
       } else if (mode === "signup") {
         const msg = await signUp(email, password);
+        trackEvent("user_signed_up");
         setInfo(msg);
       } else {
         await resetPassword(email);

@@ -10,12 +10,20 @@
  * Optional attributes:
  *   data-source   — identifies your app in the Grova inbox  (default: hostname)
  *   data-position — "right" or "left"                       (default: "right")
+ *   data-api-url  — override the API endpoint               (default: https://grova-api-production.up.railway.app/feedback)
+ *   data-key      — your Grova project API key for per-project routing
+ *   data-no-badge — hide the "Powered by Grova" footer link
  */
 (function () {
   'use strict';
 
+  const GROVA_WIDGET_VERSION = '1.1.0';
+
   if (window.__grovaWidget) return;
   window.__grovaWidget = true;
+
+  // ── Throttle state ────────────────────────────────────────────────────
+  let lastSubmitTime = 0;
 
   // ── Console error capture (ring buffer of last 10) ─────────────────────
 
@@ -87,8 +95,10 @@
 
   // ── Config ──────────────────────────────────────────────────────────────
 
-  const API    = 'https://grova-api-production.up.railway.app/feedback';
-  const script = document.currentScript;
+  const script = document.currentScript || document.querySelector('script[data-source][src*="grova"]');
+  const API    = script?.getAttribute('data-api-url') || 'https://grova-api-production.up.railway.app/feedback';
+  const apiKey = script?.getAttribute('data-key') || null;
+  const noBadge = script?.hasAttribute('data-no-badge') || false;
   const SOURCE = script?.dataset.source   || window.location.hostname;
   const SIDE   = script?.dataset.position === 'left' ? 'left' : 'right';
 
@@ -590,6 +600,21 @@
   // ── Actions ──────────────────────────────────────────────────────────────
 
   async function submit() {
+    // ── Throttle: 1 submission per 30 seconds ──
+    if (Date.now() - lastSubmitTime < 30000) {
+      const existing = panel.querySelector('.gv-err');
+      if (!existing) {
+        const subEl = document.getElementById('gv-sub');
+        if (subEl) {
+          const note = document.createElement('p');
+          note.className = 'gv-err';
+          note.textContent = 'Please wait before submitting again.';
+          subEl.parentNode.insertBefore(note, subEl);
+        }
+      }
+      return;
+    }
+
     const msg   = document.getElementById('gv-msg')?.value.trim();
     const email = document.getElementById('gv-email')?.value.trim();
     if (!msg) return;
@@ -645,9 +670,12 @@
     if (subEl) subEl.textContent = 'Sending…';
 
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['x-grova-key'] = apiKey;
+
       const res = await fetch(API, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           type:           activeType,
           message:        msg,
@@ -655,6 +683,8 @@
           page:           window.location.pathname,
           timestamp:      new Date().toISOString(),
           source:         SOURCE,
+          widget_version: GROVA_WIDGET_VERSION,
+          ...(apiKey ? { api_key: apiKey } : {}),
           metadata,
           console_errors,
           screenshot,
@@ -665,6 +695,7 @@
       status = 'success';
     }
 
+    lastSubmitTime = Date.now();
     renderPanel();
   }
 
