@@ -97,11 +97,11 @@ export function NavBar() {
   return (
     <nav className="flex flex-col border-b border-border bg-bg shrink-0 md:flex-row md:items-center md:h-16">
       {/* Top row (always visible) */}
-      <div className="flex items-center h-12 px-5 gap-4 md:h-16 md:flex-1">
+      <div className="flex items-center h-12 px-5 gap-4 max-md:gap-2 max-md:px-3 md:h-16 md:flex-1 overflow-hidden">
         {/* Logo */}
-        <div className="flex items-center gap-2 shrink-0 mr-2">
+        <div className="flex items-center gap-2 shrink-0 max-md:mr-0 mr-2">
           <Logo size="sm" href="/dashboard" />
-          <span className="font-mono text-micro text-text3 uppercase tracking-[0.1em]">
+          <span className="font-mono text-micro text-text3 uppercase tracking-[0.1em] max-md:hidden">
             dashboard
           </span>
         </div>
@@ -170,10 +170,10 @@ export function NavBar() {
         )}
 
         {/* Right section */}
-        <div className="ml-auto flex items-center gap-2 shrink-0">
+        <div className="ml-auto flex items-center gap-2 max-md:gap-1 shrink-0">
           <button
             onClick={handleRefresh}
-            className="p-2 text-text3 hover:text-text2 transition-colors font-mono text-callout cursor-pointer"
+            className="p-2 max-md:p-1.5 text-text3 hover:text-text2 transition-colors font-mono text-callout cursor-pointer"
             title="Refresh"
           >
             ↺
@@ -181,16 +181,20 @@ export function NavBar() {
           <ThemeToggle />
           <button
             onClick={handleSignOut}
-            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors uppercase tracking-[0.04em] px-3 py-2 cursor-pointer"
+            className="font-mono text-text3 hover:text-text2 transition-colors cursor-pointer
+                       text-footnote uppercase tracking-[0.04em] px-3 py-2
+                       max-md:text-callout max-md:px-1.5 max-md:py-1.5"
+            title="Sign out"
           >
-            Sign out
+            <span className="max-md:hidden">Sign out</span>
+            <span className="md:hidden">⏻</span>
           </button>
         </div>
       </div>
 
       {/* Mobile tab row — scrollable horizontal tabs */}
       <div
-        className="flex md:hidden items-center gap-1 px-5 pb-2 overflow-x-auto scrollbar-none"
+        className="flex md:hidden items-center gap-1 px-3 pb-2 overflow-x-auto scrollbar-none"
         role="tablist"
       >
         {tabs.map((tab) => {

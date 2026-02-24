@@ -28,7 +28,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   if (!session && !isDemo) return null;
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col">
+    <div className="min-h-screen bg-bg flex flex-col overflow-x-hidden">
       {/* Demo banner */}
       {isDemo && (
         <div className="bg-accent/10 border-b border-accent/20 px-5 py-2 text-center">
@@ -47,7 +47,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Main content */}
-        <main id="main-content" className="flex-1 overflow-y-auto p-6 max-md:p-4">
+        <main id="main-content" className="flex-1 overflow-y-auto p-6 max-md:p-3">
           {children}
         </main>
       </div>
