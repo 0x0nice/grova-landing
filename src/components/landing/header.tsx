@@ -19,16 +19,24 @@ export function Header() {
 
         {/* Right: action buttons */}
         <div className="flex items-center gap-2.5">
-          <span className="font-mono text-caption text-text3 tracking-[0.14em] uppercase max-md:hidden">
-            Early Access
-          </span>
           <Link
-            href="/dashboard/inbox?demo"
+            href="/login?mode=signup"
             className="bg-[var(--track-accent)] text-black border border-[var(--track-accent)]
                        rounded px-3.5 py-1.5
                        font-mono text-[0.65rem] font-semibold tracking-[0.04em]
                        no-underline inline-flex items-center gap-1.5
                        transition-opacity duration-[180ms] hover:opacity-85"
+          >
+            Get Started
+          </Link>
+          <Link
+            href="/dashboard/inbox?demo"
+            className="bg-transparent border border-border2 rounded
+                       text-text2 cursor-pointer font-mono text-[0.65rem] font-medium
+                       tracking-[0.04em] px-3 py-1.5 no-underline
+                       inline-flex items-center gap-1.5
+                       transition-colors duration-[180ms]
+                       hover:border-[var(--track-accent)] hover:text-[var(--track-accent)]"
           >
             Try Demo
           </Link>
@@ -39,7 +47,8 @@ export function Header() {
                        tracking-[0.04em] px-3 py-1.5 no-underline
                        inline-flex items-center gap-1.5
                        transition-colors duration-[180ms]
-                       hover:border-[var(--track-accent)] hover:text-[var(--track-accent)]"
+                       hover:border-[var(--track-accent)] hover:text-[var(--track-accent)]
+                       max-md:hidden"
           >
             Login <span className="text-[0.7rem] transition-transform duration-150 group-hover:translate-x-0.5">→</span>
           </Link>

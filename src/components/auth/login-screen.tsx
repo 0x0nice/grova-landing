@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Logo } from "@/components/ui/logo";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,8 @@ import Link from "next/link";
 
 type AuthMode = "signin" | "signup" | "forgot";
 
+const API = process.env.NEXT_PUBLIC_API_URL!;
+
 const fadeUp = {
   initial: { opacity: 0, y: 14 },
   animate: { opacity: 1, y: 0 },
@@ -20,7 +22,9 @@ const fadeUp = {
 };
 
 export function LoginScreen() {
-  const [mode, setMode] = useState<AuthMode>("signin");
+  const searchParams = useSearchParams();
+  const initialMode: AuthMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -37,8 +41,27 @@ export function LoginScreen() {
 
     try {
       if (mode === "signin") {
-        await signIn(email, password);
+        const session = await signIn(email, password);
         trackEvent("user_signed_in");
+
+        // Smart redirect: new users → onboarding, returning users → dashboard
+        try {
+          const res = await fetch(`${API}/projects`, {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          if (res.ok) {
+            const projects = await res.json();
+            if (Array.isArray(projects) && projects.length === 0) {
+              router.push("/onboarding");
+              return;
+            }
+          }
+        } catch {
+          // If project check fails, fall through to dashboard
+        }
         router.push("/dashboard");
       } else if (mode === "signup") {
         const msg = await signUp(email, password);

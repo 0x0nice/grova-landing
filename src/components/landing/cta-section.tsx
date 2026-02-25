@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useTrack } from "@/hooks/use-track";
 import { WaitlistForm } from "./waitlist-form";
 
 export function CTASection() {
   const { track } = useTrack();
+  const accentBg = track === "biz" ? "bg-orange" : "bg-accent";
 
   return (
     <section className="py-24 text-center" id="waitlist">
@@ -16,7 +18,7 @@ export function CTASection() {
             <em className="text-text2">always improving.</em>
           </h2>
           <p className="text-body text-text2 mb-[34px] font-light leading-[1.75]">
-            Join the waitlist. Early access and founding member pricing.
+            Start free today. No credit card required.
           </p>
         </>
       ) : (
@@ -27,11 +29,28 @@ export function CTASection() {
             <em className="text-text2">customers are saying?</em>
           </h2>
           <p className="text-body text-text2 mb-[34px] font-light leading-[1.75]">
-            Join the waitlist. Free to start — paid plans from $19/mo.
+            Start free today. Paid plans from $19/mo.
           </p>
         </>
       )}
-      <WaitlistForm className="flex justify-center" />
+
+      <div className="flex flex-col items-center gap-6">
+        <Link
+          href="/login?mode=signup"
+          className={`${accentBg} text-black rounded px-8 py-3
+                     font-mono text-footnote font-semibold tracking-[0.04em]
+                     no-underline inline-flex items-center gap-2
+                     transition-opacity duration-[180ms] hover:opacity-85`}
+        >
+          Get started free →
+        </Link>
+        <div className="flex items-center gap-3 text-text3">
+          <span className="h-px w-8 bg-border" />
+          <span className="font-mono text-caption uppercase tracking-[0.12em]">or join the paid-tier waitlist</span>
+          <span className="h-px w-8 bg-border" />
+        </div>
+        <WaitlistForm className="flex justify-center" />
+      </div>
     </section>
   );
 }

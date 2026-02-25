@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTrack } from "@/hooks/use-track";
 
 interface PriceTier {
@@ -9,6 +10,7 @@ interface PriceTier {
   desc: string;
   features: { text: string; yes: boolean; soon?: boolean }[];
   cta: string;
+  href: string;
   fill?: boolean;
 }
 
@@ -26,6 +28,7 @@ const devTiers: PriceTier[] = [
       { text: "Custom triage rules", yes: false },
     ],
     cta: "Get started",
+    href: "/login?mode=signup",
   },
   {
     popular: true,
@@ -41,6 +44,7 @@ const devTiers: PriceTier[] = [
       { text: "No Grova badge", yes: true },
     ],
     cta: "Join waitlist",
+    href: "#waitlist",
     fill: true,
   },
   {
@@ -56,6 +60,7 @@ const devTiers: PriceTier[] = [
       { text: "Cursor extension", yes: true, soon: true },
     ],
     cta: "Join waitlist",
+    href: "#waitlist",
   },
   {
     tier: "Agency",
@@ -70,6 +75,7 @@ const devTiers: PriceTier[] = [
       { text: "Priority support", yes: true },
     ],
     cta: "Join waitlist",
+    href: "#waitlist",
   },
 ];
 
@@ -87,6 +93,7 @@ const bizTiers: PriceTier[] = [
       { text: "Custom categories", yes: false },
     ],
     cta: "Get started free",
+    href: "/login?mode=signup",
   },
   {
     popular: true,
@@ -102,6 +109,7 @@ const bizTiers: PriceTier[] = [
       { text: "Urgent message alerts", yes: true },
     ],
     cta: "Join waitlist",
+    href: "#waitlist",
     fill: true,
   },
   {
@@ -117,6 +125,7 @@ const bizTiers: PriceTier[] = [
       { text: "White-label widget", yes: false },
     ],
     cta: "Join waitlist",
+    href: "#waitlist",
   },
   {
     tier: "Multi-location",
@@ -131,6 +140,7 @@ const bizTiers: PriceTier[] = [
       { text: "Priority support", yes: true },
     ],
     cta: "Join waitlist",
+    href: "#waitlist",
   },
 ];
 
@@ -182,19 +192,35 @@ function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
           </li>
         ))}
       </ul>
-      <a
-        href="#waitlist"
-        className={`
-          block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
-          no-underline cursor-pointer tracking-[0.04em] transition-all duration-150
-          ${t.fill
-            ? `${fillBg} border-none hover:opacity-82`
-            : `bg-transparent border border-solid ${outlineStyle}`
-          }
-        `}
-      >
-        {t.cta}
-      </a>
+      {t.href.startsWith("/") ? (
+        <Link
+          href={t.href}
+          className={`
+            block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
+            no-underline cursor-pointer tracking-[0.04em] transition-all duration-150
+            ${t.fill
+              ? `${fillBg} border-none hover:opacity-82`
+              : `bg-transparent border border-solid ${outlineStyle}`
+            }
+          `}
+        >
+          {t.cta}
+        </Link>
+      ) : (
+        <a
+          href={t.href}
+          className={`
+            block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
+            no-underline cursor-pointer tracking-[0.04em] transition-all duration-150
+            ${t.fill
+              ? `${fillBg} border-none hover:opacity-82`
+              : `bg-transparent border border-solid ${outlineStyle}`
+            }
+          `}
+        >
+          {t.cta}
+        </a>
+      )}
     </div>
   );
 }

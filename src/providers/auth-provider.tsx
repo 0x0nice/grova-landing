@@ -16,7 +16,7 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   isDemo: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<Session>;
   signUp: (email: string, password: string) => Promise<string>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -27,7 +27,7 @@ const AuthContext = createContext<AuthContextValue>({
   user: null,
   loading: true,
   isDemo: false,
-  signIn: async () => {},
+  signIn: async () => ({} as Session),
   signUp: async () => "",
   signOut: async () => {},
   resetPassword: async () => {},
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string): Promise<Session> => {
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -89,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
     setSession(data.session);
     setIsDemo(false);
+    return data.session!;
   }, []);
 
   const signUp = useCallback(async (email: string, password: string) => {
