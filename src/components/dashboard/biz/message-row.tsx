@@ -5,17 +5,20 @@ import type { FeedbackItem } from "@/types/feedback";
 import { scoreClass, scoreColor, timeAgo } from "@/lib/triage";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
+import { ActionCard } from "@/components/dashboard/dev/action-card";
 
 interface MessageRowProps {
   item: FeedbackItem;
   showScore?: boolean;
+  isDemo?: boolean;
 }
 
-export function MessageRow({ item, showScore = false }: MessageRowProps) {
+export function MessageRow({ item, showScore = false, isDemo = false }: MessageRowProps) {
   const [replyOpen, setReplyOpen] = useState(false);
   const { show } = useToast();
   const t = item.triage;
   const hasReply = !!t?.suggested_reply;
+  const hasActions = !!(t?.suggested_actions && t.suggested_actions.length > 0);
 
   function handleCopyReply() {
     if (t?.suggested_reply) {
@@ -88,6 +91,23 @@ export function MessageRow({ item, showScore = false }: MessageRowProps) {
                 </div>
               )}
             </>
+          )}
+
+          {/* Suggested actions */}
+          {hasActions && (
+            <div className="mt-2">
+              <div className="flex flex-wrap gap-3">
+                {t!.suggested_actions!.map((action, i) => (
+                  <ActionCard
+                    key={i}
+                    action={action}
+                    feedbackId={item.id}
+                    customerEmail={item.email ?? undefined}
+                    onActionSent={() => show("Email sent")}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </div>

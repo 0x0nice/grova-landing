@@ -58,6 +58,7 @@ export default function CategoriesPage() {
           name={name}
           items={catItems}
           defaultOpen={i === 0}
+          isDemo={isDemo}
         />
       ))}
     </div>

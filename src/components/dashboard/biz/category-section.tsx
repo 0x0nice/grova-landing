@@ -8,12 +8,14 @@ interface CategorySectionProps {
   name: string;
   items: FeedbackItem[];
   defaultOpen?: boolean;
+  isDemo?: boolean;
 }
 
 export function CategorySection({
   name,
   items,
   defaultOpen = false,
+  isDemo = false,
 }: CategorySectionProps) {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -43,7 +45,7 @@ export function CategorySection({
       {open && (
         <div className="border-t border-border px-5">
           {items.map((item) => (
-            <MessageRow key={item.id} item={item} showScore />
+            <MessageRow key={item.id} item={item} showScore isDemo={isDemo} />
           ))}
         </div>
       )}

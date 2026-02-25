@@ -109,7 +109,7 @@ export default function OverviewPage() {
           </span>
           <div className="border border-border rounded overflow-hidden [html[data-theme=light]_&]:bg-white">
             {recent.map((item) => (
-              <MessageRow key={item.id} item={item} showScore />
+              <MessageRow key={item.id} item={item} showScore isDemo={isDemo} />
             ))}
           </div>
         </div>
