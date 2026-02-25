@@ -80,7 +80,7 @@ export default function RootLayout({
             </AnalyticsProvider>
           </ThemeProvider>
           <script
-            src="https://grova.dev/grova-widget.js"
+            src="https://grova.dev/grova-business-widget.js"
             data-source="grova.dev"
             defer
           />
