@@ -57,7 +57,20 @@
   --radius-xl: 4px;
   --radius-pill: 100px;
 
-  /* --- Typography Scale (bumped ~15-20% for readability) --- */
+  /* --- Transitions --- */
+  --transition-timing-function-default: ease;
+  --transition-duration-default: 180ms;
+
+  /* --- Shadows (none by design) --- */
+  --shadow-none: none;
+}
+
+/* ===================================================================
+   Typography Scale — uses @theme (not inline) so utilities emit
+   var(--text-*) references instead of hardcoded values.
+   This allows --font-scale to work at runtime.
+   =================================================================== */
+@theme {
   --text-display: 2.8rem;
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.02em;
@@ -91,13 +104,6 @@
   --text-micro: 0.6rem;
   --text-micro--line-height: 1.3;
   --text-micro--letter-spacing: 0.1em;
-
-  /* --- Transitions --- */
-  --transition-timing-function-default: ease;
-  --transition-duration-default: 180ms;
-
-  /* --- Shadows (none by design) --- */
-  --shadow-none: none;
 }
 
 /* ===================================================================
