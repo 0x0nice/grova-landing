@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useProjectStore } from "@/stores/project-store";
@@ -8,6 +8,7 @@ import { useBizStore, type BizConfig } from "@/stores/biz-store";
 import { CAT_PRESETS } from "@/lib/cat-presets";
 import { useToast } from "@/components/ui/toast";
 import { FontSizeControl } from "@/components/ui/font-size-control";
+import { QRCodeCanvas } from "qrcode.react";
 
 /* ------------------------------------------------------------------ */
 /*  Eyeball toggle icon                                                */
@@ -102,6 +103,8 @@ export function SetupView() {
   const [keyVisible, setKeyVisible] = useState(false);
   const [keyCopied, setKeyCopied] = useState(false);
   const [snippetCopied, setSnippetCopied] = useState(false);
+  const [qrLinkCopied, setQrLinkCopied] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (active) loadConfig(active.id);
@@ -161,6 +164,30 @@ export function SetupView() {
     setKeyCopied(true);
     show("API key copied");
     setTimeout(() => setKeyCopied(false), 2000);
+  }
+
+  // QR code feedback URL
+  const feedbackUrl = active?.api_key
+    ? `https://grova.dev/f?k=${active.api_key}`
+    : "";
+
+  function copyFeedbackLink() {
+    if (!feedbackUrl) return;
+    navigator.clipboard.writeText(feedbackUrl);
+    setQrLinkCopied(true);
+    show("Feedback link copied");
+    setTimeout(() => setQrLinkCopied(false), 2000);
+  }
+
+  function downloadQr() {
+    const canvas = qrRef.current?.querySelector("canvas");
+    if (!canvas) return;
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${config.name || "grova"}-qr-code.png`;
+    a.click();
+    show("QR code downloaded");
   }
 
   // Build embed snippet
@@ -226,6 +253,65 @@ export function SetupView() {
             >
               {keyCopied ? <CheckIcon /> : <CopyIcon />}
             </button>
+          </div>
+        </Section>
+      )}
+
+      {/* ── QR Code ── */}
+      {feedbackUrl && (
+        <Section>
+          <SectionHeader
+            title="QR Code"
+            description="Print this QR code so customers can leave feedback from their phone."
+          />
+          <div className="flex flex-col items-center gap-4">
+            <div
+              ref={qrRef}
+              className="bg-white rounded-lg p-4"
+            >
+              <QRCodeCanvas
+                value={feedbackUrl}
+                size={200}
+                bgColor="#ffffff"
+                fgColor="#000000"
+                level="M"
+                marginSize={2}
+              />
+            </div>
+            <p className="font-mono text-micro text-text3 break-all text-center max-w-[300px]">
+              {feedbackUrl}
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={downloadQr}
+                className="flex items-center gap-1.5 font-mono text-footnote text-text2
+                           hover:text-text transition-colors cursor-pointer px-3 py-2 rounded-lg
+                           bg-bg2 border border-border hover:border-border2"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Download PNG
+              </button>
+              <button
+                onClick={copyFeedbackLink}
+                className="flex items-center gap-1.5 font-mono text-footnote text-accent
+                           hover:text-accent/80 transition-colors cursor-pointer px-3 py-2 rounded-lg
+                           hover:bg-accent/5 border border-transparent hover:border-accent/20"
+              >
+                {qrLinkCopied ? (
+                  <>
+                    <CheckIcon />
+                    <span>Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <CopyIcon />
+                    <span>Copy Link</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </Section>
       )}
