@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTrack } from "@/hooks/use-track";
 import { WaitlistForm } from "./waitlist-form";
@@ -31,7 +32,7 @@ export function Hero() {
           <motion.div key="dev" {...crossfade}>
             <span
               {...fadeUp(50)}
-              className="block text-[0.64rem] tracking-[0.16em] uppercase mb-[34px] text-accent"
+              className="block text-[0.64rem] tracking-[0.16em] uppercase mb-[34px] text-orange"
             >
               Feedback triage for developers
             </span>
@@ -62,32 +63,45 @@ export function Hero() {
           <motion.div key="biz" {...crossfade}>
             <span
               {...fadeUp(50)}
-              className="block text-[0.64rem] tracking-[0.16em] uppercase mb-[34px] text-orange"
+              className="block text-[0.64rem] tracking-[0.16em] uppercase mb-[34px] text-accent"
             >
-              Grova for Business
+              Smart feedback for your business
             </span>
             <h1
               {...fadeUp(150)}
               className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.025em] text-text font-normal mb-[26px]"
             >
-              Know what your customers think.
+              Your customers have something to say.
               <br />
-              <em className="text-text2">Without guessing.</em>
+              <em className="text-text2">Make it easy to hear them.</em>
             </h1>
             <p
               {...fadeUp(250)}
-              className="text-[0.94rem] text-text2 leading-[1.85] max-w-[500px] mb-[44px] font-light"
+              className="text-[0.94rem] text-text2 leading-[1.85] max-w-[540px] mb-[44px] font-light"
             >
-              Replace your contact form with something that actually tells you
-              what customers care about. A lightweight widget on your site.
-              Plain-English summaries every week. No spreadsheets. No jargon. Just
-              answers.
+              Grova makes it easy for customers to share honest feedback — through
+              a widget on your site, a QR code at your register, or a simple
+              link. AI filters the noise and surfaces what actually matters. No
+              dashboards to learn. No data to crunch. Just a weekly brief in your
+              inbox telling you what to fix, what&apos;s working, and what your
+              customers really think.
             </p>
-            <div {...fadeUp(350)}>
-              <WaitlistForm />
-              <p className="mt-2.5 text-[0.62rem] text-text3 tracking-[0.04em]">
-                Simple flat-rate pricing, coming soon.
-              </p>
+            <div {...fadeUp(350)} className="flex items-center gap-4 flex-wrap">
+              <Link
+                href="/login?mode=signup"
+                className="bg-accent text-black rounded px-6 py-3
+                           font-mono text-[0.75rem] font-semibold tracking-[0.04em]
+                           no-underline inline-flex items-center gap-2
+                           transition-opacity duration-[180ms] hover:opacity-85"
+              >
+                Start free →
+              </Link>
+              <a
+                href="#pipeline"
+                className="text-[0.76rem] text-text2 font-light hover:text-accent transition-colors"
+              >
+                See how it works ↓
+              </a>
             </div>
           </motion.div>
         )}

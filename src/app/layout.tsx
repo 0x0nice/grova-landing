@@ -13,13 +13,13 @@ import "./globals.css";
 initSentry();
 
 export const metadata: Metadata = {
-  title: "Grova — Feedback triage for developers",
+  title: "Grova — Smart feedback for local businesses",
   description:
-    "Capture user feedback, use AI to filter and score submissions, then deliver structured fix briefs ready for implementation.",
+    "Collect honest customer feedback with a simple widget and QR code. AI filters the noise and sends you a plain-English brief each week.",
   openGraph: {
-    title: "Grova — Feedback triage for developers",
+    title: "Grova — Smart feedback for local businesses",
     description:
-      "Capture user feedback, use AI to filter and score submissions, then deliver structured fix briefs ready for implementation.",
+      "Collect honest customer feedback with a simple widget and QR code. AI filters the noise and sends you a plain-English brief each week.",
     url: "https://grova.dev",
     siteName: "Grova",
     images: [
@@ -27,16 +27,16 @@ export const metadata: Metadata = {
         url: "https://grova.dev/og.png",
         width: 1200,
         height: 630,
-        alt: "Grova — Feedback, triaged.",
+        alt: "Grova — Smart feedback for your business",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Grova — Feedback triage for developers",
+    title: "Grova — Smart feedback for local businesses",
     description:
-      "Capture user feedback, use AI to filter and score submissions, then deliver structured fix briefs ready for implementation.",
+      "Collect honest customer feedback with a simple widget and QR code. AI filters the noise and sends you a plain-English brief each week.",
     images: ["https://grova.dev/og.png"],
   },
 };

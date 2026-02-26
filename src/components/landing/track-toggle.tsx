@@ -48,22 +48,10 @@ export function TrackToggle() {
             left: indicator.left,
             width: indicator.width,
             backgroundColor:
-              track === "dev" ? "var(--color-accent)" : "var(--color-orange)",
+              track === "biz" ? "var(--color-accent)" : "var(--color-orange)",
           }}
         />
 
-        <button
-          ref={devRef}
-          onClick={() => setTrack("dev")}
-          className={`
-            relative z-10 border-none rounded-pill cursor-pointer font-mono text-caption font-medium
-            tracking-[0.05em] px-3 py-[5px] leading-none whitespace-nowrap
-            transition-colors duration-300
-            ${track === "dev" ? "text-black" : "bg-transparent text-text3 hover:text-text2"}
-          `}
-        >
-          Developers
-        </button>
         <button
           ref={bizRef}
           onClick={() => setTrack("biz")}
@@ -71,10 +59,22 @@ export function TrackToggle() {
             relative z-10 border-none rounded-pill cursor-pointer font-mono text-caption font-medium
             tracking-[0.05em] px-3 py-[5px] leading-none whitespace-nowrap
             transition-colors duration-300
-            ${track === "biz" ? "text-white" : "bg-transparent text-text3 hover:text-text2"}
+            ${track === "biz" ? "text-black" : "bg-transparent text-text3 hover:text-text2"}
           `}
         >
           Business
+        </button>
+        <button
+          ref={devRef}
+          onClick={() => setTrack("dev")}
+          className={`
+            relative z-10 border-none rounded-pill cursor-pointer font-mono text-caption font-medium
+            tracking-[0.05em] px-3 py-[5px] leading-none whitespace-nowrap
+            transition-colors duration-300
+            ${track === "dev" ? "text-white" : "bg-transparent text-text3 hover:text-text2"}
+          `}
+        >
+          Developers
         </button>
       </div>
     </div>

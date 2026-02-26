@@ -4,8 +4,12 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { TrackToggle } from "./track-toggle";
+import { useTrack } from "@/hooks/use-track";
 
 export function Header() {
+  const { track } = useTrack();
+  const btnText = track === "biz" ? "text-black" : "text-white";
+
   return (
     <header className="sticky top-0 z-100 bg-bg border-b border-border transition-colors duration-[180ms]">
       <nav className="max-w-[980px] mx-auto px-10 max-md:px-5 py-7 max-md:py-4 flex flex-wrap items-center justify-between gap-y-3">
@@ -21,11 +25,11 @@ export function Header() {
         <div className="flex items-center gap-2.5">
           <Link
             href="/login?mode=signup"
-            className="bg-[var(--track-accent)] text-black border border-[var(--track-accent)]
+            className={`bg-[var(--track-accent)] ${btnText} border border-[var(--track-accent)]
                        rounded px-3.5 py-1.5
                        font-mono text-[0.65rem] font-semibold tracking-[0.04em]
                        no-underline inline-flex items-center gap-1.5
-                       transition-opacity duration-[180ms] hover:opacity-85"
+                       transition-opacity duration-[180ms] hover:opacity-85`}
           >
             Get Started
           </Link>

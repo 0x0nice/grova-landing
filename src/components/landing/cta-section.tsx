@@ -6,7 +6,7 @@ import { WaitlistForm } from "./waitlist-form";
 
 export function CTASection() {
   const { track } = useTrack();
-  const accentBg = track === "biz" ? "bg-orange" : "bg-accent";
+  const accentBg = track === "biz" ? "bg-accent text-black" : "bg-orange text-white";
 
   return (
     <section className="py-24 text-center" id="waitlist">
@@ -24,12 +24,12 @@ export function CTASection() {
       ) : (
         <>
           <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.025em] leading-[1.1] text-text max-w-[500px] mx-auto mb-3.5">
-            Ready to hear what your
+            Your customers are already talking.
             <br />
-            <em className="text-text2">customers are saying?</em>
+            <em className="text-text2">Start listening.</em>
           </h2>
           <p className="text-body text-text2 mb-[34px] font-light leading-[1.75]">
-            Start free today. Paid plans from $19/mo.
+            Start free today. No credit card required.
           </p>
         </>
       )}
@@ -37,7 +37,7 @@ export function CTASection() {
       <div className="flex flex-col items-center gap-6">
         <Link
           href="/login?mode=signup"
-          className={`${accentBg} text-black rounded px-8 py-3
+          className={`${accentBg} rounded px-8 py-3
                      font-mono text-footnote font-semibold tracking-[0.04em]
                      no-underline inline-flex items-center gap-2
                      transition-opacity duration-[180ms] hover:opacity-85`}

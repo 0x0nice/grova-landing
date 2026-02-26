@@ -9,8 +9,8 @@ const steps = [
 function Tag({ type }: { type: "auto" | "you" }) {
   const cls =
     type === "auto"
-      ? "text-accent border-accent/30 bg-accent/[0.07]"
-      : "text-orange border-orange/35 bg-orange/[0.07]";
+      ? "text-orange border-orange/30 bg-orange/[0.07]"
+      : "text-accent border-accent/30 bg-accent/[0.07]";
   return (
     <span className={`text-[0.52rem] tracking-[0.09em] uppercase px-1.5 py-[2px] rounded-pill inline-block border ${cls}`}>
       {type}
@@ -50,7 +50,7 @@ export function PipelineSection() {
       {/* Custom rules banner */}
       <div className="mt-3 grid grid-cols-2 gap-8 p-7 border border-border rounded bg-surface items-center max-md:grid-cols-1 max-md:gap-5">
         <div>
-          <span className="inline-block text-[0.54rem] text-accent tracking-[0.12em] uppercase mb-2.5">
+          <span className="inline-block text-[0.54rem] text-orange tracking-[0.12em] uppercase mb-2.5">
             Paid plans
           </span>
           <span className="block font-serif text-title text-text tracking-[-0.02em] leading-[1.15] mb-2.5">
@@ -63,7 +63,7 @@ export function PipelineSection() {
           </span>
         </div>
         <div className="bg-bg border border-border2 rounded p-[16px_18px] dark:bg-bg light:bg-bg2">
-          <span className="block text-[0.54rem] text-accent tracking-[0.1em] uppercase mb-2">
+          <span className="block text-[0.54rem] text-orange tracking-[0.1em] uppercase mb-2">
             Your triage rule
           </span>
           <span className="block text-subheadline text-text2 leading-[1.7] italic">

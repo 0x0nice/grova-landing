@@ -13,7 +13,7 @@ export function Footer() {
         <span className="text-[0.58rem] text-text3 tracking-[0.05em]">
           {track === "dev"
             ? "© 2026 Grova — Built by a developer, for developers."
-            : "© 2026 Grova — Feedback made simple for small businesses."}
+            : "© 2026 Grova — Built for businesses that listen."}
         </span>
         <div className="flex items-center gap-3">
           <Link

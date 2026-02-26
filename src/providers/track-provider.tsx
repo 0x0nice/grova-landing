@@ -16,23 +16,23 @@ interface TrackContextValue {
 }
 
 export const TrackContext = createContext<TrackContextValue>({
-  track: "dev",
+  track: "biz",
   setTrack: () => {},
 });
 
 export function TrackProvider({ children }: { children: ReactNode }) {
-  const [track, setTrackState] = useState<Track>("dev");
+  const [track, setTrackState] = useState<Track>("biz");
 
   useEffect(() => {
     try {
-      const hash = window.location.hash === "#business" ? "biz" : null;
+      const hash = window.location.hash === "#developers" ? "dev" : null;
       let saved: string | null = null;
       try { saved = localStorage.getItem("grova-track"); } catch {}
-      const initial = hash || (saved as Track) || "dev";
+      const initial = hash || (saved as Track) || "biz";
       setTrackState(initial);
       document.documentElement.setAttribute("data-track", initial);
     } catch {
-      // Fallback: keep default "dev" track
+      // Fallback: keep default "biz" track
     }
   }, []);
 
@@ -40,7 +40,7 @@ export function TrackProvider({ children }: { children: ReactNode }) {
     setTrackState(t);
     document.documentElement.setAttribute("data-track", t);
     try { localStorage.setItem("grova-track", t); } catch {}
-    try { history.replaceState(null, "", t === "biz" ? "#business" : "#"); } catch {}
+    try { history.replaceState(null, "", t === "dev" ? "#developers" : "#"); } catch {}
   }, []);
 
   return (

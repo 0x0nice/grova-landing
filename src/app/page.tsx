@@ -9,9 +9,11 @@ import { PipelineSection } from "@/components/landing/pipeline-section";
 import { StepsSection } from "@/components/landing/steps-section";
 import { FeaturesGrid } from "@/components/landing/features-grid";
 import { PricingGrid } from "@/components/landing/pricing-grid";
-import { BizHowSection } from "@/components/landing/biz-how-section";
+import { BizPipelineSection } from "@/components/landing/biz-pipeline-section";
+import { BizStopGuessingSection } from "@/components/landing/biz-stop-guessing-section";
+import { BizThreeStepsSection } from "@/components/landing/biz-three-steps-section";
+import { BizBounceBackSection } from "@/components/landing/biz-bounce-back-section";
 import { BizFeaturesSection } from "@/components/landing/biz-features-section";
-import { BizExampleSection } from "@/components/landing/biz-example-section";
 import { CTASection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
 
@@ -62,15 +64,23 @@ function LandingContent() {
           <motion.div key="biz-sections" {...sectionFade}>
             <Divider />
             <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-              <BizHowSection />
+              <BizPipelineSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <BizStopGuessingSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <BizThreeStepsSection />
+            </div>
+            <Divider />
+            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+              <BizBounceBackSection />
             </div>
             <Divider />
             <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
               <BizFeaturesSection />
-            </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
-              <BizExampleSection />
             </div>
             <Divider />
             <div className="max-w-[980px] mx-auto px-10 max-md:px-5">

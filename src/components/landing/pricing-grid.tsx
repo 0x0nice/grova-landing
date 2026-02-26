@@ -83,59 +83,64 @@ const bizTiers: PriceTier[] = [
   {
     tier: "Free",
     amount: "$0",
-    desc: "See if Grova is right for your business. No commitment.",
+    desc: "Start collecting feedback today. See every submission in your inbox.",
     features: [
       { text: "50 submissions/month", yes: true },
-      { text: "Guided contact widget", yes: true },
-      { text: "Pre-set category topics", yes: true },
-      { text: "Basic weekly digest", yes: true },
-      { text: "AI suggested replies", yes: false },
-      { text: "Custom categories", yes: false },
+      { text: "Widget, QR code & direct link", yes: true },
+      { text: "AI spam & noise filtering", yes: true },
+      { text: "Feedback inbox (all sources unified)", yes: true },
+      { text: "Embeddable widget", yes: true },
+      { text: "QR code for your location", yes: true },
+      { text: "Weekly intelligence brief", yes: false },
+      { text: "Pattern detection", yes: false },
+      { text: "Bounce-Back Offers", yes: false },
     ],
     cta: "Get started free",
     href: "/login?mode=signup",
   },
   {
     popular: true,
-    tier: "Essentials",
+    tier: "Growth",
     amount: "$19",
-    desc: "Everything you need to understand your customers.",
+    desc: "Stop reading every submission. Let Grova tell you what matters.",
     features: [
       { text: "Unlimited submissions", yes: true },
-      { text: "Guided contact widget", yes: true },
-      { text: "Custom categories", yes: true },
-      { text: "Full plain-English digest", yes: true },
-      { text: "AI suggested replies", yes: true },
-      { text: "Urgent message alerts", yes: true },
+      { text: "Full AI triage & scoring", yes: true },
+      { text: "Weekly intelligence brief", yes: true },
+      { text: "Pattern detection & trend alerts", yes: true },
+      { text: "Smart Actions & recommendations", yes: true },
+      { text: "Bounce-Back Offers", yes: true },
+      { text: "Custom triage rules", yes: true },
+      { text: "No Grova badge", yes: true },
     ],
     cta: "Join waitlist",
     href: "#waitlist",
     fill: true,
   },
   {
-    tier: "Growth",
-    amount: "$39",
-    desc: "For businesses with a team or a few locations.",
+    tier: "Pro",
+    amount: "$49",
+    desc: "For businesses with multiple locations or high volume.",
     features: [
-      { text: "Everything in Essentials", yes: true },
-      { text: "Up to 3 locations", yes: true },
-      { text: "Team dashboard access", yes: true },
-      { text: "Priority message flagging", yes: true },
-      { text: "Monthly trend reports", yes: true },
-      { text: "White-label widget", yes: false },
+      { text: "Everything in Growth", yes: true },
+      { text: "Unlimited locations/projects", yes: true },
+      { text: "Daily briefs available", yes: true },
+      { text: "Exportable reports", yes: true },
+      { text: "Team access (up to 3)", yes: true },
+      { text: "Priority support", yes: true },
     ],
     cta: "Join waitlist",
     href: "#waitlist",
   },
   {
-    tier: "Multi-location",
-    amount: "$99",
-    desc: "For franchises and businesses across many sites.",
+    tier: "Agency",
+    amount: "$149",
+    desc: "Manage feedback for multiple clients.",
     features: [
-      { text: "Everything in Growth", yes: true },
-      { text: "Unlimited locations", yes: true },
-      { text: "White-label widget", yes: true },
-      { text: "Per-location reporting", yes: true },
+      { text: "Everything in Pro", yes: true },
+      { text: "White label widget", yes: true },
+      { text: "Client management", yes: true },
+      { text: "Client reporting", yes: true },
       { text: "Custom branding", yes: true },
       { text: "Priority support", yes: true },
     ],
@@ -145,13 +150,13 @@ const bizTiers: PriceTier[] = [
 ];
 
 function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
-  const accentCheck = isBiz ? "text-orange" : "text-accent";
-  const accentPop = isBiz ? "text-orange" : "text-accent";
-  const accentLine = isBiz ? "bg-orange" : "bg-accent";
-  const fillBg = isBiz ? "bg-orange text-white" : "bg-accent text-black";
+  const accentCheck = isBiz ? "text-accent" : "text-orange";
+  const accentPop = isBiz ? "text-accent" : "text-orange";
+  const accentLine = isBiz ? "bg-accent" : "bg-orange";
+  const fillBg = isBiz ? "bg-accent text-black" : "bg-orange text-white";
   const outlineStyle = isBiz
-    ? "border-orange/40 text-text2 hover:border-orange hover:text-orange"
-    : "border-accent/40 text-text2 hover:border-accent hover:text-accent";
+    ? "border-accent/40 text-text2 hover:border-accent hover:text-accent"
+    : "border-orange/40 text-text2 hover:border-orange hover:text-orange";
 
   return (
     <div
@@ -237,13 +242,13 @@ export function PricingGrid() {
           {track === "dev" ? (
             <>Start free.<br /><em className="text-text2">Scale when it clicks.</em></>
           ) : (
-            <>Start free.<br /><em className="text-text2">Upgrade when it earns it.</em></>
+            <>Start free.<br /><em className="text-text2">Upgrade when it clicks.</em></>
           )}
         </h2>
         <p className="text-[0.86rem] text-text2 leading-[1.85] font-light pt-1">
           {track === "dev"
             ? "No credit card to start. Upgrade when Grova earns it. Per-project pricing — not per seat — because you\u2019re building alone."
-            : "No credit card to start. Flat-rate monthly pricing — not per-message, not per-location. Grova should pay for itself in the first week."}
+            : "Free gets you collecting. Paid gets you understanding. No credit card to start. No contracts. Cancel anytime."}
         </p>
       </div>
       <div className="grid grid-cols-4 border border-border rounded overflow-hidden max-lg:grid-cols-2 max-lg:[&>*:nth-child(2)]:border-r-0 max-lg:[&>*:nth-child(-n+2)]:border-b max-lg:[&>*:nth-child(-n+2)]:border-b-border max-lg:[&>*:nth-child(3)]:border-r max-lg:[&>*:nth-child(3)]:border-r-border max-md:grid-cols-1 max-md:[&>*]:border-r-0 max-md:[&>*]:border-b max-md:[&>*]:border-b-border max-md:[&>*:last-child]:border-b-0">

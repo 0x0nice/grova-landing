@@ -241,13 +241,17 @@
 /* ===================================================================
    TRACK-AWARE COLOR OVERRIDES
    =================================================================== */
-[data-track="biz"] {
+:root {
+  --track-accent: #00c87a;
+  --track-accent-dim: rgba(0, 200, 122, 0.1);
+}
+
+[data-track="dev"] {
   --track-accent: #e8640a;
   --track-accent-dim: rgba(232, 100, 10, 0.1);
 }
 
-[data-track="dev"],
-:root {
+[data-track="biz"] {
   --track-accent: #00c87a;
   --track-accent-dim: rgba(0, 200, 122, 0.1);
 }
