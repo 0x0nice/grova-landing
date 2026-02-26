@@ -27,7 +27,19 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       const projects = await apiGet<Project[]>("/projects", token);
       set({ projects, loading: false });
       if (projects.length > 0 && !get().active) {
-        set({ active: projects[0] });
+        // Restore previously selected project from localStorage
+        let restored = false;
+        try {
+          const savedId = localStorage.getItem("grova-active-project-id");
+          if (savedId) {
+            const match = projects.find((p) => p.id === savedId);
+            if (match) {
+              set({ active: match });
+              restored = true;
+            }
+          }
+        } catch {}
+        if (!restored) set({ active: projects[0] });
       }
     } catch {
       set({ loading: false });
@@ -36,6 +48,9 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
   selectProject: (project) => {
     set({ active: project });
+    try {
+      localStorage.setItem("grova-active-project-id", project.id);
+    } catch {}
   },
 
   createProject: async (data, token) => {

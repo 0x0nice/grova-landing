@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function OverviewPage() {
   const { session, isDemo } = useAuth();
   const active = useProjectStore((s) => s.active);
-  const { items, loading, loaded, loadFeedback } = useBizStore();
+  const { items, loading, loaded, loadFeedback, approve, deny } = useBizStore();
 
   useEffect(() => {
     if (active && (session?.access_token || isDemo) && !loaded) {
@@ -109,7 +109,14 @@ export default function OverviewPage() {
           </span>
           <div className="border border-border rounded overflow-hidden [html[data-theme=light]_&]:bg-white">
             {recent.map((item) => (
-              <MessageRow key={item.id} item={item} showScore isDemo={isDemo} />
+              <MessageRow
+                key={item.id}
+                item={item}
+                showScore
+                isDemo={isDemo}
+                onApprove={(id) => approve(id, session?.access_token || "demo", isDemo)}
+                onDeny={(id) => deny(id, session?.access_token || "demo", isDemo)}
+              />
             ))}
           </div>
         </div>

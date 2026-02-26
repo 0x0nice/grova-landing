@@ -11,9 +11,11 @@ interface MessageRowProps {
   item: FeedbackItem;
   showScore?: boolean;
   isDemo?: boolean;
+  onApprove?: (id: string) => void;
+  onDeny?: (id: string) => void;
 }
 
-export function MessageRow({ item, showScore = false, isDemo = false }: MessageRowProps) {
+export function MessageRow({ item, showScore = false, isDemo = false, onApprove, onDeny }: MessageRowProps) {
   const [replyOpen, setReplyOpen] = useState(false);
   const { show } = useToast();
   const t = item.triage;
@@ -27,6 +29,8 @@ export function MessageRow({ item, showScore = false, isDemo = false }: MessageR
       });
     }
   }
+
+  const isPending = item.status === "pending";
 
   return (
     <div className="border-b border-border last:border-b-0 py-4 px-1">
@@ -57,6 +61,17 @@ export function MessageRow({ item, showScore = false, isDemo = false }: MessageR
             <span className="font-mono text-micro text-text3">
               {timeAgo(item.created_at)}
             </span>
+            {!isPending && (
+              <span
+                className={`font-mono text-micro uppercase tracking-[0.06em] px-2 py-0.5 rounded ${
+                  item.status === "approved"
+                    ? "bg-accent/10 text-accent"
+                    : "bg-orange/10 text-orange"
+                }`}
+              >
+                {item.status}
+              </span>
+            )}
           </div>
 
           <p className="font-mono text-footnote text-text2 leading-[1.7] mb-2">
@@ -110,6 +125,28 @@ export function MessageRow({ item, showScore = false, isDemo = false }: MessageR
             </div>
           )}
         </div>
+
+        {/* Approve / Deny buttons */}
+        {onApprove && onDeny && isPending && (
+          <div className="flex flex-col gap-2 shrink-0 self-center">
+            <button
+              onClick={() => onApprove(item.id)}
+              className="rounded px-3 py-1.5 font-mono text-micro font-medium uppercase tracking-[0.04em]
+                         bg-accent-dim text-accent hover:bg-accent hover:text-black
+                         transition-all duration-[180ms] cursor-pointer"
+            >
+              Approve
+            </button>
+            <button
+              onClick={() => onDeny(item.id)}
+              className="rounded px-3 py-1.5 font-mono text-micro font-medium uppercase tracking-[0.04em]
+                         bg-orange-dim text-orange hover:bg-orange hover:text-white
+                         transition-all duration-[180ms] cursor-pointer"
+            >
+              Deny
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

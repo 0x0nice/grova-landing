@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { FeedbackItem } from "@/types/feedback";
-import { apiGet } from "@/lib/api";
-import { demoGet } from "@/lib/demo-data";
+import { apiGet, apiPost } from "@/lib/api";
+import { demoGet, demoPost } from "@/lib/demo-data";
 
 export interface BizConfig {
   name: string;
@@ -16,6 +16,8 @@ interface BizState {
   config: BizConfig;
 
   loadFeedback: (projectId: string, token: string, isDemo: boolean) => Promise<void>;
+  approve: (id: string, token: string, isDemo: boolean) => Promise<void>;
+  deny: (id: string, token: string, isDemo: boolean) => Promise<void>;
   loadConfig: (projectId: string) => void;
   saveConfig: (projectId: string, config: BizConfig) => void;
   reset: () => void;
@@ -49,6 +51,30 @@ export const useBizStore = create<BizState>((set) => ({
     } catch {
       set({ loading: false });
     }
+  },
+
+  approve: async (id, token, isDemo) => {
+    try {
+      if (isDemo) demoPost(`/feedback/${id}/approve`);
+      else await apiPost(`/feedback/${id}/approve`, {}, token);
+      set((s) => ({
+        items: s.items.map((i) =>
+          i.id === id ? { ...i, status: "approved" as const } : i
+        ),
+      }));
+    } catch {}
+  },
+
+  deny: async (id, token, isDemo) => {
+    try {
+      if (isDemo) demoPost(`/feedback/${id}/deny`);
+      else await apiPost(`/feedback/${id}/deny`, {}, token);
+      set((s) => ({
+        items: s.items.map((i) =>
+          i.id === id ? { ...i, status: "denied" as const } : i
+        ),
+      }));
+    } catch {}
   },
 
   loadConfig: (projectId) => {
