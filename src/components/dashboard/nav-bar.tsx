@@ -119,9 +119,9 @@ export function NavBar() {
 
   return (
     <>
-      <nav className="flex flex-col border-b border-border bg-bg shrink-0 md:flex-row md:items-center md:h-16">
+      <nav className="relative z-40 flex flex-col border-b border-border bg-bg shrink-0 md:flex-row md:items-center md:h-16">
         {/* Top row (always visible) */}
-        <div className="flex items-center h-12 px-5 gap-4 max-md:gap-2 max-md:px-3 md:h-16 md:flex-1 overflow-hidden">
+        <div className="flex items-center h-12 px-5 gap-4 max-md:gap-2 max-md:px-3 md:h-16 md:flex-1">
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0 max-md:mr-0 mr-2">
             <Logo size="md" href="/dashboard" />
