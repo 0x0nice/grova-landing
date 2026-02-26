@@ -11,6 +11,82 @@ import { getActionSettings, putActionSettings } from "@/lib/api";
 import { demoGet } from "@/lib/demo-data";
 import type { ActionSettings } from "@/types/feedback";
 
+/* ------------------------------------------------------------------ */
+/*  Icons                                                              */
+/* ------------------------------------------------------------------ */
+function EyeIcon({ open }: { open: boolean }) {
+  if (open) {
+    return (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+    </svg>
+  );
+}
+
+function CopyIcon() {
+  return (
+    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.334a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Section helpers                                                    */
+/* ------------------------------------------------------------------ */
+function Section({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`bg-surface border border-border rounded-xl p-6 max-md:p-4 [html[data-theme=light]_&]:bg-white ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function SectionHeader({
+  title,
+  description,
+}: {
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="mb-5">
+      <h3 className="font-serif text-callout text-text mb-1">{title}</h3>
+      {description && (
+        <p className="font-mono text-micro text-text3 leading-[1.6] max-w-[440px]">
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main component                                                     */
+/* ------------------------------------------------------------------ */
 export function SettingsView() {
   const active = useProjectStore((s) => s.active);
   const [context, setContext] = useState("");
@@ -24,6 +100,8 @@ export function SettingsView() {
   );
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaving, setSettingsSaving] = useState(false);
+  const [keyVisible, setKeyVisible] = useState(false);
+  const [keyCopied, setKeyCopied] = useState(false);
 
   const storageKey = active ? `grova-ctx-${active.id}` : null;
 
@@ -78,37 +156,70 @@ export function SettingsView() {
     }
   }
 
+  function copyKey() {
+    if (!active?.api_key) return;
+    navigator.clipboard.writeText(active.api_key);
+    setKeyCopied(true);
+    show("API key copied");
+    setTimeout(() => setKeyCopied(false), 2000);
+  }
+
   if (!active) return null;
 
+  const maskedKey = active.api_key
+    ? active.api_key.slice(0, 3) + "•".repeat(20) + active.api_key.slice(-4)
+    : "";
+
   return (
-    <div className="max-w-[600px]">
-      {/* Project info */}
-      <div className="mb-10">
-        <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-4">
-          Project info
-        </span>
+    <div className="max-w-[640px] flex flex-col gap-5">
+      {/* ── Project Info ── */}
+      <Section>
+        <SectionHeader title="Project Info" />
         <h2 className="font-serif text-title text-text mb-4">{active.name}</h2>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <InfoRow label="Source" value={active.source || "—"} />
           <InfoRow label="Mode" value={active.mode} />
-          {active.api_key && (
-            <CopyableRow label="API Key" value={active.api_key} />
-          )}
         </div>
-      </div>
 
-      {/* Triage lens */}
-      <div className="mb-10">
-        <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-4">
-          Triage lens
-        </span>
-        <h2 className="font-serif text-title text-text mb-2">
-          Project context
-        </h2>
-        <p className="font-mono text-footnote text-text2 leading-[1.7] mb-4">
-          Paste your README or product description. This context is injected
-          into every Cursor prompt when you approve feedback.
-        </p>
+        {/* API Key — hidden by default */}
+        {active.api_key && (
+          <div className="mt-5 pt-5 border-t border-border">
+            <label className="block font-mono text-micro text-text3 uppercase tracking-[0.08em] mb-2">
+              API Key
+            </label>
+            <div className="flex items-center gap-2 bg-bg2 rounded-lg px-4 py-3 border border-border">
+              <code className="font-mono text-footnote text-text2 flex-1 break-all select-all">
+                {keyVisible ? active.api_key : maskedKey}
+              </code>
+              <button
+                onClick={() => setKeyVisible(!keyVisible)}
+                className="p-1.5 rounded-md text-text3 hover:text-text2 hover:bg-surface
+                           transition-colors cursor-pointer shrink-0"
+                title={keyVisible ? "Hide key" : "Show key"}
+                aria-label={keyVisible ? "Hide API key" : "Show API key"}
+              >
+                <EyeIcon open={keyVisible} />
+              </button>
+              <button
+                onClick={copyKey}
+                className="p-1.5 rounded-md text-text3 hover:text-text2 hover:bg-surface
+                           transition-colors cursor-pointer shrink-0"
+                title="Copy key"
+                aria-label="Copy API key"
+              >
+                {keyCopied ? <CheckIcon /> : <CopyIcon />}
+              </button>
+            </div>
+          </div>
+        )}
+      </Section>
+
+      {/* ── Triage Lens ── */}
+      <Section>
+        <SectionHeader
+          title="Triage Lens"
+          description="Paste your README or product description. This context is injected into every Cursor prompt when you approve feedback."
+        />
         <Textarea
           id="project-ctx"
           label="Project description / README"
@@ -124,19 +235,14 @@ export function SettingsView() {
             {saved ? "Saved ✓" : "Save context"}
           </Button>
         </div>
-      </div>
+      </Section>
 
-      {/* Smart Actions settings */}
-      <div>
-        <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-4">
-          Smart Actions
-        </span>
-        <h2 className="font-serif text-title text-text mb-2">
-          Email settings
-        </h2>
-        <p className="font-mono text-footnote text-text2 leading-[1.7] mb-4">
-          Configure how outbound emails are sent from Smart Actions.
-        </p>
+      {/* ── Smart Actions ── */}
+      <Section>
+        <SectionHeader
+          title="Smart Actions"
+          description="Configure how outbound emails are sent from Smart Actions."
+        />
 
         {settingsLoading ? (
           <div className="font-mono text-footnote text-text3">Loading...</div>
@@ -185,7 +291,7 @@ export function SettingsView() {
                       brand_color: e.target.value,
                     })
                   }
-                  className="w-10 h-10 rounded border border-border cursor-pointer bg-transparent"
+                  className="w-10 h-10 rounded-lg border border-border cursor-pointer bg-transparent"
                 />
                 <span className="font-mono text-footnote text-text3">
                   {actionSettings.brand_color || "#00c87a"}
@@ -265,11 +371,14 @@ export function SettingsView() {
             </div>
           </div>
         ) : null}
-      </div>
+      </Section>
     </div>
   );
 }
 
+/* ------------------------------------------------------------------ */
+/*  Helper rows                                                        */
+/* ------------------------------------------------------------------ */
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline gap-3">
@@ -277,28 +386,6 @@ function InfoRow({ label, value }: { label: string; value: string }) {
         {label}
       </span>
       <span className="font-mono text-footnote text-text2">{value}</span>
-    </div>
-  );
-}
-
-function CopyableRow({ label, value }: { label: string; value: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <div className="flex items-baseline gap-3">
-      <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em] w-16 shrink-0">
-        {label}
-      </span>
-      <span className="font-mono text-footnote text-accent break-all">{value}</span>
-      <button
-        onClick={() => {
-          navigator.clipboard.writeText(value);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        }}
-        className="font-mono text-micro text-text3 hover:text-text2 transition-colors cursor-pointer shrink-0"
-      >
-        {copied ? "Copied!" : "Copy"}
-      </button>
     </div>
   );
 }

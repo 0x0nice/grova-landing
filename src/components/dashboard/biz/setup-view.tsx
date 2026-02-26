@@ -8,12 +8,99 @@ import { useBizStore, type BizConfig } from "@/stores/biz-store";
 import { CAT_PRESETS } from "@/lib/cat-presets";
 import { useToast } from "@/components/ui/toast";
 
+/* ------------------------------------------------------------------ */
+/*  Eyeball toggle icon                                                */
+/* ------------------------------------------------------------------ */
+function EyeIcon({ open }: { open: boolean }) {
+  if (open) {
+    return (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.338 5.31 7.5 10.066 7.5.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Copy icon                                                          */
+/* ------------------------------------------------------------------ */
+function CopyIcon() {
+  return (
+    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.334a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Section card wrapper                                               */
+/* ------------------------------------------------------------------ */
+function Section({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`bg-surface border border-border rounded-xl p-6 max-md:p-4 [html[data-theme=light]_&]:bg-white ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function SectionHeader({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4 mb-5">
+      <div>
+        <h3 className="font-serif text-callout text-text mb-1">{title}</h3>
+        {description && (
+          <p className="font-mono text-micro text-text3 leading-[1.6] max-w-[440px]">
+            {description}
+          </p>
+        )}
+      </div>
+      {action && <div className="shrink-0">{action}</div>}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main component                                                     */
+/* ------------------------------------------------------------------ */
 export function SetupView() {
   const active = useProjectStore((s) => s.active);
   const { config, loadConfig, saveConfig } = useBizStore();
   const { show } = useToast();
   const [newCat, setNewCat] = useState("");
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [keyVisible, setKeyVisible] = useState(false);
+  const [keyCopied, setKeyCopied] = useState(false);
+  const [snippetCopied, setSnippetCopied] = useState(false);
 
   useEffect(() => {
     if (active) loadConfig(active.id);
@@ -67,6 +154,14 @@ export function SetupView() {
     setDragIdx(null);
   }
 
+  function copyKey() {
+    if (!active?.api_key) return;
+    navigator.clipboard.writeText(active.api_key);
+    setKeyCopied(true);
+    show("API key copied");
+    setTimeout(() => setKeyCopied(false), 2000);
+  }
+
   // Build embed snippet
   const source = active?.source || "your-business-id";
   const catStr = config.categories.join(",");
@@ -86,46 +181,60 @@ export function SetupView() {
   snippet += `>\n</script>`;
 
   function copySnippet() {
-    navigator.clipboard.writeText(snippet).then(() => show("Snippet copied"));
+    navigator.clipboard.writeText(snippet).then(() => {
+      setSnippetCopied(true);
+      show("Snippet copied");
+      setTimeout(() => setSnippetCopied(false), 2000);
+    });
   }
-
-  const [keyCopied, setKeyCopied] = useState(false);
 
   if (!active) return null;
 
+  const maskedKey = active.api_key
+    ? active.api_key.slice(0, 3) + "•".repeat(20) + active.api_key.slice(-4)
+    : "";
+
   return (
-    <div className="max-w-[640px]">
-      {/* Project info */}
+    <div className="max-w-[640px] flex flex-col gap-5">
+      {/* ── API Key ── */}
       {active.api_key && (
-        <div className="mb-10">
-          <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-4">
-            Project info
-          </span>
-          <div className="flex items-baseline gap-3">
-            <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em] w-16 shrink-0">
-              API Key
-            </span>
-            <span className="font-mono text-footnote text-accent break-all">{active.api_key}</span>
+        <Section>
+          <SectionHeader
+            title="API Key"
+            description="Use this key to authenticate your widget. Keep it private."
+          />
+          <div className="flex items-center gap-2 bg-bg2 rounded-lg px-4 py-3 border border-border">
+            <code className="font-mono text-footnote text-text2 flex-1 break-all select-all">
+              {keyVisible ? active.api_key : maskedKey}
+            </code>
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(active.api_key!);
-                setKeyCopied(true);
-                setTimeout(() => setKeyCopied(false), 2000);
-                show("API key copied");
-              }}
-              className="font-mono text-micro text-text3 hover:text-text2 transition-colors cursor-pointer shrink-0"
+              onClick={() => setKeyVisible(!keyVisible)}
+              className="p-1.5 rounded-md text-text3 hover:text-text2 hover:bg-surface
+                         transition-colors cursor-pointer shrink-0"
+              title={keyVisible ? "Hide key" : "Show key"}
+              aria-label={keyVisible ? "Hide API key" : "Show API key"}
             >
-              {keyCopied ? "Copied!" : "Copy"}
+              <EyeIcon open={keyVisible} />
+            </button>
+            <button
+              onClick={copyKey}
+              className="p-1.5 rounded-md text-text3 hover:text-text2 hover:bg-surface
+                         transition-colors cursor-pointer shrink-0"
+              title="Copy key"
+              aria-label="Copy API key"
+            >
+              {keyCopied ? <CheckIcon /> : <CopyIcon />}
             </button>
           </div>
-        </div>
+        </Section>
       )}
 
-      {/* Business profile */}
-      <div className="mb-10">
-        <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-4">
-          Business profile
-        </span>
+      {/* ── Business Profile ── */}
+      <Section>
+        <SectionHeader
+          title="Business Profile"
+          description="Basic info about your business. This is shown in the review widget."
+        />
         <div className="flex flex-col gap-4">
           <Input
             id="biz-name"
@@ -146,24 +255,27 @@ export function SetupView() {
             <option value="default">Other</option>
           </Select>
         </div>
-      </div>
+      </Section>
 
-      {/* Categories */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <span className="font-mono text-micro text-text3 uppercase tracking-[0.14em]">
-            Categories
-          </span>
-          <button
-            onClick={resetCategories}
-            className="font-mono text-micro text-text3 hover:text-text2 transition-colors cursor-pointer"
-          >
-            Reset to defaults
-          </button>
-        </div>
+      {/* ── Categories ── */}
+      <Section>
+        <SectionHeader
+          title="Review Categories"
+          description="Organize incoming feedback by topic. Drag to reorder."
+          action={
+            <button
+              onClick={resetCategories}
+              className="font-mono text-micro text-text3 hover:text-text2
+                         transition-colors cursor-pointer px-2 py-1 rounded
+                         hover:bg-bg2 border border-transparent hover:border-border"
+            >
+              Reset defaults
+            </button>
+          }
+        />
 
         {/* Category chips */}
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex flex-wrap gap-2 mb-4">
           {config.categories.map((cat, i) => (
             <div
               key={`${cat}-${i}`}
@@ -171,16 +283,21 @@ export function SetupView() {
               onDragStart={() => handleDragStart(i)}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleDrop(i)}
-              className="flex items-center gap-1.5 bg-surface border border-border rounded px-3 py-1.5
+              className="group flex items-center gap-1.5 bg-bg2 border border-border rounded-lg px-3 py-1.5
                          font-mono text-footnote text-text2 cursor-grab active:cursor-grabbing
-                         [html[data-theme=light]_&]:bg-white"
+                         transition-all hover:border-border2
+                         [html[data-theme=light]_&]:bg-surface"
             >
-              {cat}
+              <span className="select-none">{cat}</span>
               <button
                 onClick={() => removeCategory(i)}
-                className="text-text3 hover:text-red transition-colors cursor-pointer ml-1"
+                className="text-text3 hover:text-red transition-colors cursor-pointer ml-0.5
+                           opacity-60 group-hover:opacity-100"
+                aria-label={`Remove ${cat}`}
               >
-                ×
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           ))}
@@ -193,45 +310,66 @@ export function SetupView() {
             onChange={(e) => setNewCat(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addCategory()}
             placeholder="Add category..."
-            className="flex-1 bg-bg2 border border-border rounded px-3 py-2
+            className="flex-1 bg-bg2 border border-border rounded-lg px-3 py-2
                        font-mono text-footnote text-text placeholder:text-text3
                        focus:outline-none focus:border-accent transition-colors"
           />
           <button
             onClick={addCategory}
+            disabled={!newCat.trim()}
             className="font-mono text-footnote text-accent hover:text-accent/80
-                       transition-colors cursor-pointer px-2 py-2"
+                       transition-colors cursor-pointer px-3 py-2 rounded-lg
+                       hover:bg-accent/5 disabled:opacity-30 disabled:cursor-default"
           >
             Add
           </button>
         </div>
-      </div>
+      </Section>
 
-      {/* Embed snippet */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-3">
-          <span className="font-mono text-micro text-text3 uppercase tracking-[0.14em]">
-            Embed snippet
-          </span>
-          <button
-            onClick={copySnippet}
-            className="font-mono text-micro text-accent hover:text-accent/80
-                       transition-colors cursor-pointer"
-          >
-            Copy
-          </button>
-        </div>
-        <pre className="bg-bg2 border border-border rounded p-4 font-mono text-micro text-text2 leading-[1.8] overflow-x-auto whitespace-pre-wrap">
+      {/* ── Embed Snippet ── */}
+      <Section>
+        <SectionHeader
+          title="Embed Snippet"
+          description="Paste this into your website HTML to show the review widget."
+          action={
+            <button
+              onClick={copySnippet}
+              className="flex items-center gap-1.5 font-mono text-micro text-accent hover:text-accent/80
+                         transition-colors cursor-pointer px-2.5 py-1 rounded
+                         hover:bg-accent/5 border border-transparent hover:border-accent/20"
+            >
+              {snippetCopied ? (
+                <>
+                  <CheckIcon />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <CopyIcon />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          }
+        />
+        <pre
+          className="bg-bg2 border border-border rounded-lg p-4 font-mono text-micro text-text2
+                     leading-[1.8] overflow-x-auto whitespace-pre-wrap select-all"
+        >
           {snippet}
         </pre>
-      </div>
+      </Section>
 
-      {/* Widget preview */}
-      <div>
-        <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-3">
-          Widget preview
-        </span>
-        <div className="bg-surface border border-border rounded p-6 max-w-[320px] [html[data-theme=light]_&]:bg-white">
+      {/* ── Widget Preview ── */}
+      <Section>
+        <SectionHeader
+          title="Widget Preview"
+          description="This is roughly how the widget will look on your site."
+        />
+        <div
+          className="bg-bg2 border border-border rounded-lg p-6 max-w-[320px]
+                     [html[data-theme=light]_&]:bg-surface"
+        >
           <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2">
             Get in touch
           </span>
@@ -244,15 +382,16 @@ export function SetupView() {
             {config.categories.map((cat) => (
               <div
                 key={cat}
-                className="bg-bg2 border border-border rounded px-3 py-2
-                           font-mono text-footnote text-text2 [html[data-theme=light]_&]:bg-surface"
+                className="bg-surface border border-border rounded-lg px-3 py-2
+                           font-mono text-footnote text-text2
+                           [html[data-theme=light]_&]:bg-white"
               >
                 {cat}
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </Section>
     </div>
   );
 }
