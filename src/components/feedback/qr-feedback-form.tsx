@@ -66,6 +66,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
   );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -116,6 +117,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
     setStep(1);
     setSelectedCategory(null);
     setMessage("");
+    setName("");
     setEmail("");
     setErrorMessage(null);
     setStatus("ready");
@@ -128,6 +130,8 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
     setErrorMessage(null);
 
     try {
+      const meta = collectMetadata();
+      if (name.trim()) (meta as Record<string, unknown>).customer_name = name.trim();
       const body: Record<string, unknown> = {
         type: selectedCategory,
         message: message.trim(),
@@ -135,7 +139,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
         page: `/f?k=${apiKey}`,
         timestamp: new Date().toISOString(),
         source: "qr",
-        metadata: collectMetadata(),
+        metadata: meta,
       };
       // Only attach project_id for real projects (not demo)
       if (!isDemo) body.project_id = project.id;
@@ -294,6 +298,20 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
           className="w-full p-4 rounded-[8px] bg-surface border border-border2
             font-mono text-body text-text placeholder:text-text3
             resize-none focus:outline-none focus:border-text3
+            transition-colors duration-150
+            text-[1rem]"
+          style={{ fontSize: "1rem" }}
+        />
+
+        {/* Name */}
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your name (optional)"
+          className="w-full mt-3 px-4 py-3 rounded-[8px] bg-surface border border-border2
+            font-mono text-body text-text placeholder:text-text3
+            focus:outline-none focus:border-text3
             transition-colors duration-150
             text-[1rem]"
           style={{ fontSize: "1rem" }}

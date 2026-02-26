@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/providers/auth-provider";
+import { useProjectStore } from "@/stores/project-store";
 import type { EmailTemplate } from "@/lib/templates";
 import { renderTemplate } from "@/lib/templates";
-import { sendAction } from "@/lib/api";
-import { demoPost } from "@/lib/demo-data";
+import { sendAction, getActionSettings } from "@/lib/api";
+import { demoPost, demoGet } from "@/lib/demo-data";
 
 interface ActionPreviewModalProps {
   open: boolean;
@@ -47,6 +48,32 @@ export function ActionPreviewModal({
   const [error, setError] = useState<string | null>(null);
   const { show } = useToast();
   const { session, isDemo } = useAuth();
+  const active = useProjectStore((s) => s.active);
+
+  // Load action_settings and re-render template with business_name, review_url, etc.
+  useEffect(() => {
+    if (!open || !active) return;
+    const token = session?.access_token || "";
+    const loadSettings = async () => {
+      try {
+        const settings = isDemo
+          ? (demoGet(`/projects/${active.id}/action-settings`) as Record<string, unknown>)
+          : await getActionSettings(active.id, token);
+        if (!settings) return;
+        const merged: Record<string, string> = {
+          business_name: (settings as Record<string, unknown>).owner_name as string || active.name || "",
+          review_platform: (settings as Record<string, unknown>).preferred_review_platform as string || "Google",
+          review_url: (settings as Record<string, unknown>).review_url as string || "",
+          owner_name: (settings as Record<string, unknown>).owner_name as string || active.name || "",
+          ...variables,
+        };
+        setSubject(renderTemplate(template.subject, merged));
+        setBody(renderTemplate(template.body, merged));
+      } catch {}
+    };
+    loadSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   function handleCopy() {
     const text = `Subject: ${subject}\n\n${body}`;
