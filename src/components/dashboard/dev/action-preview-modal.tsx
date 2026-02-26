@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
@@ -8,6 +8,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
 import type { EmailTemplate } from "@/lib/templates";
 import { renderTemplate } from "@/lib/templates";
+import { renderEmailPreviewHtml } from "@/lib/email-renderer";
 import { sendAction, getActionSettings } from "@/lib/api";
 import { demoPost, demoGet } from "@/lib/demo-data";
 
@@ -48,6 +49,11 @@ export function ActionPreviewModal({
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<"preview" | "edit">("preview");
+  const [brandColor, setBrandColor] = useState("#00c87a");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [ownerName, setOwnerName] = useState("");
+  const [isInternal, setIsInternal] = useState(false);
   const { show } = useToast();
   const { session, isDemo } = useAuth();
   const active = useProjectStore((s) => s.active);
@@ -55,6 +61,7 @@ export function ActionPreviewModal({
   // Load action_settings and re-render template with business_name, review_url, etc.
   useEffect(() => {
     if (!open || !active) return;
+    setIsInternal(templateId === "escalation_internal");
     const token = session?.access_token || "";
     const loadSettings = async () => {
       try {
@@ -63,6 +70,12 @@ export function ActionPreviewModal({
           : await getActionSettings(active.id, token);
         if (!settings) return;
         const s = settings as Record<string, unknown>;
+
+        // Store settings for the preview renderer
+        setBrandColor((s.brand_color as string) || "#00c87a");
+        setLogoUrl((s.logo_url as string) || "");
+        setOwnerName((s.owner_name as string) || active.name || "The Team");
+
         const merged: Record<string, string> = {
           customer_name: customerName || "there",
           business_name: (s.owner_name as string) || active.name || "",
@@ -82,6 +95,20 @@ export function ActionPreviewModal({
     loadSettings();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+
+  // Memoize the HTML preview so it only re-renders when body/subject/settings change
+  const previewHtml = useMemo(
+    () =>
+      renderEmailPreviewHtml({
+        body,
+        subject,
+        brandColor,
+        logoUrl: logoUrl || undefined,
+        ownerName,
+        isInternal,
+      }),
+    [body, subject, brandColor, logoUrl, ownerName, isInternal]
+  );
 
   function handleCopy() {
     const text = `Subject: ${subject}\n\n${body}`;
@@ -130,7 +157,7 @@ export function ActionPreviewModal({
   const needsEmailInput = requiresCustomerEmail && !customerEmail;
 
   return (
-    <Modal open={open} onClose={onClose} title={template.name} maxWidth="560px">
+    <Modal open={open} onClose={onClose} title={template.name} maxWidth="640px">
       <div className="flex flex-col gap-4">
         {/* Recipient email — shown when feedback has no email */}
         {needsEmailInput && (
@@ -162,6 +189,7 @@ export function ActionPreviewModal({
           </div>
         )}
 
+        {/* Subject — always editable */}
         <div>
           <label className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-1.5">
             Subject
@@ -174,19 +202,50 @@ export function ActionPreviewModal({
                        focus:outline-none focus:border-accent transition-colors"
           />
         </div>
-        <div>
-          <label className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-1.5">
-            Body
-          </label>
+
+        {/* Preview / Edit toggle */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setMode("preview")}
+            className={`font-mono text-micro uppercase tracking-[0.08em] px-3 py-1.5 rounded transition-colors ${
+              mode === "preview"
+                ? "bg-accent/15 text-accent"
+                : "text-text3 hover:text-text2"
+            }`}
+          >
+            Preview
+          </button>
+          <button
+            onClick={() => setMode("edit")}
+            className={`font-mono text-micro uppercase tracking-[0.08em] px-3 py-1.5 rounded transition-colors ${
+              mode === "edit"
+                ? "bg-accent/15 text-accent"
+                : "text-text3 hover:text-text2"
+            }`}
+          >
+            Edit
+          </button>
+        </div>
+
+        {/* Body — preview iframe or edit textarea */}
+        {mode === "preview" ? (
+          <iframe
+            srcDoc={previewHtml}
+            sandbox="allow-same-origin"
+            title="Email preview"
+            className="w-full rounded border border-border bg-[#f8f8f6]"
+            style={{ height: "420px" }}
+          />
+        ) : (
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            rows={10}
+            rows={14}
             className="w-full bg-bg2 border border-border rounded px-3 py-2
                        font-mono text-footnote text-text leading-[1.7]
                        focus:outline-none focus:border-accent transition-colors resize-y"
           />
-        </div>
+        )}
 
         {/* Error message */}
         {error && (
@@ -198,7 +257,7 @@ export function ActionPreviewModal({
             Close
           </Button>
           <Button variant="copy" onClick={handleCopy}>
-            Copy to clipboard
+            Copy text
           </Button>
           {!sent ? (
             <Button
