@@ -39,7 +39,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
         {showScore && t?.score != null && (
           <div className="shrink-0 text-center w-10">
             <span
-              className={`font-serif text-[1.4rem] italic leading-none ${scoreColor(scoreClass(t.score))}`}
+              className={`font-serif text-title italic leading-none ${scoreColor(scoreClass(t.score))}`}
             >
               {t.score.toFixed(1)}
             </span>
@@ -54,11 +54,11 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             <Badge type={item.type} />
             {item.email && (
-              <span className="font-mono text-micro text-text3">
+              <span className="font-mono text-footnote text-text3">
                 {item.email}
               </span>
             )}
-            <span className="font-mono text-micro text-text3">
+            <span className="font-mono text-footnote text-text3">
               {timeAgo(item.created_at)}
             </span>
             {!isPending && (
@@ -74,7 +74,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
             )}
           </div>
 
-          <p className="font-mono text-footnote text-text2 leading-[1.7] mb-2">
+          <p className="font-mono text-callout text-text2 leading-[1.7] mb-2">
             {item.message}
           </p>
 
@@ -83,7 +83,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
             <>
               <button
                 onClick={() => setReplyOpen(!replyOpen)}
-                className="font-mono text-micro text-accent hover:text-accent/80
+                className="font-mono text-footnote text-accent hover:text-accent/80
                            transition-colors cursor-pointer"
               >
                 💬 Suggested reply
@@ -93,12 +93,12 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
                   <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2">
                     Suggested reply
                   </span>
-                  <p className="font-mono text-footnote text-text2 leading-[1.7] italic mb-3">
+                  <p className="font-mono text-callout text-text2 leading-[1.7] italic mb-3">
                     &ldquo;{t!.suggested_reply}&rdquo;
                   </p>
                   <button
                     onClick={handleCopyReply}
-                    className="font-mono text-micro text-accent hover:text-accent/80
+                    className="font-mono text-footnote text-accent hover:text-accent/80
                                transition-colors cursor-pointer"
                   >
                     Copy reply

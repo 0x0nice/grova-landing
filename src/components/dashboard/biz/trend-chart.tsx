@@ -44,7 +44,7 @@ export function TrendChart({ byWeek, weeks, cats }: TrendChartProps) {
                 }}
                 title={`${label}: ${total} messages`}
               />
-              <span className="font-mono text-micro text-text3">{label}</span>
+              <span className="font-mono text-footnote text-text3">{label}</span>
             </div>
           );
         })}
@@ -60,7 +60,7 @@ export function TrendChart({ byWeek, weeks, cats }: TrendChartProps) {
                 backgroundColor: CHART_COLORS[i % CHART_COLORS.length],
               }}
             />
-            <span className="font-mono text-micro text-text3">{cat}</span>
+            <span className="font-mono text-footnote text-text3">{cat}</span>
           </div>
         ))}
       </div>

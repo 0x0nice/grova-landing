@@ -300,7 +300,7 @@ export default function BillingPage() {
       <div className="bg-surface border border-border rounded p-5 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-1">
+            <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.12em] mb-1">
               Current Plan
             </span>
             {loading ? (
@@ -327,19 +327,19 @@ export default function BillingPage() {
           </div>
         </div>
         {billing?.plan_status === "past_due" && (
-          <p className="font-mono text-micro text-red mt-3">
+          <p className="font-mono text-footnote text-red mt-3">
             Payment past due — please update your payment method to keep your plan active.
           </p>
         )}
         {isDemo && (
-          <p className="font-mono text-micro text-orange mt-3">
+          <p className="font-mono text-footnote text-orange mt-3">
             Demo mode — billing actions are disabled.
           </p>
         )}
       </div>
 
       {/* Plan grid */}
-      <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-4">
+      <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.12em] mb-4">
         Available Plans
       </span>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -368,14 +368,14 @@ export default function BillingPage() {
                   Most Popular
                 </span>
               )}
-              <span className="font-mono text-footnote text-text uppercase tracking-[0.04em]">
+              <span className="font-mono text-callout text-text uppercase tracking-[0.04em]">
                 {tier.name}
               </span>
               <div className="mt-2 mb-4">
-                <span className="font-serif text-[2rem] text-text italic leading-none">
+                <span className="font-serif text-title text-text italic leading-none">
                   {tier.price}
                 </span>
-                <span className="font-mono text-micro text-text3 ml-1">
+                <span className="font-mono text-footnote text-text3 ml-1">
                   {tier.period}
                 </span>
               </div>
@@ -383,7 +383,7 @@ export default function BillingPage() {
                 {tier.features.map((f, i) => (
                   <li
                     key={i}
-                    className="font-mono text-micro text-text2 leading-[1.6]"
+                    className="font-mono text-footnote text-text2 leading-[1.6]"
                   >
                     <span className="text-accent mr-1.5">+</span>
                     {f}
@@ -391,14 +391,14 @@ export default function BillingPage() {
                 ))}
               </ul>
               {isCurrent ? (
-                <span className="font-mono text-micro text-text3 uppercase tracking-[0.04em] text-center py-2">
+                <span className="font-mono text-footnote text-text3 uppercase tracking-[0.04em] text-center py-2">
                   Current Plan
                 </span>
               ) : isFree && currentOrder > 0 ? (
                 <button
                   onClick={handleManage}
                   disabled={isDemo || !!actionLoading}
-                  className="font-mono text-micro uppercase tracking-[0.04em] py-2.5 rounded
+                  className="font-mono text-footnote uppercase tracking-[0.04em] py-2.5 rounded
                     transition-all cursor-pointer text-center
                     border border-border text-text3 hover:border-border2 hover:text-text2
                     disabled:opacity-30 disabled:cursor-not-allowed"
@@ -410,7 +410,7 @@ export default function BillingPage() {
                   onClick={() => handleUpgrade(tier.key)}
                   disabled={isDemo || !!actionLoading}
                   className={`
-                    font-mono text-micro uppercase tracking-[0.04em] py-2.5 rounded
+                    font-mono text-footnote uppercase tracking-[0.04em] py-2.5 rounded
                     transition-all cursor-pointer text-center
                     ${
                       tier.popular
@@ -438,12 +438,12 @@ export default function BillingPage() {
 
       {/* Usage section */}
       <div className="mt-8 bg-surface border border-border rounded p-5">
-        <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-4">
+        <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.12em] mb-4">
           This Month&apos;s Usage
         </span>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div>
-            <span className="block font-mono text-micro text-text3 mb-1">
+            <span className="block font-mono text-footnote text-text3 mb-1">
               Feedback received
             </span>
             {loading ? (
@@ -453,7 +453,7 @@ export default function BillingPage() {
                 <span className="font-serif text-title text-text italic">
                   {feedbackCount}
                 </span>
-                <span className="font-mono text-micro text-text3">
+                <span className="font-mono text-footnote text-text3">
                   {" "}
                   / {feedbackLimit === -1 ? "∞" : feedbackLimit}
                 </span>
@@ -461,7 +461,7 @@ export default function BillingPage() {
             )}
           </div>
           <div>
-            <span className="block font-mono text-micro text-text3 mb-1">
+            <span className="block font-mono text-footnote text-text3 mb-1">
               Plan status
             </span>
             {loading ? (
@@ -481,7 +481,7 @@ export default function BillingPage() {
             )}
           </div>
           <div>
-            <span className="block font-mono text-micro text-text3 mb-1">
+            <span className="block font-mono text-footnote text-text3 mb-1">
               Current tier
             </span>
             {loading ? (
@@ -493,7 +493,7 @@ export default function BillingPage() {
             )}
           </div>
           <div>
-            <span className="block font-mono text-micro text-text3 mb-1">
+            <span className="block font-mono text-footnote text-text3 mb-1">
               Period ends
             </span>
             {loading ? (

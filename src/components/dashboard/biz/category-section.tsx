@@ -29,7 +29,7 @@ export function CategorySection({
       >
         <div className="flex items-center gap-3">
           <span className="font-serif text-callout text-text">{name}</span>
-          <span className="font-mono text-micro text-text3">
+          <span className="font-mono text-footnote text-text3">
             {items.length} message{items.length !== 1 ? "s" : ""}
           </span>
         </div>

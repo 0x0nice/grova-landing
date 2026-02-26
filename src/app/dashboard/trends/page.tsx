@@ -44,7 +44,7 @@ export default function TrendsPage() {
 
   return (
     <div>
-      <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-4">
+      <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.14em] mb-4">
         Weekly message volume
       </span>
       <TrendChart byWeek={byWeek} weeks={weeks} cats={cats} />
