@@ -1,11 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
 import type { OnboardingData } from "./onboarding-wizard";
+
+function HelpTip({ children }: { children: React.ReactNode }) {
+  const [show, setShow] = useState(false);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+
+  function enter() {
+    clearTimeout(timeout.current);
+    setShow(true);
+  }
+  function leave() {
+    timeout.current = setTimeout(() => setShow(false), 150);
+  }
+
+  function toggle() {
+    setShow((s) => !s);
+  }
+
+  return (
+    <span
+      className="relative inline-flex items-center ml-1.5"
+      onMouseEnter={enter}
+      onMouseLeave={leave}
+    >
+      <button
+        type="button"
+        onClick={toggle}
+        onFocus={enter}
+        onBlur={leave}
+        className="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full
+                   border border-border2 text-text3 text-[0.5rem] leading-none cursor-help
+                   hover:border-accent hover:text-accent transition-colors"
+        aria-label="Help"
+      >
+        ?
+      </button>
+      {show && (
+        <span
+          className="absolute bottom-full right-0 mb-2 w-[260px]
+                     bg-bg2 border border-border rounded p-3 shadow-lg z-50
+                     font-mono text-[0.62rem] text-text2 leading-[1.65] font-normal
+                     normal-case tracking-normal"
+        >
+          {children}
+          <span className="absolute top-full right-[4px] w-0 h-0
+                          border-l-[5px] border-r-[5px] border-t-[5px]
+                          border-l-transparent border-r-transparent border-t-border" />
+        </span>
+      )}
+    </span>
+  );
+}
 
 interface StepProjectProps {
   data: OnboardingData;
@@ -100,17 +151,54 @@ export function StepProject({
           value={data.projectName}
           onChange={(e) => onUpdate({ projectName: e.target.value })}
         />
-        <Input
-          id="project-source"
-          label="Source Identifier (optional)"
-          placeholder={
-            data.track === "developer"
-              ? "my-saas-app"
-              : "joes-coffee-main"
-          }
-          value={data.projectSource}
-          onChange={(e) => onUpdate({ projectSource: e.target.value })}
-        />
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="project-source"
+            className="font-mono text-footnote text-text2 uppercase tracking-[0.04em] flex items-center"
+          >
+            Source Identifier (optional)
+            <HelpTip>
+              {data.track === "developer" ? (
+                <>
+                  The <strong className="text-text">data-source</strong> attribute in your
+                  widget script tag. It links feedback to this project.
+                  <br /><br />
+                  Example: if your widget has{" "}
+                  <code className="text-accent bg-bg px-1 rounded">data-source=&quot;my-app&quot;</code>,
+                  enter <strong className="text-text">my-app</strong> here.
+                  <br /><br />
+                  Leave blank to auto-generate from your app name.
+                </>
+              ) : (
+                <>
+                  A short identifier that connects your feedback widget to this
+                  project. It appears in your widget embed code as{" "}
+                  <code className="text-accent bg-bg px-1 rounded">data-source</code>.
+                  <br /><br />
+                  Use your domain or a slug like{" "}
+                  <strong className="text-text">joes-coffee</strong> or{" "}
+                  <strong className="text-text">mysite.com</strong>.
+                  <br /><br />
+                  Leave blank to auto-generate from your business name.
+                </>
+              )}
+            </HelpTip>
+          </label>
+          <input
+            id="project-source"
+            className="w-full bg-bg2 border border-border rounded px-4 py-3
+                       font-mono text-body text-text placeholder:text-text3
+                       transition-colors duration-[180ms] ease
+                       focus:outline-none focus:border-accent"
+            placeholder={
+              data.track === "developer"
+                ? "my-saas-app"
+                : "joes-coffee-main"
+            }
+            value={data.projectSource}
+            onChange={(e) => onUpdate({ projectSource: e.target.value })}
+          />
+        </div>
       </div>
 
       {error && (
