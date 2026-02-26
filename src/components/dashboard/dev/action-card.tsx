@@ -10,6 +10,7 @@ interface ActionCardProps {
   action: SuggestedAction;
   feedbackId: string;
   customerEmail?: string;
+  customerName?: string;
   onActionSent?: () => void;
 }
 
@@ -17,6 +18,7 @@ export function ActionCard({
   action,
   feedbackId,
   customerEmail,
+  customerName,
   onActionSent,
 }: ActionCardProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -66,6 +68,7 @@ export function ActionCard({
           actionType={action.type}
           templateId={action.template_id!}
           customerEmail={customerEmail}
+          customerName={customerName}
           requiresCustomerEmail={action.requires_customer_email}
           onSent={onActionSent}
         />

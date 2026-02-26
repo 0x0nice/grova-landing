@@ -20,6 +20,7 @@ interface ActionPreviewModalProps {
   actionType: string;
   templateId: string;
   customerEmail?: string;
+  customerName?: string;
   requiresCustomerEmail?: boolean;
   onSent?: () => void;
 }
@@ -33,6 +34,7 @@ export function ActionPreviewModal({
   actionType,
   templateId,
   customerEmail,
+  customerName,
   requiresCustomerEmail,
   onSent,
 }: ActionPreviewModalProps) {
@@ -62,13 +64,17 @@ export function ActionPreviewModal({
         if (!settings) return;
         const s = settings as Record<string, unknown>;
         const merged: Record<string, string> = {
-          customer_name: "there",
+          customer_name: customerName || "there",
           business_name: (s.owner_name as string) || active.name || "",
           review_platform: (s.preferred_review_platform as string) || "Google",
           review_url: (s.review_url as string) || "",
           owner_name: (s.owner_name as string) || active.name || "",
           ...variables,
         };
+        // Ensure customer_name from feedback metadata wins over triage defaults
+        if (customerName && !variables.customer_name) {
+          merged.customer_name = customerName;
+        }
         setSubject(renderTemplate(template.subject, merged));
         setBody(renderTemplate(template.body, merged));
       } catch {}
