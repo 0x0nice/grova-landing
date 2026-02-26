@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthProvider, useAuth } from "@/providers/auth-provider";
 import { NavBar } from "@/components/dashboard/nav-bar";
-import { Sidebar } from "@/components/dashboard/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -40,17 +39,10 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
 
       <NavBar />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar — 240px on desktop, hidden on mobile */}
-        <div className="w-[240px] shrink-0 max-md:hidden">
-          <Sidebar />
-        </div>
-
-        {/* Main content */}
-        <main id="main-content" className="flex-1 overflow-y-auto p-6 max-md:p-3">
-          {children}
-        </main>
-      </div>
+      {/* Main content — full width */}
+      <main id="main-content" className="flex-1 overflow-y-auto p-6 max-md:p-3">
+        {children}
+      </main>
     </div>
   );
 }

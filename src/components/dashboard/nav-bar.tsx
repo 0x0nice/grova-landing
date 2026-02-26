@@ -10,6 +10,8 @@ import { useInboxStore } from "@/stores/inbox-store";
 import { useDoneStore } from "@/stores/done-store";
 import { useArchiveStore } from "@/stores/archive-store";
 import { useBizStore } from "@/stores/biz-store";
+import { DEMO_PROJECTS } from "@/lib/demo-data";
+import { NewProjectModal } from "./new-project-modal";
 
 interface Tab {
   view: string;
@@ -36,8 +38,15 @@ const bizTabs: Tab[] = [
 export function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { signOut, isDemo } = useAuth();
-  const { projects, active, selectProject } = useProjectStore();
+  const { session, signOut, isDemo } = useAuth();
+  const {
+    projects,
+    active,
+    loading: projectsLoading,
+    loadProjects,
+    selectProject,
+    setProjects,
+  } = useProjectStore();
   const inboxCount = useInboxStore((s) => s.items.length);
   const resetInbox = useInboxStore((s) => s.reset);
   const doneCount = useDoneStore((s) => s.items.length);
@@ -51,11 +60,23 @@ export function NavBar() {
     done: doneCount,
     archive: archiveCount,
   };
+
   const [projectMenuOpen, setProjectMenuOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const tabs = active?.mode === "business" ? bizTabs : devTabs;
   const currentView = pathname.split("/").pop() || "inbox";
+
+  // Load projects (moved from Sidebar)
+  useEffect(() => {
+    if (isDemo) {
+      setProjects(DEMO_PROJECTS);
+      if (!active) selectProject(DEMO_PROJECTS[0]);
+    } else if (session?.access_token) {
+      loadProjects(session.access_token);
+    }
+  }, [session?.access_token, isDemo, loadProjects, setProjects, selectProject, active]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -97,20 +118,178 @@ export function NavBar() {
   }
 
   return (
-    <nav className="flex flex-col border-b border-border bg-bg shrink-0 md:flex-row md:items-center md:h-16">
-      {/* Top row (always visible) */}
-      <div className="flex items-center h-12 px-5 gap-4 max-md:gap-2 max-md:px-3 md:h-16 md:flex-1 overflow-hidden">
-        {/* Logo */}
-        <div className="flex items-center gap-2 shrink-0 max-md:mr-0 mr-2">
-          <Logo size="md" href="/dashboard" />
-          <span className="font-mono text-micro text-text3 uppercase tracking-[0.1em] max-md:hidden">
-            dashboard
-          </span>
+    <>
+      <nav className="flex flex-col border-b border-border bg-bg shrink-0 md:flex-row md:items-center md:h-16">
+        {/* Top row (always visible) */}
+        <div className="flex items-center h-12 px-5 gap-4 max-md:gap-2 max-md:px-3 md:h-16 md:flex-1 overflow-hidden">
+          {/* Logo */}
+          <div className="flex items-center gap-2 shrink-0 max-md:mr-0 mr-2">
+            <Logo size="md" href="/dashboard" />
+            <span className="font-mono text-micro text-text3 uppercase tracking-[0.1em] max-md:hidden">
+              dashboard
+            </span>
+          </div>
+
+          {/* Tabs — hidden on mobile, shown inline on md+ */}
+          <div
+            className="hidden md:flex items-center gap-1 overflow-x-auto scrollbar-none"
+            role="tablist"
+          >
+            {tabs.map((tab) => {
+              const isActive = currentView === tab.view;
+              return (
+                <button
+                  key={tab.view}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => handleTabClick(tab.view)}
+                  className={`
+                    font-mono text-footnote uppercase tracking-[0.04em]
+                    px-3 py-2 rounded transition-colors duration-[180ms] cursor-pointer
+                    whitespace-nowrap
+                    ${
+                      isActive
+                        ? "bg-surface text-text border border-border"
+                        : "text-text3 hover:text-text2 border border-transparent"
+                    }
+                  `}
+                >
+                  {tab.label}
+                  {tab.countKey && counts[tab.countKey] > 0 && (
+                    <span className="ml-1.5 text-text3">{counts[tab.countKey]}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right section */}
+          <div className="ml-auto flex items-center gap-1.5 shrink-0">
+            {/* Project dropdown */}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setProjectMenuOpen(!projectMenuOpen)}
+                className={`flex items-center gap-2 font-mono text-footnote px-3 py-2
+                           rounded border transition-colors duration-[180ms] cursor-pointer
+                           max-md:px-2 max-md:py-1.5 max-md:text-micro
+                           ${
+                             projectMenuOpen
+                               ? "bg-surface border-border text-text"
+                               : "border-transparent text-text2 hover:text-text hover:bg-surface/50"
+                           }`}
+              >
+                <span className="text-[0.9rem] shrink-0 max-md:text-[0.8rem]">
+                  {active?.mode === "developer" ? "🔧" : "🏪"}
+                </span>
+                <span className="truncate max-w-[140px] max-md:max-w-[80px]">
+                  {projectsLoading ? "Loading..." : active?.name || "Select project"}
+                </span>
+                <svg
+                  className={`w-3 h-3 text-text3 transition-transform duration-150 shrink-0 ${
+                    projectMenuOpen ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {projectMenuOpen && (
+                <div className="absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-lg z-50 min-w-[220px] py-1 max-md:right-auto max-md:left-0">
+                  {projects.length === 0 && !projectsLoading && (
+                    <div className="px-3 py-2 font-mono text-micro text-text3">
+                      No projects yet
+                    </div>
+                  )}
+                  {projects.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => handleProjectSwitch(p)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-left font-mono text-footnote
+                                  transition-colors cursor-pointer
+                                  ${
+                                    active?.id === p.id
+                                      ? "text-text bg-bg"
+                                      : "text-text2 hover:bg-bg hover:text-text"
+                                  }`}
+                    >
+                      <span className="text-[0.9rem] shrink-0">
+                        {p.mode === "developer" ? "🔧" : "🏪"}
+                      </span>
+                      <span className="truncate">{p.name}</span>
+                      {active?.id === p.id && (
+                        <svg className="w-3.5 h-3.5 text-accent ml-auto shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                  <div className="border-t border-border mt-1 pt-1">
+                    <button
+                      onClick={() => {
+                        setProjectMenuOpen(false);
+                        setModalOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left font-mono text-footnote
+                                 text-accent hover:bg-bg transition-colors cursor-pointer"
+                    >
+                      <span className="text-[0.9rem] shrink-0">+</span>
+                      <span>New Project</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="w-px h-5 bg-border mx-0.5 max-md:hidden" />
+
+            {/* Refresh button */}
+            <button
+              onClick={handleRefresh}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded
+                         font-mono text-micro uppercase tracking-[0.04em]
+                         text-text3 hover:text-text2 hover:bg-surface/50
+                         border border-transparent hover:border-border
+                         transition-colors duration-[180ms] cursor-pointer
+                         max-md:px-2 max-md:py-1.5"
+              title="Refresh data"
+              aria-label="Refresh data"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="max-md:hidden">Refresh</span>
+            </button>
+
+            <ThemeToggle />
+
+            {/* Sign out button */}
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded
+                         font-mono text-micro uppercase tracking-[0.04em]
+                         text-text3 hover:text-red hover:bg-red/5
+                         border border-transparent hover:border-red/20
+                         transition-colors duration-[180ms] cursor-pointer
+                         max-md:px-2 max-md:py-1.5"
+              title="Sign out"
+              aria-label="Sign out"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span className="max-md:hidden">Sign out</span>
+            </button>
+          </div>
         </div>
 
-        {/* Tabs — hidden on mobile, shown inline on md+ */}
+        {/* Mobile tab row — scrollable horizontal tabs */}
         <div
-          className="hidden md:flex items-center gap-1 overflow-x-auto scrollbar-none"
+          className="flex md:hidden items-center gap-1 px-3 pb-2 overflow-x-auto scrollbar-none"
           role="tablist"
         >
           {tabs.map((tab) => {
@@ -123,7 +302,7 @@ export function NavBar() {
                 onClick={() => handleTabClick(tab.view)}
                 className={`
                   font-mono text-footnote uppercase tracking-[0.04em]
-                  px-3 py-2 rounded transition-colors duration-[180ms] cursor-pointer
+                  px-3 py-1.5 rounded transition-colors duration-[180ms] cursor-pointer
                   whitespace-nowrap
                   ${
                     isActive
@@ -133,98 +312,16 @@ export function NavBar() {
                 `}
               >
                 {tab.label}
-                {tab.countKey && counts[tab.countKey] > 0 && (
-                  <span className="ml-1.5 text-text3">{counts[tab.countKey]}</span>
-                )}
               </button>
             );
           })}
         </div>
+      </nav>
 
-        {/* Mobile project switcher */}
-        {projects.length > 1 && (
-          <div className="relative md:hidden" ref={menuRef}>
-            <button
-              onClick={() => setProjectMenuOpen(!projectMenuOpen)}
-              className="flex items-center gap-1.5 font-mono text-micro text-text2 px-2 py-1 rounded border border-border bg-surface cursor-pointer"
-            >
-              <span>{active?.mode === "developer" ? "🔧" : "🏪"}</span>
-              <span className="truncate max-w-[100px]">{active?.name}</span>
-              <span className="text-text3">▾</span>
-            </button>
-            {projectMenuOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-surface border border-border rounded z-50 min-w-[180px]">
-                {projects.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => handleProjectSwitch(p)}
-                    className={`w-full flex items-center gap-2 px-3 py-2 text-left font-mono text-footnote transition-colors cursor-pointer ${
-                      active?.id === p.id ? "text-text bg-bg" : "text-text2 hover:bg-bg"
-                    }`}
-                  >
-                    <span>{p.mode === "developer" ? "🔧" : "🏪"}</span>
-                    {p.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Right section */}
-        <div className="ml-auto flex items-center gap-2 max-md:gap-1 shrink-0">
-          <button
-            onClick={handleRefresh}
-            className="p-2 max-md:p-1.5 text-text3 hover:text-text2 transition-colors font-mono text-callout cursor-pointer"
-            title="Refresh"
-            aria-label="Refresh page"
-          >
-            ↺
-          </button>
-          <ThemeToggle />
-          <button
-            onClick={handleSignOut}
-            className="font-mono text-text3 hover:text-text2 transition-colors cursor-pointer
-                       text-footnote uppercase tracking-[0.04em] px-3 py-2
-                       max-md:text-callout max-md:px-1.5 max-md:py-1.5"
-            title="Sign out"
-            aria-label="Sign out"
-          >
-            <span className="max-md:hidden">Sign out</span>
-            <span className="md:hidden">⏻</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile tab row — scrollable horizontal tabs */}
-      <div
-        className="flex md:hidden items-center gap-1 px-3 pb-2 overflow-x-auto scrollbar-none"
-        role="tablist"
-      >
-        {tabs.map((tab) => {
-          const isActive = currentView === tab.view;
-          return (
-            <button
-              key={tab.view}
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => handleTabClick(tab.view)}
-              className={`
-                font-mono text-footnote uppercase tracking-[0.04em]
-                px-3 py-1.5 rounded transition-colors duration-[180ms] cursor-pointer
-                whitespace-nowrap
-                ${
-                  isActive
-                    ? "bg-surface text-text border border-border"
-                    : "text-text3 hover:text-text2 border border-transparent"
-                }
-              `}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-    </nav>
+      <NewProjectModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+    </>
   );
 }
