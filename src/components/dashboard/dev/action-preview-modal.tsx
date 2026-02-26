@@ -60,11 +60,13 @@ export function ActionPreviewModal({
           ? (demoGet(`/projects/${active.id}/action-settings`) as Record<string, unknown>)
           : await getActionSettings(active.id, token);
         if (!settings) return;
+        const s = settings as Record<string, unknown>;
         const merged: Record<string, string> = {
-          business_name: (settings as Record<string, unknown>).owner_name as string || active.name || "",
-          review_platform: (settings as Record<string, unknown>).preferred_review_platform as string || "Google",
-          review_url: (settings as Record<string, unknown>).review_url as string || "",
-          owner_name: (settings as Record<string, unknown>).owner_name as string || active.name || "",
+          customer_name: "there",
+          business_name: (s.owner_name as string) || active.name || "",
+          review_platform: (s.preferred_review_platform as string) || "Google",
+          review_url: (s.review_url as string) || "",
+          owner_name: (s.owner_name as string) || active.name || "",
           ...variables,
         };
         setSubject(renderTemplate(template.subject, merged));
