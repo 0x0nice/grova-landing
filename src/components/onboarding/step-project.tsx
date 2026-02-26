@@ -9,7 +9,7 @@ import type { OnboardingData } from "./onboarding-wizard";
 
 function HelpTip({ children }: { children: React.ReactNode }) {
   const [show, setShow] = useState(false);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   function enter() {
     clearTimeout(timeout.current);
