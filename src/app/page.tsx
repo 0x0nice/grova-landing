@@ -16,6 +16,7 @@ import { BizBounceBackSection } from "@/components/landing/biz-bounce-back-secti
 import { BizFeaturesSection } from "@/components/landing/biz-features-section";
 import { CTASection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
+import Script from "next/script";
 
 function Divider() {
   return <div className="h-px bg-border" />;
@@ -104,6 +105,11 @@ export default function Home() {
   return (
     <TrackProvider>
       <LandingContent />
+      <Script
+        src="https://grova.dev/grova-business-widget.js"
+        data-source="grova.dev"
+        strategy="lazyOnload"
+      />
     </TrackProvider>
   );
 }
