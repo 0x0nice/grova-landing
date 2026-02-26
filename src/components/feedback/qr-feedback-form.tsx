@@ -127,28 +127,23 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
     setStatus("sending");
     setErrorMessage(null);
 
-    // Demo mode: simulate success without API call
-    if (isDemo) {
-      await new Promise((r) => setTimeout(r, 600));
-      setStep(3);
-      setStatus("success");
-      return;
-    }
-
     try {
+      const body: Record<string, unknown> = {
+        type: selectedCategory,
+        message: message.trim(),
+        email: email.trim() || null,
+        page: `/f?k=${apiKey}`,
+        timestamp: new Date().toISOString(),
+        source: "qr",
+        metadata: collectMetadata(),
+      };
+      // Only attach project_id for real projects (not demo)
+      if (!isDemo) body.project_id = project.id;
+
       const res = await fetch(`${API}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: selectedCategory,
-          message: message.trim(),
-          email: email.trim() || null,
-          page: `/f/${apiKey}`,
-          timestamp: new Date().toISOString(),
-          source: "qr",
-          project_id: project.id,
-          metadata: collectMetadata(),
-        }),
+        body: JSON.stringify(body),
       });
 
       if (res.status === 429) {
