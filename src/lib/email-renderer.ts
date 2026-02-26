@@ -37,7 +37,8 @@ function bodyToHtml(bodyText: string, brandColor: string): string {
     const para = paragraphs[i].trim();
     if (!para) continue;
 
-    const lines = para.split("\n");
+    const lines = para.split("\n").filter((l) => l.trim() !== "");
+    if (lines.length === 0) continue;
     const firstLine = lines[0].trim();
 
     // ── Greeting line ──
