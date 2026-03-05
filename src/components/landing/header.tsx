@@ -24,6 +24,18 @@ export function Header() {
         {/* Right: action buttons */}
         <div className="flex items-center gap-2.5">
           <Link
+            href="/docs"
+            className="bg-transparent border border-border2 rounded
+                       text-text2 cursor-pointer font-mono text-[0.65rem] font-medium
+                       tracking-[0.04em] px-3 py-1.5 no-underline
+                       inline-flex items-center gap-1.5
+                       transition-colors duration-[180ms]
+                       hover:border-[var(--track-accent)] hover:text-[var(--track-accent)]
+                       max-md:hidden"
+          >
+            Docs
+          </Link>
+          <Link
             href="/login?mode=signup"
             className={`bg-[var(--track-accent)] ${btnText} border border-[var(--track-accent)]
                        rounded px-3.5 py-1.5

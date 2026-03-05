@@ -86,6 +86,18 @@ export async function getActions(feedbackId: string, token: string) {
   return apiGet<SentAction[]>(`/actions?feedback_id=${feedbackId}`, token);
 }
 
+export async function sendSuggestedAction(
+  feedbackId: string,
+  actionIndex: number,
+  token: string
+) {
+  return apiPost<SendActionResponse>(
+    "/actions/send-suggested",
+    { feedback_id: feedbackId, action_index: actionIndex },
+    token
+  );
+}
+
 export async function getActionSettings(projectId: string, token: string) {
   return apiGet<ActionSettings>(`/projects/${projectId}/action-settings`, token);
 }

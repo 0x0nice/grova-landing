@@ -17,6 +17,18 @@ export function Footer() {
         </span>
         <div className="flex items-center gap-3">
           <Link
+            href="/about"
+            className="text-[0.62rem] text-text3 hover:text-text2 transition-colors tracking-[0.05em]"
+          >
+            About
+          </Link>
+          <Link
+            href="/docs"
+            className="text-[0.62rem] text-text3 hover:text-text2 transition-colors tracking-[0.05em]"
+          >
+            Docs
+          </Link>
+          <Link
             href="/terms"
             className="text-[0.62rem] text-text3 hover:text-text2 transition-colors tracking-[0.05em]"
           >

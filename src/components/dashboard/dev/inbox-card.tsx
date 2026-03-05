@@ -291,6 +291,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
                       <ActionCard
                         key={i}
                         action={action}
+                        actionIndex={i}
                         feedbackId={item.id}
                         customerEmail={item.email}
                         customerName={(item.metadata as Record<string, unknown>)?.customer_name as string | undefined}

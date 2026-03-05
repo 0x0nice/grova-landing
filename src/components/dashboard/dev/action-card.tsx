@@ -4,10 +4,14 @@ import { useState } from "react";
 import type { SuggestedAction } from "@/types/feedback";
 import { actionIcon } from "@/lib/triage";
 import { getTemplate } from "@/lib/templates";
+import { sendSuggestedAction } from "@/lib/api";
+import { useAuth } from "@/providers/auth-provider";
+import { useToast } from "@/components/ui/toast";
 import { ActionPreviewModal } from "./action-preview-modal";
 
 interface ActionCardProps {
   action: SuggestedAction;
+  actionIndex: number;
   feedbackId: string;
   customerEmail?: string;
   customerName?: string;
@@ -16,14 +20,38 @@ interface ActionCardProps {
 
 export function ActionCard({
   action,
+  actionIndex,
   feedbackId,
   customerEmail,
   customerName,
   onActionSent,
 }: ActionCardProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [quickSending, setQuickSending] = useState(false);
+  const [quickSent, setQuickSent] = useState(false);
+  const { session, isDemo } = useAuth();
+  const { show } = useToast();
   const icon = actionIcon(action.type);
   const template = action.template_id ? getTemplate(action.template_id) : null;
+
+  async function handleQuickSend() {
+    if (action.requires_customer_email && !customerEmail) {
+      setPreviewOpen(true);
+      return;
+    }
+    setQuickSending(true);
+    try {
+      const token = session?.access_token || "";
+      await sendSuggestedAction(feedbackId, actionIndex, token);
+      setQuickSent(true);
+      show("Action sent");
+      onActionSent?.();
+    } catch {
+      setPreviewOpen(true); // Fall back to preview modal on error
+    } finally {
+      setQuickSending(false);
+    }
+  }
 
   return (
     <>
@@ -48,13 +76,29 @@ export function ActionCard({
           </div>
         </div>
         {template && (
-          <button
-            onClick={() => setPreviewOpen(true)}
-            className="font-mono text-micro text-accent hover:text-accent/80
-                       transition-colors cursor-pointer text-left mt-1"
-          >
-            Preview email
-          </button>
+          <div className="flex items-center gap-0">
+            <button
+              onClick={() => setPreviewOpen(true)}
+              className="font-mono text-micro text-accent hover:text-accent/80
+                         transition-colors cursor-pointer text-left mt-1"
+            >
+              Preview email
+            </button>
+            {!quickSent ? (
+              <button
+                onClick={handleQuickSend}
+                disabled={quickSending}
+                className="font-mono text-micro text-text3 hover:text-accent
+                           transition-colors cursor-pointer text-left mt-1 ml-3"
+              >
+                {quickSending ? "Sending..." : "Send now"}
+              </button>
+            ) : (
+              <span className="font-mono text-micro text-accent ml-3 mt-1">
+                Sent
+              </span>
+            )}
+          </div>
         )}
       </div>
 
