@@ -72,11 +72,13 @@ function buildBizSnippet(
 /* ------------------------------------------------------------------ */
 /*  AI prompt builders                                                 */
 /* ------------------------------------------------------------------ */
-function buildDevPrompt(source: string, apiKey: string): string {
-  const snippet = buildDevSnippet(source, apiKey);
-  return `Add the Grova feedback widget to this project. Here is my pre-configured script tag — do not change any of the data- attribute values:
+function buildDevPrompt(source: string): string {
+  const snippet = buildDevSnippet(source, "YOUR_API_KEY");
+  return `Add the Grova feedback widget to this project. Here is the script tag to use:
 
 ${snippet}
+
+IMPORTANT: Replace YOUR_API_KEY with your actual Grova API key. You can find it in your dashboard settings. Do not commit the API key to a public repository — use an environment variable if needed.
 
 Choose the right approach for this project's framework:
 
@@ -88,7 +90,8 @@ import Script from "next/script"
 // inside <body>, after {children}:
 <Script
   src="https://grova.dev/grova-widget.js"
-  data-source="${source || "your-app"}"${apiKey ? `\n  data-key="${apiKey}"` : ""}
+  data-source="${source || "your-app"}"
+  data-key="YOUR_API_KEY"
   strategy="lazyOnload"
 />
 \`\`\`
@@ -106,22 +109,24 @@ Add the <script> tag to your main HTML template or layout before </body>.
 Add the <script> tag before </body> on each page.
 
 Important:
-- Do NOT modify data-source or data-key values — they are specific to my Grova project
+- Replace YOUR_API_KEY with your real key before deploying
+- Do NOT modify the data-source value — it identifies your Grova project
 - The widget renders a floating feedback button automatically — no extra CSS or HTML needed
 - After adding it, run the dev server and verify the widget appears in the bottom-right corner`;
 }
 
 function buildBizPrompt(
   source: string,
-  apiKey: string,
   businessType?: string,
   businessName?: string,
   categories?: string[]
 ): string {
-  const snippet = buildBizSnippet(source, apiKey, businessType, businessName, categories);
-  return `Add the Grova review widget to this website. Here is my pre-configured script tag — do not change any of the data- attribute values:
+  const snippet = buildBizSnippet(source, "YOUR_API_KEY", businessType, businessName, categories);
+  return `Add the Grova review widget to this website. Here is the script tag to use:
 
 ${snippet}
+
+IMPORTANT: Replace YOUR_API_KEY with your actual Grova API key. You can find it in your dashboard under Setup. Do not commit the API key to a public repository — use an environment variable if needed.
 
 Choose the right approach for this site's platform:
 
@@ -133,7 +138,8 @@ import Script from "next/script"
 // inside <body>, after {children}:
 <Script
   src="https://grova.dev/grova-business-widget.js"
-  data-source="${source || "your-business"}"${apiKey ? `\n  data-key="${apiKey}"` : ""}
+  data-source="${source || "your-business"}"
+  data-key="YOUR_API_KEY"
   strategy="lazyOnload"
 />
 \`\`\`
@@ -151,7 +157,8 @@ Go to Settings > Custom Code > Add Custom Code, paste the script, and set it to 
 Add the <script> tag before </body> on each page.
 
 Important:
-- Do NOT modify any data- attribute values — they are configured for my specific business
+- Replace YOUR_API_KEY with your real key before deploying
+- Do NOT modify the other data- attribute values — they are configured for your business
 - The widget renders a floating review button automatically — no extra CSS or HTML needed
 - After adding it, visit your site and verify the widget appears in the bottom-right corner`;
 }
@@ -179,8 +186,8 @@ export function WidgetInstallSection({
     : buildBizSnippet(source, apiKey, businessType, businessName, categories);
 
   const aiPrompt = isDev
-    ? buildDevPrompt(source, apiKey)
-    : buildBizPrompt(source, apiKey, businessType, businessName, categories);
+    ? buildDevPrompt(source)
+    : buildBizPrompt(source, businessType, businessName, categories);
 
   function copySnippet() {
     navigator.clipboard.writeText(snippet).then(() => {
@@ -276,7 +283,9 @@ export function WidgetInstallSection({
             </div>
             <p className="font-mono text-micro text-text3 leading-[1.6]">
               Paste this prompt into Claude Code or Cursor to auto-install the
-              widget in your project.
+              widget. You will need to replace{" "}
+              <code className="text-text2">YOUR_API_KEY</code> with your real
+              key after install.
             </p>
           </div>
           <button
