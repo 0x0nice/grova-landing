@@ -282,7 +282,7 @@ export function WidgetInstallSection({
               </span>
             </div>
             <p className="font-mono text-micro text-text3 leading-[1.6]">
-              Paste this prompt into Claude Code or Cursor to auto-install the
+              Paste this prompt into your AI editor to auto-install the
               widget. You will need to replace{" "}
               <code className="text-text2">YOUR_API_KEY</code> with your real
               key after install.

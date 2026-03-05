@@ -34,7 +34,7 @@ const DEV_TIERS: Tier[] = [
       "3 projects",
       "500 feedback/mo",
       "AI triage + actions",
-      "Cursor prompts",
+      "AI prompts",
       "Email alerts",
     ],
     popular: true,

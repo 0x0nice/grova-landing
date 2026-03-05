@@ -7,12 +7,12 @@ const features = [
   {
     icon: "🧠",
     title: "Teach Grova your standards",
-    desc: "You know your product better than anyone. On paid plans, define exactly what great feedback means for your project — your rules, your priorities, your Cursor prompt format. Grova thinks like you do.",
+    desc: "You know your product better than anyone. On paid plans, define exactly what great feedback means for your project — your rules, your priorities, your AI prompt format. Grova thinks like you do.",
   },
   {
     icon: "⚡",
-    title: "Cursor & Claude Code ready",
-    desc: "Approved fix briefs are formatted as ready-to-use prompts. Paste into Cursor or Claude Code and implement in minutes.",
+    title: "AI editor ready",
+    desc: "Approved fix briefs are formatted as ready-to-use prompts. Paste into Cursor, Claude Code, or any AI editor and implement in minutes.",
   },
   {
     icon: "🧩",

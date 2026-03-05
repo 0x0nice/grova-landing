@@ -317,7 +317,7 @@ export function SettingsView() {
         <Section>
           <SectionHeader
             title="Triage Lens"
-            description="Paste your README or product description. This context is injected into every Cursor prompt when you approve feedback."
+            description="Paste your README or product description. This context is injected into every AI prompt when you approve feedback."
           />
           <Textarea
             id="project-ctx"

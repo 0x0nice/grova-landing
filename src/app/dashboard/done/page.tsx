@@ -42,7 +42,7 @@ export default function DonePage() {
       <EmptyState
         icon="✅"
         heading="Nothing approved yet"
-        description="Approve items from the Inbox to see their Cursor prompts here."
+        description="Approve items from the Inbox to see their AI prompts here."
       />
     );
   }

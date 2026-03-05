@@ -14,7 +14,7 @@ export function StepTrack({ data, onUpdate, onNext, onBack }: StepTrackProps) {
       value: "developer" as const,
       icon: "🔧",
       title: "Developer",
-      desc: "Bug reports, feature requests, AI triage scoring, Cursor-ready prompts.",
+      desc: "Bug reports, feature requests, AI triage scoring, AI-ready prompts.",
     },
     {
       value: "business" as const,

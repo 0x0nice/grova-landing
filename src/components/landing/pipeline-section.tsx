@@ -1,9 +1,9 @@
 const steps = [
   { num: "01", icon: "💬", title: "User submits feedback", tag: "auto" as const },
   { num: "02", icon: "🧠", title: "AI triages & scores it", tag: "auto" as const },
-  { num: "03", icon: "📋", title: "Cursor-ready prompt written", tag: "auto" as const },
+  { num: "03", icon: "📋", title: "AI-ready prompt written", tag: "auto" as const },
   { num: "04", icon: "📥", title: "Lands in your inbox", tag: "you" as const },
-  { num: "05", icon: "⚡", title: "Drop into Cursor", tag: "you" as const },
+  { num: "05", icon: "⚡", title: "Drop into your AI editor", tag: "you" as const },
 ];
 
 function Tag({ type }: { type: "auto" | "you" }) {
@@ -39,7 +39,7 @@ export function PipelineSection() {
       <div className="mt-3 flex items-center gap-2.5 p-[12px_16px] border border-border rounded bg-surface max-md:flex-col max-md:items-start">
         <span className="text-[0.95rem] shrink-0">🔌</span>
         <span className="text-footnote text-text2 leading-[1.5] flex-1">
-          Builder plan: skip the inbox entirely — feedback lands directly in a Cursor panel.
+          Builder plan: skip the inbox entirely — feedback lands directly in your AI editor.
           One click sends the prompt to Composer.
         </span>
         <span className="text-[0.6rem] tracking-[0.09em] uppercase px-1.5 py-[2px] rounded-pill border text-orange border-orange/35 bg-orange/[0.07] whitespace-nowrap shrink-0">
@@ -58,7 +58,7 @@ export function PipelineSection() {
           </span>
           <span className="block text-[0.84rem] text-text2 leading-[1.8] font-light">
             Tell Grova what great feedback means for your product. Set your own triage rules,
-            define your priorities, and customise how your Cursor prompts are structured.
+            define your priorities, and customise how your AI prompts are structured.
             Your standards, your workflow.
           </span>
         </div>

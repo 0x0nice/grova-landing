@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { FeedbackItem } from "@/types/feedback";
 import { effectiveScore, signalCount, timeAgo } from "@/lib/triage";
-import { generateCursorPrompt } from "@/lib/cursor-prompt";
+import { generateAIPrompt } from "@/lib/ai-prompt";
 import { Badge } from "@/components/ui/badge";
 import { ScoreDisplay } from "./score-display";
 import { useToast } from "@/components/ui/toast";
@@ -22,7 +22,7 @@ export function DoneCard({ item, projectContext }: DoneCardProps) {
   const es = effectiveScore(item);
   const sig = signalCount(item);
   const t = item.triage;
-  const prompt = generateCursorPrompt(item, projectContext);
+  const prompt = generateAIPrompt(item, projectContext);
 
   function handleCopy() {
     navigator.clipboard.writeText(prompt).then(() => {
@@ -69,12 +69,12 @@ export function DoneCard({ item, projectContext }: DoneCardProps) {
             >
               ▼
             </span>
-            Cursor prompt ready
+            AI prompt ready
           </button>
         </div>
       </div>
 
-      {/* Cursor prompt block */}
+      {/* AI prompt block */}
       <AnimatePresence>
         {expanded && (
           <motion.div

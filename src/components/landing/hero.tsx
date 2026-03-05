@@ -49,8 +49,8 @@ export function Hero() {
               className="text-[1.06rem] text-text2 leading-[1.85] max-w-[500px] mb-[44px] font-light"
             >
               Grova captures user feedback, filters the noise, and delivers ranked
-              fix briefs straight to your inbox — ready to drop into Cursor or
-              Claude Code. You stay in control. Your AI does the work.
+              fix briefs straight to your inbox — ready to drop into your AI
+              editor. You stay in control. Your AI does the work.
             </p>
             <div {...fadeUp(350)}>
               <WaitlistForm />

@@ -15,7 +15,7 @@ const steps = [
     badge: "your call",
     num: "03",
     title: "Approve. Then build.",
-    desc: "A clean inbox ranked by priority. Approve an item and the fix brief is ready to paste into Cursor or Claude Code. Done in minutes.",
+    desc: "A clean inbox ranked by priority. Approve an item and the fix brief is ready to paste into your AI editor. Done in minutes.",
   },
 ];
 
