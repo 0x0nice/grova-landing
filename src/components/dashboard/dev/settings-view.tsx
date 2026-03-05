@@ -12,6 +12,7 @@ import { demoGet } from "@/lib/demo-data";
 import type { ActionSettings } from "@/types/feedback";
 import { FontSizeControl } from "@/components/ui/font-size-control";
 import { QRCodeCanvas } from "qrcode.react";
+import { WidgetInstallSection } from "@/components/dashboard/widget-install-section";
 
 /* ------------------------------------------------------------------ */
 /*  Icons                                                              */
@@ -243,6 +244,15 @@ export function SettingsView() {
             </div>
           )}
         </Section>
+
+        {/* ── Install Widget ── */}
+        <WidgetInstallSection
+          mode="developer"
+          source={active.source || ""}
+          apiKey={active.api_key || ""}
+          projectName={active.name}
+          onCopy={(msg) => show(msg)}
+        />
 
         {/* ── QR Code ── */}
         {feedbackUrl && (

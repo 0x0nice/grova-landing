@@ -8,6 +8,7 @@ import { useBizStore, type BizConfig } from "@/stores/biz-store";
 import { CAT_PRESETS } from "@/lib/cat-presets";
 import { useToast } from "@/components/ui/toast";
 import { FontSizeControl } from "@/components/ui/font-size-control";
+import { WidgetInstallSection } from "@/components/dashboard/widget-install-section";
 import { QRCodeCanvas } from "qrcode.react";
 
 /* ------------------------------------------------------------------ */
@@ -102,7 +103,6 @@ export function SetupView() {
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [keyVisible, setKeyVisible] = useState(false);
   const [keyCopied, setKeyCopied] = useState(false);
-  const [snippetCopied, setSnippetCopied] = useState(false);
   const [qrLinkCopied, setQrLinkCopied] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -188,32 +188,6 @@ export function SetupView() {
     a.download = `${config.name || "grova"}-qr-code.png`;
     a.click();
     show("QR code downloaded");
-  }
-
-  // Build embed snippet
-  const source = active?.source || "your-business-id";
-  const catStr = config.categories.join(",");
-  let snippet = `<script\n  src="https://grova.dev/grova-business-widget.js"\n  data-source="${source}"`;
-  if (active?.api_key) {
-    snippet += `\n  data-key="${active.api_key}"`;
-  }
-  if (config.type && config.type !== "default") {
-    snippet += `\n  data-business-type="${config.type}"`;
-  }
-  if (config.name) {
-    snippet += `\n  data-name="${config.name.replace(/"/g, "&quot;")}"`;
-  }
-  if (catStr) {
-    snippet += `\n  data-categories="${catStr}"`;
-  }
-  snippet += `>\n</script>`;
-
-  function copySnippet() {
-    navigator.clipboard.writeText(snippet).then(() => {
-      setSnippetCopied(true);
-      show("Snippet copied");
-      setTimeout(() => setSnippetCopied(false), 2000);
-    });
   }
 
   if (!active) return null;
@@ -451,39 +425,17 @@ export function SetupView() {
           </div>
         </Section>
 
-        {/* ── Embed Snippet ── */}
-        <Section>
-          <SectionHeader
-            title="Embed Snippet"
-            description="Paste this into your website HTML to show the review widget."
-            action={
-              <button
-                onClick={copySnippet}
-                className="flex items-center gap-1.5 font-mono text-footnote text-accent hover:text-accent/80
-                           transition-colors cursor-pointer px-2.5 py-1 rounded
-                           hover:bg-accent/5 border border-transparent hover:border-accent/20"
-              >
-                {snippetCopied ? (
-                  <>
-                    <CheckIcon />
-                    <span>Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <CopyIcon />
-                    <span>Copy</span>
-                  </>
-                )}
-              </button>
-            }
-          />
-          <pre
-            className="bg-bg2 border border-border rounded-lg p-4 font-mono text-footnote text-text2
-                       leading-[1.8] overflow-x-auto whitespace-pre-wrap select-all"
-          >
-            {snippet}
-          </pre>
-        </Section>
+        {/* ── Install Widget ── */}
+        <WidgetInstallSection
+          mode="business"
+          source={active.source || ""}
+          apiKey={active.api_key || ""}
+          projectName={active.name}
+          businessType={config.type}
+          businessName={config.name}
+          categories={config.categories}
+          onCopy={(msg) => show(msg)}
+        />
       </div>
 
       {/* ── Full width: Appearance ── */}
