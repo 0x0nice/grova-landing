@@ -116,6 +116,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
                   <ActionCard
                     key={i}
                     action={action}
+                    actionIndex={i}
                     feedbackId={item.id}
                     customerEmail={item.email ?? undefined}
                     onActionSent={() => show("Email sent")}
