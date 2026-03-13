@@ -1,0 +1,8 @@
+# Widget JS files — short cache so updates propagate quickly
+/grova-widget.js
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+/grova-business-widget.js
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *

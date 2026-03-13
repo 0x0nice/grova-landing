@@ -719,8 +719,6 @@
           await new Promise(function (resolve, reject) {
             const s = document.createElement('script');
             s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-            s.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
-            s.crossOrigin = 'anonymous';
             s.onload = resolve;
             s.onerror = function () { reject(new Error('Failed to load html2canvas')); };
             document.head.appendChild(s);
