@@ -1,5 +1,5 @@
 /**
- * Grova Business Widget v1.1
+ * Grova Business Widget v2.0
  * Drop-in contact/feedback widget for small business websites.
  * Zero dependencies. Embeds via a single <script> tag.
  *
@@ -29,7 +29,7 @@
 (function () {
   'use strict';
 
-  const GROVA_BIZ_WIDGET_VERSION = '1.1.0';
+  const GROVA_BIZ_WIDGET_VERSION = '2.0.0';
 
   // ── Guard — prevent double load ────────────────────────────────────────────
   if (window.__grovaContactWidget) return;
@@ -161,6 +161,26 @@
 
   const ACCENT_RGB = hexToRgb(ACCENT);
 
+  // ── Category colour mapping ──────────────────────────────────────────────
+  const CATEGORY_COLORS = {
+    'Reservation': '#3b82f6', 'Appointment': '#3b82f6',
+    'Complaint': '#ef4444', 'Return / Exchange': '#ef4444',
+    'Compliment': '#34d399',
+    'Catering Inquiry': '#f59e0b', 'Product Question': '#f59e0b',
+    'General Question': '#8b5cf6', 'Service Question': '#8b5cf6',
+    'Question': '#8b5cf6',
+    'Suggestion': '#06b6d4',
+    'Other': '#6b7280',
+  };
+
+  function getCategoryColor(cat) {
+    return CATEGORY_COLORS[cat] || ACCENT;
+  }
+
+  function getCategoryColorRgb(cat) {
+    return hexToRgb(getCategoryColor(cat));
+  }
+
   // ── CSS injection ──────────────────────────────────────────────────────────
   if (!document.querySelector('style[data-grova-biz]')) {
     const style = document.createElement('style');
@@ -169,22 +189,24 @@
       /* ── Grova Business Widget — gb- namespace ── */
 
       .gb-root {
-        font-family: 'Geist Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         position: fixed;
         bottom: 24px;
         ${SIDE}: 24px;
         z-index: 99999;
         --gb-accent: ${ACCENT};
         --gb-accent-rgb: ${ACCENT_RGB};
+        --gb-cat-color: ${ACCENT};
+        --gb-cat-color-rgb: ${ACCENT_RGB};
         /* Light theme tokens (default for biz widget) */
-        --gb-bg: #f8f8f6; --gb-surface: #fff; --gb-border: #d4d4d0; --gb-border2: #c0c0bc;
-        --gb-text: #080808; --gb-text2: #333; --gb-text3: #888;
-        --gb-shadow: 0 8px 40px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+        --gb-bg: #f5f5f7; --gb-surface: #ffffff; --gb-border: rgba(0,0,0,0.06); --gb-border2: rgba(0,0,0,0.10);
+        --gb-text: #1d1d1f; --gb-text2: #48484a; --gb-text3: #8e8e93;
+        --gb-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04);
       }
       .gb-root.gb-dark {
-        --gb-bg: #000; --gb-surface: #111; --gb-border: #222; --gb-border2: #2e2e2e;
-        --gb-text: #fff; --gb-text2: #c0c0c0; --gb-text3: #606060;
-        --gb-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.4);
+        --gb-bg: #1a1a1e; --gb-surface: #242428; --gb-border: rgba(255,255,255,0.08); --gb-border2: rgba(255,255,255,0.12);
+        --gb-text: #f5f5f7; --gb-text2: #a1a1aa; --gb-text3: #52525b;
+        --gb-shadow: 0 8px 60px rgba(0,0,0,0.5), 0 2px 16px rgba(0,0,0,0.25);
       }
 
       /* ── Trigger ── */
@@ -242,7 +264,7 @@
       .gb-panel {
         background: var(--gb-surface);
         border: 1px solid var(--gb-border);
-        border-radius: 4px;
+        border-radius: 20px;
         bottom: 58px;
         box-shadow: var(--gb-shadow);
         opacity: 0;
@@ -266,7 +288,7 @@
         .gb-root { bottom: 20px; ${SIDE}: 20px; }
         .gb-panel {
           border-bottom: none;
-          border-radius: 14px 14px 0 0;
+          border-radius: 20px 20px 0 0;
           bottom: 0;
           left: 0;
           max-height: 82dvh;
@@ -313,32 +335,62 @@
       }
       .gb-header-left { display: flex; flex-direction: column; gap: 3px; }
       .gb-eyebrow {
-        color: var(--gb-text3);
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 0.12em;
+        color: var(--gb-accent);
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        margin-bottom: 5px;
         text-transform: uppercase;
+      }
+      .gb-logo {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+      }
+      .gb-logo-mark {
+        background: var(--gb-accent);
+        border-radius: 50%;
+        flex-shrink: 0;
+        height: 12px;
+        margin-top: 2px;
+        width: 12px;
+      }
+      .gb-logo-name {
+        color: var(--gb-text);
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 1.45rem;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        line-height: 1;
       }
       .gb-title {
         color: var(--gb-text);
-        font-family: 'Instrument Serif', Georgia, serif;
-        font-size: 1.25rem;
-        font-style: italic;
-        font-weight: 400;
-        line-height: 1.1;
-        letter-spacing: -0.01em;
+        font-family: 'Playfair Display', 'New York', Georgia, serif;
+        font-size: 1.15rem;
+        font-weight: 500;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        margin-top: 12px;
       }
       .gb-close {
-        background: none;
+        align-items: center;
+        background: rgba(0,0,0,0.04);
         border: none;
+        border-radius: 50%;
         color: var(--gb-text3);
         cursor: pointer;
-        font-size: 1.2rem;
+        display: flex;
+        font-size: 1.1rem;
+        height: 28px;
+        justify-content: center;
         line-height: 1;
-        padding: 2px 4px;
-        transition: color 0.15s;
+        padding: 0;
+        transition: background 0.15s, color 0.15s;
+        width: 28px;
       }
-      .gb-close:hover { color: var(--gb-text); }
+      .gb-close:hover { background: rgba(0,0,0,0.08); color: var(--gb-text); }
+      .gb-root.gb-dark .gb-close { background: rgba(255,255,255,0.06); }
+      .gb-root.gb-dark .gb-close:hover { background: rgba(255,255,255,0.12); color: var(--gb-text); }
 
       /* ── Step navigation ── */
 
@@ -359,17 +411,18 @@
 
       .gb-breadcrumb {
         align-items: center;
-        background: rgba(var(--gb-accent-rgb), 0.10);
-        border: 1.5px solid rgba(var(--gb-accent-rgb), 0.28);
-        border-radius: 100px;
-        color: var(--gb-accent);
+        background: rgba(var(--gb-cat-color-rgb), 0.08);
+        border: none;
+        border-radius: 999px;
+        color: var(--gb-cat-color);
         cursor: pointer;
         display: inline-flex;
         font-family: inherit;
         font-size: 0.75rem;
         font-weight: 500;
         gap: 6px;
-        padding: 5px 12px;
+        padding: 6px 14px;
+        transition: opacity 0.15s;
       }
       .gb-breadcrumb:hover { opacity: 0.75; }
 
@@ -377,35 +430,47 @@
 
       .gb-cats {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+        flex-direction: column;
+        gap: 6px;
       }
       .gb-cat {
+        align-items: center;
         background: var(--gb-bg);
-        border: 1.5px solid var(--gb-border2);
-        border-radius: 100px;
-        color: var(--gb-text2);
+        border: 1px solid var(--gb-border2);
+        border-radius: 14px;
+        color: var(--gb-text);
         cursor: pointer;
+        display: flex;
         font-family: inherit;
         font-size: 0.88rem;
-        font-weight: 400;
+        font-weight: 500;
+        gap: 12px;
         line-height: 1;
-        padding: 10px 18px;
-        transition: border-color 0.15s, color 0.15s, background 0.15s;
+        padding: 15px 16px;
+        transition: border-color 0.2s, background 0.2s, transform 0.15s;
       }
       .gb-cat:hover {
-        border-color: var(--gb-accent);
-        color: var(--gb-accent);
+        border-color: var(--gb-border2);
+        background: var(--gb-bg);
+        transform: translateY(-1px);
       }
-      .gb-cat.gb-cat-active {
-        background: var(--gb-accent);
-        border-color: var(--gb-accent);
-        color: #fff;
-        font-weight: 600;
+      .gb-cat:active { transform: translateY(0); }
+      .gb-cat-dot {
+        border-radius: 50%;
+        flex-shrink: 0;
+        height: 8px;
+        width: 8px;
       }
+      .gb-cat-arrow {
+        color: var(--gb-text3);
+        font-size: 0.85rem;
+        margin-left: auto;
+        transition: color 0.2s;
+      }
+      .gb-cat:hover .gb-cat-arrow { color: var(--gb-text2); }
 
       @media (max-width: 640px) {
-        .gb-cat { font-size: 1rem; padding: 13px 20px; }
+        .gb-cat { font-size: 1rem; padding: 17px 18px; }
       }
 
       /* ── Textarea & email (step 2) ── */
@@ -413,8 +478,8 @@
       .gb-textarea,
       .gb-email {
         background: var(--gb-bg);
-        border: 1.5px solid var(--gb-border2);
-        border-radius: 4px;
+        border: 1px solid transparent;
+        border-radius: 12px;
         box-sizing: border-box;
         color: var(--gb-text);
         font-family: inherit;
@@ -422,7 +487,7 @@
         line-height: 1.65;
         outline: none;
         padding: 12px 14px;
-        transition: border-color 0.15s;
+        transition: border-color 0.2s, box-shadow 0.2s;
         width: 100%;
       }
       .gb-textarea {
@@ -436,22 +501,25 @@
       .gb-textarea::placeholder,
       .gb-email::placeholder { color: var(--gb-text3); }
       .gb-textarea:focus,
-      .gb-email:focus        { border-color: var(--gb-accent); }
+      .gb-email:focus {
+        border-color: rgba(var(--gb-cat-color-rgb), 0.25);
+        box-shadow: 0 0 0 3px rgba(var(--gb-cat-color-rgb), 0.1);
+      }
 
       /* ── Submit ── */
 
       .gb-submit {
-        background: var(--gb-accent);
+        background: var(--gb-cat-color);
         border: none;
-        border-radius: 4px;
+        border-radius: 999px;
         box-sizing: border-box;
         color: #fff;
         cursor: pointer;
         font-family: inherit;
-        font-size: 0.94rem;
+        font-size: 0.88rem;
         font-weight: 600;
         padding: 14px;
-        transition: opacity 0.15s;
+        transition: opacity 0.15s, filter 0.15s, box-shadow 0.15s;
         width: 100%;
       }
       @media (max-width: 640px) {
@@ -461,23 +529,30 @@
           margin-bottom: env(safe-area-inset-bottom, 0px);
         }
       }
-      .gb-submit:hover:not(:disabled) { opacity: 0.85; }
+      .gb-submit:hover:not(:disabled) { filter: brightness(1.1); box-shadow: 0 4px 16px rgba(var(--gb-cat-color-rgb), 0.35); }
       .gb-submit:disabled              { cursor: not-allowed; opacity: 0.3; }
 
       /* ── Screenshot checkbox ── */
 
-      .gb-screenshot-label {
-        align-items: center; cursor: pointer; display: flex; gap: 8px;
-        margin: -4px 0 0;
+      .gb-screenshot-row {
+        align-items: center; display: flex; gap: 10px; margin: -4px 0 0;
       }
-      .gb-screenshot-check {
-        accent-color: var(--gb-accent); cursor: pointer; height: 14px; width: 14px; margin: 0;
+      .gb-toggle {
+        background: var(--gb-bg); border: 1px solid var(--gb-border2); border-radius: 999px;
+        cursor: pointer; flex-shrink: 0; height: 24px; position: relative;
+        transition: background 0.2s, border-color 0.2s; width: 42px;
       }
+      .gb-toggle::after {
+        background: #fff; border-radius: 50%; content: ''; height: 18px; left: 2px;
+        position: absolute; top: 2px; transition: transform 0.2s cubic-bezier(0.4,0,0.2,1); width: 18px;
+      }
+      .gb-toggle.gb-toggle-on { background: var(--gb-cat-color); border-color: var(--gb-cat-color); }
+      .gb-toggle.gb-toggle-on::after { transform: translateX(18px); }
+      .gb-root:not(.gb-dark) .gb-toggle::after { box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
       .gb-screenshot-text {
         color: var(--gb-text3); font-size: 0.72rem; letter-spacing: 0.04em;
         transition: color 0.15s;
       }
-      .gb-screenshot-label:hover .gb-screenshot-text { color: var(--gb-text2); }
 
       /* ── Error ── */
 
@@ -499,10 +574,10 @@
       }
       .gb-success-check {
         align-items: center;
-        background: rgba(var(--gb-accent-rgb), 0.10);
-        border: 1.5px solid rgba(var(--gb-accent-rgb), 0.28);
+        background: rgba(var(--gb-cat-color-rgb), 0.10);
+        border: 1.5px solid rgba(var(--gb-cat-color-rgb), 0.25);
         border-radius: 50%;
-        color: var(--gb-accent);
+        color: var(--gb-cat-color);
         display: flex;
         font-size: 1.3rem;
         height: 52px;
@@ -511,11 +586,10 @@
       }
       .gb-success-title {
         color: var(--gb-text);
-        font-family: 'Instrument Serif', Georgia, serif;
+        font-family: 'Playfair Display', 'New York', Georgia, serif;
         font-size: 1.5rem;
-        font-style: italic;
-        font-weight: 400;
-        letter-spacing: -0.01em;
+        font-weight: 500;
+        letter-spacing: -0.02em;
         margin: 0;
       }
       .gb-success-sub {
@@ -527,8 +601,8 @@
       }
       .gb-success-close {
         background: none;
-        border: 1.5px solid var(--gb-border2);
-        border-radius: 4px;
+        border: 1px solid var(--gb-border2);
+        border-radius: 999px;
         color: var(--gb-text3);
         cursor: pointer;
         font-family: inherit;
@@ -542,25 +616,34 @@
       /* ── Footer ── */
 
       .gb-footer {
-        border-top: 1px solid var(--gb-border);
         color: var(--gb-text3);
         font-size: 0.6rem;
         letter-spacing: 0.04em;
+        opacity: 0.5;
         padding: 8px 22px;
         text-align: center;
       }
       .gb-footer a {
         color: var(--gb-text3);
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
         text-decoration: none;
         transition: color 0.15s;
       }
       .gb-footer a:hover { color: var(--gb-text2); }
+
+      /* ── Step transitions ── */
+      .gb-step-content { animation: gb-fade-in 0.25s ease; }
+      @keyframes gb-fade-in {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
     `;
     document.head.appendChild(style);
   }
 
   // ── Google Fonts ───────────────────────────────────────────────────────────
-  if (!document.querySelector('link[href*="Geist+Mono"]')) {
+  if (!document.querySelector('link[href*="Playfair+Display"]')) {
     const preconnect = document.createElement('link');
     preconnect.rel  = 'preconnect';
     preconnect.href = 'https://fonts.googleapis.com';
@@ -568,13 +651,8 @@
 
     const fonts = document.createElement('link');
     fonts.rel  = 'stylesheet';
-    fonts.href = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap';
+    fonts.href = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap';
     document.head.appendChild(fonts);
-  } else if (!document.querySelector('link[href*="Instrument+Serif"]')) {
-    const link = document.createElement('link');
-    link.rel  = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap';
-    document.head.appendChild(link);
   }
 
   // ── State ──────────────────────────────────────────────────────────────────
@@ -631,22 +709,34 @@
 
   function renderStep1() {
     const cats = getCategories();
-    const title = BIZ_NAME ? `Leave a message for ${BIZ_NAME}` : 'How can we help?';
+    const title = BIZ_NAME ? `Contact ${BIZ_NAME}` : 'How can we help?';
 
+    // NOTE: innerHTML usage is safe here — all interpolated values (title, category names)
+    // are controlled server-side config, not user input. BIZ_NAME comes from the script
+    // tag's data-name attribute set by the site owner. Category names come from hardcoded
+    // PRESETS or the site owner's data-categories attribute.
     panel.innerHTML = `
-      <div class="gb-inner">
+      <div class="gb-inner gb-step-content">
         <div class="gb-header">
           <div class="gb-header-left">
-            <span class="gb-eyebrow">Get in touch</span>
-            <span class="gb-title">${title}</span>
+            <div class="gb-eyebrow">Feedback</div>
+            <div class="gb-logo">
+              <div class="gb-logo-mark"></div>
+              <span class="gb-logo-name">grova</span>
+            </div>
           </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
+        <div class="gb-title">${title}</div>
         <div class="gb-cats" id="gb-cats">
-          ${cats.map(c => `
-            <button class="gb-cat${selectedCategory === c ? ' gb-cat-active' : ''}" data-cat="${c.replace(/"/g, '&quot;')}">
-              ${c}
-            </button>`).join('')}
+          ${cats.map(c => {
+            const color = getCategoryColor(c);
+            return `<button class="gb-cat" data-cat="${c.replace(/"/g, '&quot;')}">
+              <span class="gb-cat-dot" style="background:${color}"></span>
+              <span>${c}</span>
+              <span class="gb-cat-arrow">›</span>
+            </button>`;
+          }).join('')}
         </div>
       </div>
       <div class="gb-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">Grova</a></div>
@@ -657,6 +747,11 @@
       btn.addEventListener('click', () => {
         selectedCategory = btn.dataset.cat;
         step = 2;
+        // Set dynamic category color
+        const catColor = getCategoryColor(selectedCategory);
+        const catColorRgb = hexToRgb(catColor);
+        root.style.setProperty('--gb-cat-color', catColor);
+        root.style.setProperty('--gb-cat-color-rgb', catColorRgb);
         renderPanel();
         requestAnimationFrame(() => {
           const ta = panel.querySelector('.gb-textarea');
@@ -669,13 +764,22 @@
   function renderStep2() {
     const cat = selectedCategory || 'Other';
 
+    // NOTE: innerHTML usage is safe — cat comes from hardcoded PRESETS/owner config,
+    // placeholder from PLACEHOLDERS constant. No user-generated content is interpolated.
     panel.innerHTML = `
-      <div class="gb-inner">
+      <div class="gb-inner gb-step-content">
         <div class="gb-header">
-          <button class="gb-back" id="gb-back">← Back</button>
+          <div class="gb-header-left">
+            <div class="gb-eyebrow">Feedback</div>
+            <div class="gb-logo">
+              <div class="gb-logo-mark"></div>
+              <span class="gb-logo-name">grova</span>
+            </div>
+          </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
-        <button class="gb-breadcrumb" id="gb-breadcrumb">${cat} ·  change</button>
+        <button class="gb-back" id="gb-back">← Back</button>
+        <button class="gb-breadcrumb" id="gb-breadcrumb">${cat} · change</button>
         <textarea
           class="gb-textarea"
           id="gb-msg"
@@ -686,11 +790,12 @@
           class="gb-email"
           id="gb-email"
           type="email"
-          placeholder="Your email (optional — so we can follow up)" />
-        <label class="gb-screenshot-label">
-          <input type="checkbox" id="gb-screenshot" class="gb-screenshot-check" />
-          <span class="gb-screenshot-text">Attach screenshot of this page</span>
-        </label>
+          placeholder="Your email (optional)" />
+        <div class="gb-screenshot-row">
+          <div class="gb-toggle" id="gb-toggle" role="switch" aria-checked="false" tabindex="0"></div>
+          <input type="checkbox" id="gb-screenshot" style="display:none" />
+          <span class="gb-screenshot-text">Attach screenshot</span>
+        </div>
         ${status === 'error' ? `<p class="gb-err">Something went wrong — please try again.</p>` : ''}
         <button class="gb-submit" id="gb-sub" disabled>Send Message</button>
       </div>
@@ -708,13 +813,30 @@
       subEl.disabled = !msgEl.value.trim();
     });
 
+    // iOS toggle switch
+    const toggleEl = panel.querySelector('#gb-toggle');
+    const screenshotInput = panel.querySelector('#gb-screenshot');
+    if (toggleEl && screenshotInput) {
+      toggleEl.addEventListener('click', function () {
+        screenshotInput.checked = !screenshotInput.checked;
+        toggleEl.classList.toggle('gb-toggle-on', screenshotInput.checked);
+        toggleEl.setAttribute('aria-checked', String(screenshotInput.checked));
+      });
+      toggleEl.addEventListener('keydown', function (e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          toggleEl.click();
+        }
+      });
+    }
+
     subEl.addEventListener('click', handleSubmit);
   }
 
   function renderSuccess() {
     const name = BIZ_NAME || 'our team';
     panel.innerHTML = `
-      <div class="gb-success">
+      <div class="gb-success gb-step-content">
         <div class="gb-success-check">✓</div>
         <p class="gb-success-title">Received.</p>
         <p class="gb-success-sub">Someone from ${name} will follow up.</p>
@@ -850,6 +972,9 @@
     status = 'idle';
     step   = 1;
     selectedCategory = null;
+    // Reset category color to default accent
+    root.style.setProperty('--gb-cat-color', ACCENT);
+    root.style.setProperty('--gb-cat-color-rgb', ACCENT_RGB);
     panel.classList.add('gb-open');
     backdrop.classList.add('gb-open');
     renderTrigger();
