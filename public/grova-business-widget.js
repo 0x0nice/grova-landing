@@ -792,8 +792,8 @@
           type="email"
           placeholder="Your email (optional)" />
         <div class="gb-screenshot-row">
-          <div class="gb-toggle" id="gb-toggle" role="switch" aria-checked="false" tabindex="0"></div>
-          <input type="checkbox" id="gb-screenshot" style="display:none" />
+          <div class="gb-toggle gb-toggle-on" id="gb-toggle" role="switch" aria-checked="true" tabindex="0"></div>
+          <input type="checkbox" id="gb-screenshot" style="display:none" checked />
           <span class="gb-screenshot-text">Attach screenshot</span>
         </div>
         ${status === 'error' ? `<p class="gb-err">Something went wrong — please try again.</p>` : ''}
