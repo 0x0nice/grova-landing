@@ -335,19 +335,42 @@
       }
       .gb-header-left { display: flex; flex-direction: column; gap: 3px; }
       .gb-eyebrow {
-        color: var(--gb-text3);
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 0.12em;
+        color: var(--gb-accent);
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        margin-bottom: 5px;
         text-transform: uppercase;
+      }
+      .gb-logo {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+      }
+      .gb-logo-mark {
+        background: var(--gb-accent);
+        border-radius: 50%;
+        flex-shrink: 0;
+        height: 12px;
+        margin-top: 2px;
+        width: 12px;
+      }
+      .gb-logo-name {
+        color: var(--gb-text);
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 1.45rem;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        line-height: 1;
       }
       .gb-title {
         color: var(--gb-text);
         font-family: 'Playfair Display', 'New York', Georgia, serif;
-        font-size: 1.35rem;
+        font-size: 1.15rem;
         font-weight: 500;
         line-height: 1.2;
         letter-spacing: -0.02em;
+        margin-top: 12px;
       }
       .gb-close {
         align-items: center;
@@ -696,11 +719,15 @@
       <div class="gb-inner gb-step-content">
         <div class="gb-header">
           <div class="gb-header-left">
-            <span class="gb-eyebrow">Get in touch</span>
-            <span class="gb-title">${title}</span>
+            <div class="gb-eyebrow">Feedback</div>
+            <div class="gb-logo">
+              <div class="gb-logo-mark"></div>
+              <span class="gb-logo-name">grova</span>
+            </div>
           </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
+        <div class="gb-title">${title}</div>
         <div class="gb-cats" id="gb-cats">
           ${cats.map(c => {
             const color = getCategoryColor(c);
@@ -742,9 +769,16 @@
     panel.innerHTML = `
       <div class="gb-inner gb-step-content">
         <div class="gb-header">
-          <button class="gb-back" id="gb-back">← Back</button>
+          <div class="gb-header-left">
+            <div class="gb-eyebrow">Feedback</div>
+            <div class="gb-logo">
+              <div class="gb-logo-mark"></div>
+              <span class="gb-logo-name">grova</span>
+            </div>
+          </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
+        <button class="gb-back" id="gb-back">← Back</button>
         <button class="gb-breadcrumb" id="gb-breadcrumb">${cat} · change</button>
         <textarea
           class="gb-textarea"
