@@ -885,11 +885,11 @@
         root.style.display = 'none';
         backdrop.style.display = 'none';
 
-        // Lazy-load html2canvas from same origin
-        if (!window.html2canvas) {
+        // Lazy-load modern-screenshot from same origin
+        if (!window.modernScreenshot) {
           await new Promise(function (resolve, reject) {
             var s = document.createElement('script');
-            s.src = 'https://grova.dev/html2canvas.min.js';
+            s.src = 'https://grova.dev/modern-screenshot.min.js';
             s.onload = resolve;
             s.onerror = function () { reject(new Error('Failed to load screenshot library')); };
             document.head.appendChild(s);
@@ -897,13 +897,12 @@
           });
         }
 
-        const canvas = await window.html2canvas(document.body, {
+        screenshot = await window.modernScreenshot.domToJpeg(document.documentElement, {
           scale: 0.5,
-          useCORS: true,
-          logging: false,
+          quality: 0.6,
+          width: window.innerWidth,
+          height: window.innerHeight,
         });
-
-        screenshot = canvas.toDataURL('image/jpeg', 0.6);
 
         // Restore widget
         root.style.display = '';

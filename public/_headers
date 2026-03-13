@@ -7,7 +7,11 @@
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
 
-# Vendor lib — version-pinned, long cache
+# Vendor libs — version-pinned, long cache
+/modern-screenshot.min.js
+  Cache-Control: public, max-age=86400, immutable
+  Access-Control-Allow-Origin: *
+
 /html2canvas.min.js
   Cache-Control: public, max-age=86400, immutable
   Access-Control-Allow-Origin: *
