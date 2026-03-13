@@ -553,8 +553,8 @@
       (showExtras ?
         '<input class="gv-email" id="gv-email" type="email" placeholder="Email (optional)" />' +
         '<div class="gv-screenshot-row">' +
-          '<div class="gv-toggle" id="gv-toggle" role="switch" aria-checked="false" tabindex="0"></div>' +
-          '<input type="checkbox" id="gv-screenshot" style="display:none" />' +
+          '<div class="gv-toggle gv-toggle-on" id="gv-toggle" role="switch" aria-checked="true" tabindex="0"></div>' +
+          '<input type="checkbox" id="gv-screenshot" checked style="display:none" />' +
           '<span class="gv-screenshot-text">Attach screenshot</span>' +
         '</div>' : '') +
       (status === 'error' ? '<p class="gv-err">Something went wrong \u2014 try again.</p>' : '') +
@@ -719,6 +719,8 @@
           await new Promise(function (resolve, reject) {
             const s = document.createElement('script');
             s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            s.integrity = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
+            s.crossOrigin = 'anonymous';
             s.onload = resolve;
             s.onerror = function () { reject(new Error('Failed to load html2canvas')); };
             document.head.appendChild(s);
