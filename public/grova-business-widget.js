@@ -885,14 +885,15 @@
         root.style.display = 'none';
         backdrop.style.display = 'none';
 
-        // Lazy-load html2canvas from CDN
+        // Lazy-load html2canvas from same origin
         if (!window.html2canvas) {
-          await new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          await new Promise(function (resolve, reject) {
+            var s = document.createElement('script');
+            s.src = 'https://grova.dev/html2canvas.min.js';
             s.onload = resolve;
-            s.onerror = () => reject(new Error('Failed to load html2canvas'));
+            s.onerror = function () { reject(new Error('Failed to load screenshot library')); };
             document.head.appendChild(s);
+            setTimeout(function () { reject(new Error('Screenshot library load timeout')); }, 5000);
           });
         }
 

@@ -6,3 +6,8 @@
 /grova-business-widget.js
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
+
+# Vendor lib — version-pinned, long cache
+/html2canvas.min.js
+  Cache-Control: public, max-age=86400, immutable
+  Access-Control-Allow-Origin: *
