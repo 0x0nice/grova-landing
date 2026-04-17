@@ -38,7 +38,7 @@ export function Hero() {
             </span>
             <h1
               {...fadeUp(150)}
-              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px]"
+              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px] [text-wrap:balance]"
             >
               Better feedback.
               <br />
@@ -46,7 +46,7 @@ export function Hero() {
             </h1>
             <p
               {...fadeUp(250)}
-              className="text-[1.06rem] text-text2 leading-[1.85] max-w-[500px] mb-[44px] font-light"
+              className="text-[1.06rem] text-text2 leading-[1.85] max-w-[500px] mb-[44px] font-light [text-wrap:pretty]"
             >
               Grova captures user feedback, filters the noise, and delivers ranked
               fix briefs straight to your inbox — ready to drop into Cursor or
@@ -69,7 +69,7 @@ export function Hero() {
             </span>
             <h1
               {...fadeUp(150)}
-              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px]"
+              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px] [text-wrap:balance]"
             >
               Your customers have something to say.
               <br />
@@ -77,7 +77,7 @@ export function Hero() {
             </h1>
             <p
               {...fadeUp(250)}
-              className="text-[1.06rem] text-text2 leading-[1.85] max-w-[540px] mb-[44px] font-light"
+              className="text-[1.06rem] text-text2 leading-[1.85] max-w-[540px] mb-[44px] font-light [text-wrap:pretty]"
             >
               Grova makes it easy for customers to share honest feedback — through
               a widget on your site, a QR code at your register, or a simple
@@ -92,9 +92,12 @@ export function Hero() {
                 className="bg-accent text-black rounded px-6 py-3
                            font-mono text-[0.85rem] font-semibold tracking-[0.04em]
                            no-underline inline-flex items-center gap-2
-                           transition-opacity duration-[180ms] hover:opacity-85"
+                           [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
+                           transition-all duration-[180ms]
+                           hover:opacity-92 hover:-translate-y-px hover:shadow-sm
+                           active:scale-[0.98] active:translate-y-0"
               >
-                Start free →
+                Start free <span className="inline-block -translate-y-px">→</span>
               </Link>
               <a
                 href="#pipeline"

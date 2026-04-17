@@ -66,6 +66,7 @@
   --shadow-none: none;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.24);
+  --shadow-glow-accent: 0 0 0 4px color-mix(in oklch, var(--color-accent) 15%, transparent);
 }
 
 /* ===================================================================
@@ -182,7 +183,16 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1;
+    font-feature-settings: "kern", "liga", "calt";
     transition: background 0.18s ease, color 0.18s ease;
+  }
+
+  .font-serif {
+    font-feature-settings: "kern", "liga", "calt", "dlig";
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums lining-nums;
   }
 
   /* Scrollbar */
@@ -197,10 +207,21 @@
     border-radius: 3px;
   }
 
-  /* Focus ring — accent green */
+  /* Focus ring — accent green, with subtle breathing animation */
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+    animation: focus-breathe 1.6s ease-in-out infinite;
+  }
+
+  @keyframes focus-breathe {
+    0%, 100% { outline-offset: 2px; }
+    50%      { outline-offset: 3.5px; }
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 
   /* Selection */

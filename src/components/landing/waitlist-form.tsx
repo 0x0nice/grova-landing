@@ -67,8 +67,9 @@ export function WaitlistForm({ className = "" }: WaitlistFormProps) {
             flex-1 bg-surface border rounded
             px-4 py-3 font-mono text-callout font-light text-text
             placeholder:text-text3
-            outline-none transition-colors duration-[180ms]
+            outline-none transition-all duration-[180ms]
             focus:border-[var(--track-accent)]
+            focus:shadow-[0_0_0_4px_color-mix(in_oklch,var(--track-accent)_15%,transparent)]
             ${error ? "border-[#e74c3c]" : "border-border2"}
           `}
         />
@@ -77,11 +78,19 @@ export function WaitlistForm({ className = "" }: WaitlistFormProps) {
           disabled={status === "loading"}
           className="bg-[var(--track-accent)] text-black border-none rounded
                      px-[18px] py-3 font-mono text-[0.75rem] font-medium
-                     cursor-pointer whitespace-nowrap tracking-[0.05em] uppercase
-                     transition-opacity duration-150 hover:opacity-82
-                     disabled:opacity-35 disabled:cursor-not-allowed"
+                     cursor-pointer whitespace-nowrap tracking-[0.04em] uppercase
+                     inline-flex items-center justify-center gap-2
+                     [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
+                     transition-all duration-[180ms]
+                     hover:opacity-92 hover:-translate-y-px hover:shadow-sm
+                     active:scale-[0.98] active:translate-y-0
+                     disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:transform-none"
         >
-          {status === "loading" ? "..." : status === "error" ? "Try again" : "Join waitlist"}
+          {status === "loading" ? (
+            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" strokeDasharray="45" strokeLinecap="round" />
+            </svg>
+          ) : status === "error" ? "Try again" : "Join waitlist"}
         </button>
       </div>
     </div>

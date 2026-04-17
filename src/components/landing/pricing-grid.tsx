@@ -178,7 +178,7 @@ function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
       <span className="text-caption text-text3 tracking-[0.12em] uppercase block mb-2">
         {t.tier}
       </span>
-      <div className="font-serif text-[2.2rem] text-text font-normal tracking-[-0.03em] leading-none mb-1">
+      <div className="font-serif text-[2.2rem] text-text font-normal tracking-[-0.03em] leading-none mb-1 tabular-nums">
         {t.amount} <span className="font-mono text-[0.76rem] text-text3 font-light">/mo</span>
       </div>
       <p className="text-[0.8rem] text-text2 leading-[1.7] my-2.5 font-light">{t.desc}</p>
@@ -202,9 +202,10 @@ function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
           href={t.href}
           className={`
             block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
-            no-underline cursor-pointer tracking-[0.04em] transition-all duration-150
+            no-underline cursor-pointer tracking-[0.04em]
+            transition-all duration-[180ms] active:scale-[0.98]
             ${t.fill
-              ? `${fillBg} border-none hover:opacity-82`
+              ? `${fillBg} border-none hover:opacity-90 hover:-translate-y-px hover:shadow-sm [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]`
               : `bg-transparent border border-solid ${outlineStyle}`
             }
           `}
@@ -216,9 +217,10 @@ function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
           href={t.href}
           className={`
             block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
-            no-underline cursor-pointer tracking-[0.04em] transition-all duration-150
+            no-underline cursor-pointer tracking-[0.04em]
+            transition-all duration-[180ms] active:scale-[0.98]
             ${t.fill
-              ? `${fillBg} border-none hover:opacity-82`
+              ? `${fillBg} border-none hover:opacity-90 hover:-translate-y-px hover:shadow-sm [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]`
               : `bg-transparent border border-solid ${outlineStyle}`
             }
           `}

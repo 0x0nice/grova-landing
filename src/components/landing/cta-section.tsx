@@ -40,14 +40,17 @@ export function CTASection() {
           className={`${accentBg} rounded px-8 py-3
                      font-mono text-footnote font-semibold tracking-[0.04em]
                      no-underline inline-flex items-center gap-2
-                     transition-opacity duration-[180ms] hover:opacity-85`}
+                     [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
+                     transition-all duration-[180ms]
+                     hover:opacity-92 hover:-translate-y-px hover:shadow-sm
+                     active:scale-[0.98] active:translate-y-0`}
         >
-          Get started free →
+          Get started free <span className="inline-block -translate-y-px">→</span>
         </Link>
         <div className="flex items-center gap-3 text-text3">
-          <span className="h-px w-8 bg-border" />
+          <span className="h-px w-12 bg-gradient-to-r from-transparent to-border" />
           <span className="font-mono text-caption uppercase tracking-[0.12em]">or join the paid-tier waitlist</span>
-          <span className="h-px w-8 bg-border" />
+          <span className="h-px w-12 bg-gradient-to-l from-transparent to-border" />
         </div>
         <WaitlistForm className="flex justify-center" />
       </div>
