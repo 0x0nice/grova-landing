@@ -10,7 +10,7 @@ import { WaitlistForm } from "./waitlist-form";
 function fadeUp(delayMs: number): { style: React.CSSProperties } {
   return {
     style: {
-      animation: `fadeUp 0.5s ease-out ${delayMs}ms both`,
+      animation: `fadeUp 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) ${delayMs}ms both`,
     },
   };
 }
@@ -19,7 +19,7 @@ const crossfade = {
   initial: { opacity: 0, y: 6 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -6 },
-  transition: { duration: 0.28, ease: "easeOut" as const },
+  transition: { duration: 0.32, ease: "easeOut" as const },
 };
 
 export function Hero() {
@@ -38,7 +38,7 @@ export function Hero() {
             </span>
             <h1
               {...fadeUp(150)}
-              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.025em] text-text font-normal mb-[26px]"
+              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px]"
             >
               Better feedback.
               <br />
@@ -69,7 +69,7 @@ export function Hero() {
             </span>
             <h1
               {...fadeUp(150)}
-              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.025em] text-text font-normal mb-[26px]"
+              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px]"
             >
               Your customers have something to say.
               <br />

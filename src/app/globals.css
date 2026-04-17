@@ -52,17 +52,20 @@
   /* --- Border Radius --- */
   --radius-sm: 2px;
   --radius: 4px;
-  --radius-md: 4px;
-  --radius-lg: 4px;
-  --radius-xl: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
   --radius-pill: 100px;
 
   /* --- Transitions --- */
   --transition-timing-function-default: ease;
   --transition-duration-default: 180ms;
+  --transition-duration-macro: 320ms;
 
-  /* --- Shadows (none by design) --- */
+  /* --- Shadows --- */
   --shadow-none: none;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.24);
 }
 
 /* ===================================================================
@@ -133,6 +136,8 @@
   --text: #080808;
   --text2: #333333;
   --text3: #888888;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.10);
 }
 
 /* ===================================================================

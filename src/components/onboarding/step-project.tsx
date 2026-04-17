@@ -82,7 +82,7 @@ export function StepProject({
       <span className="block font-mono text-caption text-text3 tracking-[0.16em] uppercase mb-3">
         Step 3 of 5
       </span>
-      <h2 className="font-serif text-title font-normal tracking-[-0.025em] leading-[1.1] text-text mb-2">
+      <h2 className="font-serif text-title font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
         Create a <em className="text-text2">project.</em>
       </h2>
       <p className="font-mono text-callout text-text2 leading-[1.7] mb-6">

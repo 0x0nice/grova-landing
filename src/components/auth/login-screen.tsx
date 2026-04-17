@@ -18,7 +18,7 @@ const API = process.env.NEXT_PUBLIC_API_URL!;
 const fadeUp = {
   initial: { opacity: 0, y: 14 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, ease: "easeOut" as const },
+  transition: { duration: 0.32, ease: "easeOut" as const },
 };
 
 export function LoginScreen() {
@@ -86,7 +86,7 @@ export function LoginScreen() {
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors uppercase tracking-[0.04em]"
+            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors uppercase"
           >
             Back
           </Link>
@@ -97,14 +97,14 @@ export function LoginScreen() {
       {/* Center card */}
       <div className="flex-1 flex items-center justify-center px-5">
         <motion.div
-          className="w-full max-w-[400px] bg-surface border border-border rounded p-8"
+          className="w-full max-w-[400px] bg-surface border border-border rounded-lg p-8"
           {...fadeUp}
         >
-          <span className="block font-mono text-caption text-text3 tracking-[0.16em] uppercase mb-4">
+          <span className="block font-mono text-caption text-text3 uppercase mb-4">
             Dashboard
           </span>
 
-          <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.025em] leading-[1.1] text-text mb-2">
+          <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal leading-[1.1] text-text mb-2">
             {mode === "forgot" ? (
               <>
                 Reset <em className="text-text2">password.</em>
@@ -120,13 +120,13 @@ export function LoginScreen() {
             )}
           </h1>
 
-          <p className="text-callout text-text2 font-light leading-[1.6] mb-6">
+          <p className="text-callout text-text2 font-light mb-6">
             {mode === "forgot"
               ? "Enter your email and we'll send a reset link."
               : "Sign in to manage your projects and feedback."}
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <Input
               id="email"
               label="Email"
@@ -153,7 +153,7 @@ export function LoginScreen() {
             {error && (
               <p
                 role="alert"
-                className="font-mono text-footnote text-red leading-[1.6]"
+                className="font-mono font-normal text-footnote text-red"
               >
                 {error}
               </p>
@@ -162,13 +162,13 @@ export function LoginScreen() {
             {info && (
               <p
                 role="status"
-                className="font-mono text-footnote text-accent leading-[1.6]"
+                className="font-mono font-normal text-footnote text-accent"
               >
                 {info}
               </p>
             )}
 
-            <Button type="submit" variant="fill" loading={loading}>
+            <Button type="submit" variant="fill" loading={loading} className="w-full">
               {mode === "forgot"
                 ? "Send reset link"
                 : mode === "signup"

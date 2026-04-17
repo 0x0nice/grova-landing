@@ -85,12 +85,12 @@ export function Modal({
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            className="relative z-10 bg-surface border border-border rounded p-8 mx-4"
+            className="relative z-10 bg-surface border border-border rounded-lg shadow-lg p-8 mx-4"
             style={{ maxWidth, width: "100%" }}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.18 }}
+            transition={{ duration: 0.32 }}
           >
             {title && (
               <h2 className="font-serif text-title mb-6 text-text">{title}</h2>

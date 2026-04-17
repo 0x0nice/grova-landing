@@ -10,7 +10,7 @@ export function Card({ children, className = "", padding = true }: CardProps) {
   return (
     <div
       className={`
-        bg-surface border border-border rounded
+        bg-surface border border-border rounded-lg
         ${padding ? "p-6" : ""}
         ${className}
       `}
