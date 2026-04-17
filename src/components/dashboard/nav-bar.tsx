@@ -198,7 +198,7 @@ export function NavBar() {
               </button>
 
               {projectMenuOpen && (
-                <div className="absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-lg z-50 min-w-[220px] py-1 max-md:right-auto max-md:left-0">
+                <div className="absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-md shadow-sm z-50 min-w-[220px] py-1 max-md:right-auto max-md:left-0">
                   {projects.length === 0 && !projectsLoading && (
                     <div className="px-3 py-2 font-mono text-micro text-text3">
                       No projects yet

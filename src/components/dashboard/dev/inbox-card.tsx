@@ -108,7 +108,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
           : { opacity: 1, x: 0 }
       }
       transition={{ duration: 0.32 }}
-      className="bg-surface border border-border rounded overflow-hidden [html[data-theme=light]_&]:bg-white"
+      className="bg-surface border border-border rounded-lg overflow-hidden [html[data-theme=light]_&]:bg-white"
     >
       {/* Main row */}
       <div className="grid grid-cols-[64px_1fr_auto] gap-4 p-4 max-md:grid-cols-[66px_1fr] max-md:gap-3 max-md:p-3">

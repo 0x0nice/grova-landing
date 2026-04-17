@@ -17,7 +17,7 @@ export function EmptyState({ icon, heading, description, action }: EmptyStatePro
       {icon && <span className="text-[2.5rem] mb-4">{icon}</span>}
       <h3 className="font-serif text-title text-text2 mb-2">{heading}</h3>
       {description && (
-        <p className="font-mono text-callout text-text3 max-w-[360px]">
+        <p className="font-mono text-callout text-text3 max-w-[360px] leading-[1.55]">
           {description}
         </p>
       )}

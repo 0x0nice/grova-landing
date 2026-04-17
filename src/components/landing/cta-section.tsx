@@ -12,7 +12,7 @@ export function CTASection() {
     <section className="py-24 text-center" id="waitlist">
       {track === "dev" ? (
         <>
-          <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.025em] leading-[1.1] text-text max-w-[500px] mx-auto mb-3.5">
+          <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text max-w-[500px] mx-auto mb-3.5">
             Your product,
             <br />
             <em className="text-text2">always improving.</em>
@@ -23,7 +23,7 @@ export function CTASection() {
         </>
       ) : (
         <>
-          <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.025em] leading-[1.1] text-text max-w-[500px] mx-auto mb-3.5">
+          <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text max-w-[500px] mx-auto mb-3.5">
             Your customers are already talking.
             <br />
             <em className="text-text2">Start listening.</em>

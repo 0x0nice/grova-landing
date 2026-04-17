@@ -12,7 +12,7 @@ export default function ScoringPage() {
       <span className="block font-mono text-caption text-text3 tracking-[0.16em] uppercase mb-4">
         Scoring System
       </span>
-      <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.025em] leading-[1.1] text-text mb-2">
+      <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
         Triage <em className="text-text2">Scoring.</em>
       </h1>
       <p className="text-callout text-text3 font-light mb-10">

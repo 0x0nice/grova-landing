@@ -20,21 +20,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-accent text-black hover:bg-accent/90 font-mono text-subheadline uppercase tracking-[0.05em]",
+    "bg-accent text-black hover:bg-accent/90 font-mono font-medium text-subheadline uppercase",
   ghost:
-    "bg-transparent border border-border text-text2 hover:border-border2 hover:text-text font-mono text-subheadline uppercase tracking-[0.05em]",
+    "bg-transparent border border-border text-text2 hover:border-border2 hover:text-text font-mono font-medium text-subheadline uppercase",
   approve:
-    "bg-accent-dim text-accent hover:bg-accent hover:text-black font-mono text-subheadline uppercase tracking-[0.05em]",
+    "bg-accent-dim text-accent hover:bg-accent hover:text-black font-mono font-medium text-subheadline uppercase",
   deny:
-    "bg-orange-dim text-orange hover:bg-orange hover:text-white font-mono text-subheadline uppercase tracking-[0.05em]",
+    "bg-orange-dim text-orange hover:bg-orange hover:text-white font-mono font-medium text-subheadline uppercase",
   restore:
-    "bg-transparent border border-border text-text3 hover:text-text2 hover:border-border2 font-mono text-subheadline uppercase tracking-[0.05em]",
+    "bg-transparent border border-border text-text3 hover:text-text2 hover:border-border2 font-mono font-medium text-subheadline uppercase",
   icon:
     "bg-transparent border border-border text-text2 hover:text-text hover:border-border2 p-2",
   copy:
-    "bg-transparent border border-border text-text2 hover:border-accent hover:text-accent font-mono text-subheadline uppercase tracking-[0.05em]",
+    "bg-transparent border border-border text-text2 hover:border-accent hover:text-accent font-mono font-medium text-subheadline uppercase",
   fill:
-    "bg-accent text-black hover:bg-accent/90 font-mono text-subheadline uppercase tracking-[0.05em]",
+    "bg-accent text-black hover:bg-accent/90 font-mono font-medium text-subheadline uppercase",
 };
 
 export function Button({

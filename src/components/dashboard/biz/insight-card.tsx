@@ -13,7 +13,7 @@ export function InsightCard({
 }: InsightCardProps) {
   return (
     <div
-      className={`bg-surface border rounded p-5 [html[data-theme=light]_&]:bg-white ${
+      className={`bg-surface border rounded-lg p-6 [html[data-theme=light]_&]:bg-white ${
         highlight ? "border-accent/30" : "border-border"
       }`}
     >

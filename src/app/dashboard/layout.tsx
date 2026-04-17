@@ -40,7 +40,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       <NavBar />
 
       {/* Main content — full width */}
-      <main id="main-content" className="flex-1 overflow-y-auto p-6 max-md:p-3">
+      <main id="main-content" className="flex-1 overflow-y-auto p-6 max-md:p-3 lg:p-8 xl:p-10">
         {children}
       </main>
     </div>

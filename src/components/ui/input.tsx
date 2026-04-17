@@ -19,7 +19,7 @@ export function Input({
       {label && (
         <label
           htmlFor={id}
-          className="font-mono text-footnote text-text2 uppercase tracking-[0.04em]"
+          className="font-mono text-footnote text-text2 uppercase"
         >
           {label}
         </label>
@@ -32,6 +32,7 @@ export function Input({
           placeholder:text-text3
           transition-colors duration-[180ms] ease
           focus:outline-none focus:border-accent
+          focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface
           ${error ? "border-red" : "border-border"}
           ${className}
         `}

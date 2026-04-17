@@ -21,7 +21,7 @@ export function BizBounceBackSection() {
     <section className="py-[68px]">
       {/* Heading */}
       <div className="grid grid-cols-2 gap-[72px] items-start mb-12 max-md:grid-cols-1 max-md:gap-6">
-        <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.025em] leading-[1.1] text-text">
+        <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text">
           Turn feedback into
           <br />
           <em className="text-text2">repeat customers.</em>
