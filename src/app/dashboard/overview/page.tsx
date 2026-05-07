@@ -38,9 +38,10 @@ export default function OverviewPage() {
   if (items.length === 0 && loaded) {
     return (
       <EmptyState
-        icon="📊"
-        heading="No feedback yet"
-        description="Messages from customers will appear here once the widget is installed."
+        kind="chart"
+        heading="Your feedback stream is quiet"
+        description="Once your widget is live, Grova will group recurring themes, surface urgent issues, and tell you what needs your attention this week."
+        action={{ label: "Install widget", href: "/dashboard/setup" }}
       />
     );
   }

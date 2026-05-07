@@ -33,9 +33,9 @@ export default function ArchivePage() {
   if (items.length === 0) {
     return (
       <EmptyState
-        icon="🗄️"
+        kind="archive"
         heading="Archive is empty"
-        description="Denied feedback items will appear here."
+        description="Dismissed feedback items will appear here."
       />
     );
   }

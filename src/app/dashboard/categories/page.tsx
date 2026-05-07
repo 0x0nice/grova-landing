@@ -32,9 +32,10 @@ export default function CategoriesPage() {
   if (items.length === 0 && loaded) {
     return (
       <EmptyState
-        icon="📁"
+        kind="folder"
         heading="No categories yet"
         description="Messages will be grouped by category once feedback arrives."
+        action={{ label: "Install widget", href: "/dashboard/setup" }}
       />
     );
   }

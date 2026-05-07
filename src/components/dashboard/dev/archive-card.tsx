@@ -32,7 +32,7 @@ export function ArchiveCard({ item, onRestore }: ArchiveCardProps) {
                  [html[data-theme=light]_&]:bg-white max-md:grid-cols-[40px_1fr] max-md:gap-3"
     >
       {/* Score */}
-      <span className="font-serif text-[1.8rem] italic text-text3 leading-none text-center">
+      <span className="font-serif text-[1.8rem] italic text-text3 leading-none text-center tabular-nums">
         {es.toFixed(1)}
       </span>
 

@@ -29,7 +29,7 @@ function Stat({ label, value }: { label: string; value: string }) {
       <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em]">
         {label}
       </span>
-      <span className="font-serif text-callout text-text">{value}</span>
+      <span className="font-serif text-callout text-text tabular-nums">{value}</span>
     </div>
   );
 }

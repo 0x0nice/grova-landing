@@ -39,7 +39,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
         {showScore && t?.score != null && (
           <div className="shrink-0 text-center w-10">
             <span
-              className={`font-serif text-title italic leading-none ${scoreColor(scoreClass(t.score))}`}
+              className={`font-serif text-title italic leading-none tabular-nums ${scoreColor(scoreClass(t.score))}`}
             >
               {t.score.toFixed(1)}
             </span>
