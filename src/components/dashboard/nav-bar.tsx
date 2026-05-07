@@ -109,8 +109,10 @@ export function NavBar() {
   }
 
   async function handleSignOut() {
+    // Capture before signOut() clears isDemo, so we route to the right place.
+    const wasDemo = isDemo;
     await signOut();
-    router.push("/login");
+    router.push(wasDemo ? "/" : "/login");
   }
 
   function handleRefresh() {
