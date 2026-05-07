@@ -32,7 +32,7 @@ export function Input({
           placeholder:text-text3
           transition-all duration-[180ms] ease
           focus:outline-none focus:border-accent
-          focus:shadow-[0_0_0_4px_color-mix(in_oklch,var(--color-accent)_15%,transparent)]
+          focus:shadow-[0_0_0_4px_rgba(0,200,122,0.15)]
           ${error ? "border-red" : "border-border"}
           ${className}
         `}

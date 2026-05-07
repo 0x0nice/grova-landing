@@ -1,5 +1,5 @@
 /**
- * Grova Business Widget v2.0
+ * Grova Business Widget v3.0
  * Drop-in contact/feedback widget for small business websites.
  * Zero dependencies. Embeds via a single <script> tag.
  *
@@ -19,7 +19,7 @@
  *   data-name           — your business name, shown in widget header
  *   data-accent         — brand color for the trigger button & active states (default: #00c87a)
  *   data-position       — left | right (default: right)
- *   data-api-url        — override the API endpoint (default: https://grova-api-production.up.railway.app/feedback)
+ *   data-api-url        — override the API endpoint
  *   data-key            — your Grova project API key for per-project routing
  *
  * Public API:
@@ -29,7 +29,7 @@
 (function () {
   'use strict';
 
-  const GROVA_BIZ_WIDGET_VERSION = '2.0.0';
+  const GROVA_BIZ_WIDGET_VERSION = '3.0.0';
 
   // ── Guard — prevent double load ────────────────────────────────────────────
   if (window.__grovaContactWidget) return;
@@ -161,7 +161,7 @@
 
   const ACCENT_RGB = hexToRgb(ACCENT);
 
-  // ── Category colour mapping ──────────────────────────────────────────────
+  // ── Category colour mapping (used for the leading dot only — not chrome) ──
   const CATEGORY_COLORS = {
     'Reservation': '#3b82f6', 'Appointment': '#3b82f6',
     'Complaint': '#ef4444', 'Return / Exchange': '#ef4444',
@@ -177,126 +177,161 @@
     return CATEGORY_COLORS[cat] || ACCENT;
   }
 
-  function getCategoryColorRgb(cat) {
-    return hexToRgb(getCategoryColor(cat));
-  }
-
   // ── CSS injection ──────────────────────────────────────────────────────────
   if (!document.querySelector('style[data-grova-biz]')) {
     const style = document.createElement('style');
     style.setAttribute('data-grova-biz', '');
     style.textContent = `
-      /* ── Grova Business Widget — gb- namespace ── */
+      /* ── Grova Business Widget v3 — gb- namespace ── */
 
       .gb-root {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-weight: 300;
         position: fixed;
         bottom: 24px;
         ${SIDE}: 24px;
         z-index: 99999;
+
         --gb-accent: ${ACCENT};
         --gb-accent-rgb: ${ACCENT_RGB};
-        --gb-cat-color: ${ACCENT};
-        --gb-cat-color-rgb: ${ACCENT_RGB};
-        /* Light theme tokens (default for biz widget) */
-        --gb-bg: #f5f5f7; --gb-surface: #ffffff; --gb-border: rgba(0,0,0,0.06); --gb-border2: rgba(0,0,0,0.10);
-        --gb-text: #1d1d1f; --gb-text2: #48484a; --gb-text3: #8e8e93;
-        --gb-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04);
+
+        /* Motion tokens (mirrors site) */
+        --gb-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+        --gb-micro: 180ms;
+        --gb-macro: 320ms;
+
+        /* Light theme */
+        --gb-bg: #ffffff;
+        --gb-bg2: #f8f8f6;
+        --gb-surface: #ffffff;
+        --gb-border: #d4d4d0;
+        --gb-border2: #c0c0bc;
+        --gb-text: #080808;
+        --gb-text2: #333333;
+        --gb-text3: #888888;
+        --gb-shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.10), 0 2px 10px rgba(0, 0, 0, 0.04);
+        --gb-shadow-trigger: 0 6px 22px rgba(var(--gb-accent-rgb), 0.28);
+        --gb-inset-highlight: none;
       }
       .gb-root.gb-dark {
-        --gb-bg: #1a1a1e; --gb-surface: #242428; --gb-border: rgba(255,255,255,0.08); --gb-border2: rgba(255,255,255,0.12);
-        --gb-text: #f5f5f7; --gb-text2: #a1a1aa; --gb-text3: #52525b;
-        --gb-shadow: 0 8px 60px rgba(0,0,0,0.5), 0 2px 16px rgba(0,0,0,0.25);
+        --gb-bg: #000000;
+        --gb-bg2: #0c0c0c;
+        --gb-surface: #111111;
+        --gb-border: #222222;
+        --gb-border2: #2e2e2e;
+        --gb-text: #ffffff;
+        --gb-text2: #c0c0c0;
+        --gb-text3: #606060;
+        --gb-shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.6), 0 2px 16px rgba(0, 0, 0, 0.3);
+        --gb-shadow-trigger: 0 6px 22px rgba(var(--gb-accent-rgb), 0.42);
+        --gb-inset-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.05);
       }
 
-      /* ── Trigger ── */
+      /* ── Trigger ─────────────────────────────────────────────────────── */
 
       .gb-trigger {
         align-items: center;
         background: var(--gb-accent);
         border: none;
-        border-radius: 100px;
-        box-shadow: 0 4px 20px rgba(var(--gb-accent-rgb), 0.38);
-        color: #fff;
+        border-radius: 4px;
+        box-shadow: var(--gb-shadow-trigger), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        color: #000;
         cursor: pointer;
-        display: flex;
+        display: inline-flex;
         font-family: inherit;
-        font-size: 0.88rem;
-        font-weight: 600;
+        font-size: 0.72rem;
+        font-weight: 500;
         gap: 8px;
-        padding: 12px 22px;
-        transition: opacity 0.15s, box-shadow 0.15s, background 0.15s;
+        letter-spacing: 0.04em;
+        padding: 11px 18px;
+        text-transform: uppercase;
+        transition:
+          background var(--gb-micro) var(--gb-ease),
+          box-shadow var(--gb-micro) var(--gb-ease),
+          transform var(--gb-micro) var(--gb-ease),
+          opacity var(--gb-micro) var(--gb-ease);
         white-space: nowrap;
       }
       .gb-trigger:hover {
-        box-shadow: 0 6px 28px rgba(var(--gb-accent-rgb), 0.55);
         opacity: 0.92;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 28px rgba(var(--gb-accent-rgb), 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+      }
+      .gb-trigger:active {
+        transform: scale(0.97);
+      }
+      .gb-trigger-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #000;
+        opacity: 0.72;
       }
       .gb-trigger-open {
         background: var(--gb-surface);
-        box-shadow: var(--gb-shadow);
         color: var(--gb-text2);
+        box-shadow: var(--gb-shadow-panel), var(--gb-inset-highlight);
       }
       .gb-trigger-open:hover {
-        box-shadow: var(--gb-shadow);
         opacity: 1;
+        transform: translateY(-1px);
       }
-      .gb-trigger svg { flex-shrink: 0; }
+      .gb-trigger-open .gb-trigger-dot { background: var(--gb-text3); }
 
-      /* ── Backdrop (mobile only) ── */
+      /* ── Backdrop (mobile only) ────────────────────────────────────── */
 
       .gb-backdrop { display: none; }
-
       @media (max-width: 640px) {
         .gb-backdrop {
-          background: rgba(0,0,0,0.45);
+          background: rgba(0, 0, 0, 0.55);
           bottom: 0; display: block; left: 0;
           opacity: 0; pointer-events: none;
           position: fixed; right: 0; top: 0;
-          transition: opacity 0.22s ease;
+          transition: opacity var(--gb-macro) var(--gb-ease);
           z-index: 99998;
         }
         .gb-backdrop.gb-open { opacity: 1; pointer-events: all; }
       }
 
-      /* ── Panel — desktop ── */
+      /* ── Panel — desktop ──────────────────────────────────────────── */
 
       .gb-panel {
         background: var(--gb-surface);
         border: 1px solid var(--gb-border);
-        border-radius: 20px;
-        bottom: 58px;
-        box-shadow: var(--gb-shadow);
+        border-radius: 12px;
+        bottom: 52px;
+        box-shadow: var(--gb-shadow-panel), var(--gb-inset-highlight);
         opacity: 0;
         overflow: hidden;
         pointer-events: none;
         position: absolute;
         ${SIDE}: 0;
-        transform: translateY(10px);
-        transition: opacity 0.18s ease, transform 0.18s ease;
+        transform: translateY(8px) scale(0.98);
+        transform-origin: bottom ${SIDE};
+        transition:
+          opacity var(--gb-macro) var(--gb-ease),
+          transform var(--gb-macro) var(--gb-ease);
         width: 360px;
       }
       .gb-panel.gb-open {
         opacity: 1;
         pointer-events: all;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
 
-      /* ── Panel — mobile bottom sheet ── */
+      /* ── Panel — mobile bottom sheet ──────────────────────────────── */
 
       @media (max-width: 640px) {
         .gb-root { bottom: 20px; ${SIDE}: 20px; }
         .gb-panel {
-          border-bottom: none;
-          border-radius: 20px 20px 0 0;
+          border-radius: 16px 16px 0 0;
           bottom: 0;
           left: 0;
           max-height: 82dvh;
           overflow-y: auto;
           position: fixed;
           right: 0;
-          transform: translateY(100%);
-          transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: translateY(100%) scale(1);
+          transform-origin: bottom center;
+          transition: transform var(--gb-macro) var(--gb-ease);
           width: 100%;
           z-index: 99999;
           -webkit-overflow-scrolling: touch;
@@ -308,350 +343,406 @@
           content: '';
           display: block;
           height: 4px;
-          margin: 12px auto 0;
-          width: 40px;
+          margin: 10px auto 0;
+          width: 36px;
         }
       }
 
-      /* ── Inner layout ── */
+      /* ── Inner layout ─────────────────────────────────────────────── */
 
       .gb-inner {
         display: flex;
         flex-direction: column;
-        gap: 14px;
-        padding: 20px 22px 16px;
+        gap: 18px;
+        padding: 24px 24px 18px;
       }
-
       @media (max-width: 640px) {
-        .gb-inner { padding: 16px 20px 20px; gap: 16px; }
+        .gb-inner { padding: 18px 22px 22px; gap: 18px; }
       }
 
-      /* ── Header ── */
+      /* ── Header ───────────────────────────────────────────────────── */
 
       .gb-header {
         align-items: flex-start;
         display: flex;
         justify-content: space-between;
       }
-      .gb-header-left { display: flex; flex-direction: column; gap: 3px; }
+      .gb-header-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
       .gb-eyebrow {
-        color: var(--gb-accent);
-        font-size: 0.65rem;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        margin-bottom: 5px;
+        color: var(--gb-text3);
+        font-size: 0.62rem;
+        font-weight: 400;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
       }
-      .gb-logo {
-        align-items: center;
-        display: flex;
-        gap: 8px;
-      }
-      .gb-logo-mark {
-        background: var(--gb-accent);
-        border-radius: 50%;
-        flex-shrink: 0;
-        height: 12px;
-        margin-top: 2px;
-        width: 12px;
-      }
-      .gb-logo-name {
+      .gb-wordmark {
         color: var(--gb-text);
         font-family: 'Instrument Serif', Georgia, serif;
-        font-size: 1.45rem;
+        font-size: 1.6rem;
+        font-style: italic;
         font-weight: 400;
         letter-spacing: -0.02em;
-        line-height: 1;
+        line-height: 1.1;
       }
-      .gb-title {
-        color: var(--gb-text);
-        font-family: 'Playfair Display', 'New York', Georgia, serif;
-        font-size: 1.15rem;
-        font-weight: 500;
-        line-height: 1.2;
-        letter-spacing: -0.02em;
-        margin-top: 12px;
+      .gb-wordmark em {
+        color: var(--gb-text2);
+        font-style: italic;
       }
       .gb-close {
         align-items: center;
-        background: rgba(0,0,0,0.04);
-        border: none;
+        background: transparent;
+        border: 1px solid var(--gb-border);
         border-radius: 50%;
         color: var(--gb-text3);
         cursor: pointer;
         display: flex;
-        font-size: 1.1rem;
+        font-size: 1rem;
         height: 28px;
         justify-content: center;
         line-height: 1;
         padding: 0;
-        transition: background 0.15s, color 0.15s;
+        transition: border-color var(--gb-micro) var(--gb-ease), color var(--gb-micro) var(--gb-ease);
         width: 28px;
       }
-      .gb-close:hover { background: rgba(0,0,0,0.08); color: var(--gb-text); }
-      .gb-root.gb-dark .gb-close { background: rgba(255,255,255,0.06); }
-      .gb-root.gb-dark .gb-close:hover { background: rgba(255,255,255,0.12); color: var(--gb-text); }
-
-      /* ── Step navigation ── */
-
-      .gb-back {
-        align-items: center;
-        background: none;
-        border: none;
-        color: var(--gb-text3);
-        cursor: pointer;
-        display: flex;
-        font-family: inherit;
-        font-size: 0.78rem;
-        gap: 5px;
-        padding: 0;
-        transition: color 0.15s;
+      .gb-close:hover {
+        border-color: var(--gb-border2);
+        color: var(--gb-text);
       }
-      .gb-back:hover { color: var(--gb-text); }
 
-      .gb-breadcrumb {
-        align-items: center;
-        background: rgba(var(--gb-cat-color-rgb), 0.08);
-        border: none;
-        border-radius: 999px;
-        color: var(--gb-cat-color);
-        cursor: pointer;
-        display: inline-flex;
-        font-family: inherit;
-        font-size: 0.75rem;
-        font-weight: 500;
-        gap: 6px;
-        padding: 6px 14px;
-        transition: opacity 0.15s;
-      }
-      .gb-breadcrumb:hover { opacity: 0.75; }
-
-      /* ── Category chips (step 1) ── */
+      /* ── Categories (step 1) ──────────────────────────────────────── */
 
       .gb-cats {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        border-top: 1px solid var(--gb-border);
       }
       .gb-cat {
         align-items: center;
-        background: var(--gb-bg);
-        border: 1px solid var(--gb-border2);
-        border-radius: 14px;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--gb-border);
         color: var(--gb-text);
         cursor: pointer;
         display: flex;
         font-family: inherit;
-        font-size: 0.88rem;
-        font-weight: 500;
-        gap: 12px;
+        font-size: 0.84rem;
+        font-weight: 400;
+        gap: 14px;
         line-height: 1;
-        padding: 15px 16px;
-        transition: border-color 0.2s, background 0.2s, transform 0.15s;
+        padding: 15px 2px;
+        text-align: left;
+        transition: color var(--gb-micro) var(--gb-ease), background var(--gb-micro) var(--gb-ease), padding var(--gb-micro) var(--gb-ease);
       }
       .gb-cat:hover {
-        border-color: var(--gb-border2);
-        background: var(--gb-bg);
-        transform: translateY(-1px);
+        background: var(--gb-bg2);
+        padding-left: 10px;
+        padding-right: 10px;
       }
-      .gb-cat:active { transform: translateY(0); }
+      .gb-cat:active { opacity: 0.7; }
       .gb-cat-dot {
         border-radius: 50%;
         flex-shrink: 0;
-        height: 8px;
-        width: 8px;
+        height: 6px;
+        width: 6px;
       }
       .gb-cat-arrow {
         color: var(--gb-text3);
-        font-size: 0.85rem;
+        font-family: inherit;
+        font-size: 0.88rem;
         margin-left: auto;
-        transition: color 0.2s;
+        transition: color var(--gb-micro) var(--gb-ease), transform var(--gb-micro) var(--gb-ease);
       }
-      .gb-cat:hover .gb-cat-arrow { color: var(--gb-text2); }
+      .gb-cat:hover .gb-cat-arrow {
+        color: var(--gb-text);
+        transform: translateX(2px);
+      }
 
       @media (max-width: 640px) {
-        .gb-cat { font-size: 1rem; padding: 17px 18px; }
+        .gb-cat { font-size: 0.96rem; padding: 18px 2px; }
       }
 
-      /* ── Textarea & email (step 2) ── */
+      /* ── Step 2 ───────────────────────────────────────────────────── */
 
-      .gb-textarea,
-      .gb-email {
-        background: var(--gb-bg);
-        border: 1px solid transparent;
-        border-radius: 12px;
+      .gb-breadcrumb {
+        align-items: center;
+        background: transparent;
+        border: none;
+        color: var(--gb-text3);
+        cursor: pointer;
+        display: inline-flex;
+        font-family: inherit;
+        font-size: 0.7rem;
+        gap: 8px;
+        letter-spacing: 0.14em;
+        padding: 0;
+        text-transform: uppercase;
+        transition: color var(--gb-micro) var(--gb-ease);
+      }
+      .gb-breadcrumb:hover { color: var(--gb-text); }
+      .gb-breadcrumb-chev { opacity: 0.6; }
+      .gb-breadcrumb-cat {
+        align-items: center;
+        display: inline-flex;
+        gap: 7px;
+        color: var(--gb-text2);
+      }
+      .gb-breadcrumb-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+      }
+
+      .gb-field {
+        border-bottom: 1px solid var(--gb-border);
+        padding-bottom: 10px;
+      }
+      .gb-field:focus-within {
+        border-bottom-color: var(--gb-text);
+      }
+
+      .gb-textarea {
+        background: transparent;
+        border: none;
         box-sizing: border-box;
         color: var(--gb-text);
         font-family: inherit;
-        font-size: 0.94rem;
-        line-height: 1.65;
-        outline: none;
-        padding: 12px 14px;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        width: 100%;
-      }
-      .gb-textarea {
-        min-height: 100px;
-        resize: none;
-      }
-      @media (max-width: 640px) {
-        .gb-textarea { min-height: 120px; font-size: 1rem; }
-        .gb-email    { font-size: 1rem; }
-      }
-      .gb-textarea::placeholder,
-      .gb-email::placeholder { color: var(--gb-text3); }
-      .gb-textarea:focus,
-      .gb-email:focus {
-        border-color: rgba(var(--gb-cat-color-rgb), 0.25);
-        box-shadow: 0 0 0 3px rgba(var(--gb-cat-color-rgb), 0.1);
-      }
-
-      /* ── Submit ── */
-
-      .gb-submit {
-        background: var(--gb-cat-color);
-        border: none;
-        border-radius: 999px;
-        box-sizing: border-box;
-        color: #fff;
-        cursor: pointer;
-        font-family: inherit;
         font-size: 0.88rem;
-        font-weight: 600;
-        padding: 14px;
-        transition: opacity 0.15s, filter 0.15s, box-shadow 0.15s;
+        font-weight: 300;
+        line-height: 1.65;
+        min-height: 108px;
+        outline: none;
+        padding: 4px 0;
+        resize: none;
         width: 100%;
       }
-      @media (max-width: 640px) {
-        .gb-submit {
-          font-size: 1rem;
-          padding: 16px;
-          margin-bottom: env(safe-area-inset-bottom, 0px);
-        }
-      }
-      .gb-submit:hover:not(:disabled) { filter: brightness(1.1); box-shadow: 0 4px 16px rgba(var(--gb-cat-color-rgb), 0.35); }
-      .gb-submit:disabled              { cursor: not-allowed; opacity: 0.3; }
+      .gb-textarea::placeholder { color: var(--gb-text3); }
 
-      /* ── Screenshot checkbox ── */
+      .gb-email {
+        background: transparent;
+        border: none;
+        box-sizing: border-box;
+        color: var(--gb-text);
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 300;
+        outline: none;
+        padding: 4px 0;
+        width: 100%;
+      }
+      .gb-email::placeholder { color: var(--gb-text3); }
+
+      @media (max-width: 640px) {
+        .gb-textarea { min-height: 130px; font-size: 1rem; }
+        .gb-email    { font-size: 0.95rem; }
+      }
+
+      /* ── Screenshot toggle (quieter) ──────────────────────────────── */
 
       .gb-screenshot-row {
-        align-items: center; display: flex; gap: 10px; margin: -4px 0 0;
+        align-items: center;
+        color: var(--gb-text3);
+        display: flex;
+        font-size: 0.66rem;
+        gap: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
       }
       .gb-toggle {
-        background: var(--gb-bg); border: 1px solid var(--gb-border2); border-radius: 999px;
-        cursor: pointer; flex-shrink: 0; height: 24px; position: relative;
-        transition: background 0.2s, border-color 0.2s; width: 42px;
+        background: var(--gb-bg2);
+        border: 1px solid var(--gb-border);
+        border-radius: 999px;
+        cursor: pointer;
+        flex-shrink: 0;
+        height: 20px;
+        position: relative;
+        transition: background var(--gb-micro) var(--gb-ease), border-color var(--gb-micro) var(--gb-ease);
+        width: 34px;
       }
       .gb-toggle::after {
-        background: #fff; border-radius: 50%; content: ''; height: 18px; left: 2px;
-        position: absolute; top: 2px; transition: transform 0.2s cubic-bezier(0.4,0,0.2,1); width: 18px;
+        background: var(--gb-text3);
+        border-radius: 50%;
+        content: '';
+        height: 12px;
+        left: 3px;
+        position: absolute;
+        top: 3px;
+        transition: transform var(--gb-micro) var(--gb-ease), background var(--gb-micro) var(--gb-ease);
+        width: 12px;
       }
-      .gb-toggle.gb-toggle-on { background: var(--gb-cat-color); border-color: var(--gb-cat-color); }
-      .gb-toggle.gb-toggle-on::after { transform: translateX(18px); }
-      .gb-root:not(.gb-dark) .gb-toggle::after { box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-      .gb-screenshot-text {
-        color: var(--gb-text3); font-size: 0.72rem; letter-spacing: 0.04em;
-        transition: color 0.15s;
+      .gb-toggle.gb-toggle-on {
+        background: var(--gb-accent);
+        border-color: var(--gb-accent);
+      }
+      .gb-toggle.gb-toggle-on::after {
+        background: #000;
+        transform: translateX(14px);
       }
 
-      /* ── Error ── */
+      /* ── Submit ───────────────────────────────────────────────────── */
+
+      .gb-submit {
+        align-items: center;
+        background: var(--gb-accent);
+        border: none;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        box-sizing: border-box;
+        color: #000;
+        cursor: pointer;
+        display: inline-flex;
+        font-family: inherit;
+        font-size: 0.74rem;
+        font-weight: 500;
+        gap: 10px;
+        justify-content: center;
+        letter-spacing: 0.04em;
+        padding: 13px 16px;
+        text-transform: uppercase;
+        transition:
+          opacity var(--gb-micro) var(--gb-ease),
+          transform var(--gb-micro) var(--gb-ease),
+          box-shadow var(--gb-micro) var(--gb-ease);
+        width: 100%;
+      }
+      .gb-submit:hover:not(:disabled) {
+        opacity: 0.92;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(var(--gb-accent-rgb), 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+      .gb-submit:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      .gb-submit:disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
+      }
+      .gb-submit-spinner {
+        animation: gb-spin 0.8s linear infinite;
+        height: 14px;
+        width: 14px;
+      }
+      @keyframes gb-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* ── Error ────────────────────────────────────────────────────── */
 
       .gb-err {
         color: #ff6b6b;
-        font-size: 0.78rem;
-        margin: -4px 0 0;
+        font-size: 0.72rem;
+        font-weight: 400;
+        line-height: 1.5;
+        margin: 0;
       }
 
-      /* ── Success state ── */
+      /* ── Success ──────────────────────────────────────────────────── */
 
       .gb-success {
         align-items: center;
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        padding: 44px 28px;
+        gap: 16px;
+        padding: 56px 28px 44px;
         text-align: center;
       }
-      .gb-success-check {
-        align-items: center;
-        background: rgba(var(--gb-cat-color-rgb), 0.10);
-        border: 1.5px solid rgba(var(--gb-cat-color-rgb), 0.25);
+      .gb-success-dot {
+        animation: gb-pulse 2.4s ease-in-out infinite;
+        background: var(--gb-accent);
         border-radius: 50%;
-        color: var(--gb-cat-color);
-        display: flex;
-        font-size: 1.3rem;
-        height: 52px;
-        justify-content: center;
-        width: 52px;
+        height: 10px;
+        width: 10px;
+      }
+      @keyframes gb-pulse {
+        0%, 100% { opacity: 0.6; transform: scale(1); }
+        50%      { opacity: 1;   transform: scale(1.18); }
       }
       .gb-success-title {
         color: var(--gb-text);
-        font-family: 'Playfair Display', 'New York', Georgia, serif;
-        font-size: 1.5rem;
-        font-weight: 500;
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 1.9rem;
+        font-style: italic;
+        font-weight: 400;
         letter-spacing: -0.02em;
+        line-height: 1.1;
         margin: 0;
       }
       .gb-success-sub {
         color: var(--gb-text3);
-        font-size: 0.85rem;
-        line-height: 1.7;
+        font-size: 0.76rem;
+        font-weight: 300;
+        letter-spacing: 0.02em;
+        line-height: 1.6;
         margin: 0;
         max-width: 260px;
       }
-      .gb-success-close {
-        background: none;
-        border: 1px solid var(--gb-border2);
-        border-radius: 999px;
-        color: var(--gb-text3);
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 0.82rem;
-        margin-top: 4px;
-        padding: 9px 24px;
-        transition: border-color 0.15s, color 0.15s;
-      }
-      .gb-success-close:hover { border-color: var(--gb-text3); color: var(--gb-text); }
 
-      /* ── Footer ── */
+      /* ── Footer ───────────────────────────────────────────────────── */
 
       .gb-footer {
+        align-items: center;
+        border-top: 1px solid var(--gb-border);
         color: var(--gb-text3);
-        font-size: 0.6rem;
-        letter-spacing: 0.04em;
-        opacity: 0.5;
-        padding: 8px 22px;
-        text-align: center;
+        display: flex;
+        font-size: 0.58rem;
+        gap: 6px;
+        justify-content: center;
+        letter-spacing: 0.22em;
+        padding: 10px 24px 14px;
+        text-transform: uppercase;
       }
       .gb-footer a {
         color: var(--gb-text3);
         font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 0.82rem;
         font-style: italic;
+        letter-spacing: -0.01em;
         text-decoration: none;
-        transition: color 0.15s;
+        text-transform: none;
+        transition: color var(--gb-micro) var(--gb-ease);
       }
-      .gb-footer a:hover { color: var(--gb-text2); }
+      .gb-footer a:hover { color: var(--gb-text); }
 
-      /* ── Step transitions ── */
-      .gb-step-content { animation: gb-fade-in 0.25s ease; }
+      /* ── Step fade ─────────────────────────────────────────────────── */
+
+      .gb-step-content { animation: gb-fade-in var(--gb-macro) var(--gb-ease); }
       @keyframes gb-fade-in {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ── Reduced motion ────────────────────────────────────────────── */
+
+      @media (prefers-reduced-motion: reduce) {
+        .gb-root *,
+        .gb-root *::before,
+        .gb-root *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     `;
     document.head.appendChild(style);
   }
 
-  // ── Google Fonts ───────────────────────────────────────────────────────────
-  if (!document.querySelector('link[href*="Playfair+Display"]')) {
+  // ── Fonts: Instrument Serif + Geist Mono (matches Grova site) ─────────────
+  if (!document.querySelector('link[href*="Instrument+Serif"]')) {
     const preconnect = document.createElement('link');
     preconnect.rel  = 'preconnect';
     preconnect.href = 'https://fonts.googleapis.com';
     document.head.appendChild(preconnect);
 
+    const preconnectGstatic = document.createElement('link');
+    preconnectGstatic.rel  = 'preconnect';
+    preconnectGstatic.href = 'https://fonts.gstatic.com';
+    preconnectGstatic.crossOrigin = 'anonymous';
+    document.head.appendChild(preconnectGstatic);
+
     const fonts = document.createElement('link');
     fonts.rel  = 'stylesheet';
-    fonts.href = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap';
+    fonts.href = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap';
     document.head.appendChild(fonts);
   }
 
@@ -679,22 +770,17 @@
 
   const trigger = document.createElement('button');
   trigger.className = 'gb-trigger';
-  trigger.setAttribute('aria-label', 'Contact us');
+  trigger.setAttribute('aria-label', 'Feedback');
   root.appendChild(trigger);
-
-  // ── Icons ──────────────────────────────────────────────────────────────────
-  const ICON_CHAT = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-  </svg>`;
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
   function renderTrigger() {
     if (isOpen) {
-      trigger.innerHTML = `<span style="font-size:1.2rem;line-height:1">×</span><span>Close</span>`;
+      trigger.innerHTML = `<span class="gb-trigger-dot" aria-hidden="true"></span><span>Close</span>`;
       trigger.classList.add('gb-trigger-open');
     } else {
-      trigger.innerHTML = `${ICON_CHAT}<span>Contact${BIZ_NAME ? ' Us' : ' Us'}</span>`;
+      trigger.innerHTML = `<span class="gb-trigger-dot" aria-hidden="true"></span><span>Feedback</span>`;
       trigger.classList.remove('gb-trigger-open');
     }
   }
@@ -709,25 +795,21 @@
 
   function renderStep1() {
     const cats = getCategories();
-    const title = BIZ_NAME ? `Contact ${BIZ_NAME}` : 'How can we help?';
+    const wordmark = BIZ_NAME
+      ? `${BIZ_NAME},<br/><em>listening.</em>`
+      : `Feedback,<br/><em>considered.</em>`;
 
-    // NOTE: innerHTML usage is safe here — all interpolated values (title, category names)
-    // are controlled server-side config, not user input. BIZ_NAME comes from the script
-    // tag's data-name attribute set by the site owner. Category names come from hardcoded
-    // PRESETS or the site owner's data-categories attribute.
+    // NOTE: innerHTML usage is safe — interpolated values come from controlled config
+    // (BIZ_NAME from site-owner's script tag, category names from PRESETS or owner config).
     panel.innerHTML = `
       <div class="gb-inner gb-step-content">
         <div class="gb-header">
-          <div class="gb-header-left">
-            <div class="gb-eyebrow">Feedback</div>
-            <div class="gb-logo">
-              <div class="gb-logo-mark"></div>
-              <span class="gb-logo-name">grova</span>
-            </div>
+          <div class="gb-header-main">
+            <span class="gb-eyebrow">Feedback</span>
+            <span class="gb-wordmark">${wordmark}</span>
           </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
-        <div class="gb-title">${title}</div>
         <div class="gb-cats" id="gb-cats">
           ${cats.map(c => {
             const color = getCategoryColor(c);
@@ -747,11 +829,6 @@
       btn.addEventListener('click', () => {
         selectedCategory = btn.dataset.cat;
         step = 2;
-        // Set dynamic category color
-        const catColor = getCategoryColor(selectedCategory);
-        const catColorRgb = hexToRgb(catColor);
-        root.style.setProperty('--gb-cat-color', catColor);
-        root.style.setProperty('--gb-cat-color-rgb', catColorRgb);
         renderPanel();
         requestAnimationFrame(() => {
           const ta = panel.querySelector('.gb-textarea');
@@ -763,41 +840,55 @@
 
   function renderStep2() {
     const cat = selectedCategory || 'Other';
+    const catColor = getCategoryColor(cat);
+    const wordmark = BIZ_NAME
+      ? `Talk to<br/><em>${BIZ_NAME}.</em>`
+      : `Talk to us,<br/><em>plainly.</em>`;
 
     // NOTE: innerHTML usage is safe — cat comes from hardcoded PRESETS/owner config,
     // placeholder from PLACEHOLDERS constant. No user-generated content is interpolated.
     panel.innerHTML = `
       <div class="gb-inner gb-step-content">
         <div class="gb-header">
-          <div class="gb-header-left">
-            <div class="gb-eyebrow">Feedback</div>
-            <div class="gb-logo">
-              <div class="gb-logo-mark"></div>
-              <span class="gb-logo-name">grova</span>
-            </div>
+          <div class="gb-header-main">
+            <span class="gb-eyebrow">Feedback</span>
+            <span class="gb-wordmark">${wordmark}</span>
           </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
-        <button class="gb-back" id="gb-back">← Back</button>
-        <button class="gb-breadcrumb" id="gb-breadcrumb">${cat} · change</button>
-        <textarea
-          class="gb-textarea"
-          id="gb-msg"
-          placeholder="${getPlaceholder(cat)}"
-          rows="4"
-          required></textarea>
-        <input
-          class="gb-email"
-          id="gb-email"
-          type="email"
-          placeholder="Your email (optional)" />
+        <button class="gb-breadcrumb" id="gb-breadcrumb" aria-label="Change category">
+          <span class="gb-breadcrumb-chev">←</span>
+          <span class="gb-breadcrumb-cat">
+            <span class="gb-breadcrumb-dot" style="background:${catColor}"></span>
+            ${cat}
+          </span>
+        </button>
+        <div class="gb-field">
+          <textarea
+            class="gb-textarea"
+            id="gb-msg"
+            placeholder="${getPlaceholder(cat)}"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        <div class="gb-field">
+          <input
+            class="gb-email"
+            id="gb-email"
+            type="email"
+            placeholder="Your email (optional)"
+          />
+        </div>
         <div class="gb-screenshot-row">
           <div class="gb-toggle gb-toggle-on" id="gb-toggle" role="switch" aria-checked="true" tabindex="0"></div>
           <input type="checkbox" id="gb-screenshot" style="display:none" checked />
-          <span class="gb-screenshot-text">Attach screenshot</span>
+          <span>Attach screenshot</span>
         </div>
         ${status === 'error' ? `<p class="gb-err">Something went wrong — please try again.</p>` : ''}
-        <button class="gb-submit" id="gb-sub" disabled>Send Message</button>
+        <button class="gb-submit" id="gb-sub" disabled>
+          <span id="gb-sub-label">Send</span>
+        </button>
       </div>
       <div class="gb-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">Grova</a></div>
     `;
@@ -806,14 +897,13 @@
     const subEl = panel.querySelector('#gb-sub');
 
     panel.querySelector('.gb-close').onclick   = close;
-    panel.querySelector('#gb-back').onclick    = () => { step = 1; renderPanel(); };
     panel.querySelector('#gb-breadcrumb').onclick = () => { step = 1; renderPanel(); };
 
     msgEl.addEventListener('input', () => {
       subEl.disabled = !msgEl.value.trim();
     });
 
-    // iOS toggle switch
+    // Toggle switch
     const toggleEl = panel.querySelector('#gb-toggle');
     const screenshotInput = panel.querySelector('#gb-screenshot');
     if (toggleEl && screenshotInput) {
@@ -837,17 +927,13 @@
     const name = BIZ_NAME || 'our team';
     panel.innerHTML = `
       <div class="gb-success gb-step-content">
-        <div class="gb-success-check">✓</div>
-        <p class="gb-success-title">Received.</p>
-        <p class="gb-success-sub">Someone from ${name} will follow up.</p>
-        <button class="gb-success-close" id="gb-sdone">Done</button>
+        <div class="gb-success-dot" aria-hidden="true"></div>
+        <p class="gb-success-title">Thank you.</p>
+        <p class="gb-success-sub">Someone from ${name} will follow up shortly.</p>
       </div>
     `;
-    panel.querySelector('#gb-sdone').onclick = close;
-
-    // Auto-close after 4 seconds
     clearTimeout(autoCloseTimer);
-    autoCloseTimer = setTimeout(close, 4000);
+    autoCloseTimer = setTimeout(close, 3200);
   }
 
   // ── Submit ─────────────────────────────────────────────────────────────────
@@ -866,8 +952,14 @@
     if (!msg) return;
 
     status = 'sending';
-    subEl.disabled  = true;
-    subEl.textContent = 'Sending…';
+    subEl.disabled = true;
+
+    // Replace label with spinner
+    subEl.innerHTML = `
+      <svg class="gb-submit-spinner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-dasharray="45" stroke-linecap="round" />
+      </svg>
+    `;
 
     // Auto-collect metadata and console errors (zero friction)
     const metadata = collectMetadata();
@@ -879,8 +971,6 @@
 
     if (screenshotChecked) {
       try {
-        subEl.textContent = 'Capturing…';
-
         // Hide widget during capture
         root.style.display = 'none';
         backdrop.style.display = 'none';
@@ -913,8 +1003,6 @@
         console.warn('[grova] Screenshot capture failed:', err.message);
       }
     }
-
-    subEl.textContent = 'Sending…';
 
     try {
       const headers = { 'Content-Type': 'application/json' };
@@ -949,8 +1037,6 @@
       }
     } catch {
       status = 'error';
-      subEl.disabled    = false;
-      subEl.textContent = 'Send Message';
       // Re-render to show error message while preserving textarea value
       const savedMsg   = msgEl?.value || '';
       const savedEmail = panel.querySelector('#gb-email')?.value || '';
@@ -972,9 +1058,6 @@
     status = 'idle';
     step   = 1;
     selectedCategory = null;
-    // Reset category color to default accent
-    root.style.setProperty('--gb-cat-color', ACCENT);
-    root.style.setProperty('--gb-cat-color-rgb', ACCENT_RGB);
     panel.classList.add('gb-open');
     backdrop.classList.add('gb-open');
     renderTrigger();
@@ -994,7 +1077,7 @@
       step             = 1;
       selectedCategory = null;
       renderPanel();
-    }, 300);
+    }, 320);
   }
 
   // ── Event listeners ────────────────────────────────────────────────────────

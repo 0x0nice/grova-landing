@@ -69,7 +69,7 @@ export function WaitlistForm({ className = "" }: WaitlistFormProps) {
             placeholder:text-text3
             outline-none transition-all duration-[180ms]
             focus:border-[var(--track-accent)]
-            focus:shadow-[0_0_0_4px_color-mix(in_oklch,var(--track-accent)_15%,transparent)]
+            focus:shadow-[0_0_0_4px_rgba(0,200,122,0.15)]
             ${error ? "border-[#e74c3c]" : "border-border2"}
           `}
         />
