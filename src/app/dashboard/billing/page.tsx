@@ -263,7 +263,7 @@ export default function BillingPage() {
   if (!active) {
     return (
       <EmptyState
-        icon="💳"
+        kind="card"
         heading="Select a project"
         description="Choose a project from the sidebar to view billing."
       />

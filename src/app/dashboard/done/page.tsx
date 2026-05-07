@@ -40,8 +40,8 @@ export default function DonePage() {
   if (items.length === 0) {
     return (
       <EmptyState
-        icon="✅"
-        heading="Nothing approved yet"
+        kind="done"
+        heading="Nothing resolved yet"
         description="Approve items from the Inbox to see their AI prompts here."
       />
     );

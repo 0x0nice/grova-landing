@@ -12,7 +12,7 @@ export function ScoreDisplay({ score, size = "lg" }: ScoreDisplayProps) {
   return (
     <div className="flex flex-col items-center">
       <span
-        className={`font-serif italic leading-none ${color} ${
+        className={`font-serif italic leading-none tabular-nums ${color} ${
           size === "lg" ? "text-[2.6rem]" : "text-[1.8rem]"
         }`}
       >

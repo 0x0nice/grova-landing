@@ -25,7 +25,7 @@ export function SubScoreGrid({ subScores }: SubScoreGridProps) {
                 style={{ width: `${v * 100}%` }}
               />
             </div>
-            <span className="font-mono text-micro text-text2 w-8 text-right">
+            <span className="font-mono text-micro text-text2 w-8 text-right tabular-nums">
               {v.toFixed(2)}
             </span>
           </div>

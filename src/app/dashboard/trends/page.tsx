@@ -33,9 +33,10 @@ export default function TrendsPage() {
   if (items.length === 0 && loaded) {
     return (
       <EmptyState
-        icon="📈"
+        kind="trend"
         heading="No trend data yet"
-        description="Charts will appear once there's enough feedback data."
+        description="Charts will appear once there's enough feedback to find patterns in."
+        action={{ label: "Install widget", href: "/dashboard/setup" }}
       />
     );
   }

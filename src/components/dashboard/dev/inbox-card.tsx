@@ -149,7 +149,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <Badge type={t?.category || item.type} />
             {sig > 1 && (
-              <span className="font-mono text-micro text-accent bg-accent/10 px-2 py-0.5 rounded">
+              <span className="font-mono text-micro text-accent bg-accent/10 px-2 py-0.5 rounded tabular-nums">
                 ↑ {sig} signals
               </span>
             )}
@@ -232,7 +232,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
                   {anchor}
                 </span>
                 {sig > 1 && (
-                  <span className="font-mono text-micro text-text3">
+                  <span className="font-mono text-micro text-text3 tabular-nums">
                     Base {base.toFixed(1)} + {sig - 1} signal
                     {sig - 1 > 1 ? "s" : ""}
                   </span>
