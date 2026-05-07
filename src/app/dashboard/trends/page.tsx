@@ -7,8 +7,9 @@ import { useBizStore } from "@/stores/biz-store";
 import { buildWeeklyData } from "@/lib/biz-helpers";
 import { TrendChart } from "@/components/dashboard/biz/trend-chart";
 import { TrendTable } from "@/components/dashboard/biz/trend-table";
-import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyStatePreview } from "@/components/ui/empty-state-preview";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DEMO_BIZ_PENDING } from "@/lib/demo-data";
 
 export default function TrendsPage() {
   const { session, isDemo } = useAuth();
@@ -32,11 +33,13 @@ export default function TrendsPage() {
 
   if (items.length === 0 && loaded) {
     return (
-      <EmptyState
+      <EmptyStatePreview
         kind="trend"
         heading="No trend data yet"
         description="Charts will appear once there's enough feedback to find patterns in."
         action={{ label: "Install widget", href: "/dashboard/setup" }}
+        previewItems={DEMO_BIZ_PENDING}
+        previewLimit={3}
       />
     );
   }

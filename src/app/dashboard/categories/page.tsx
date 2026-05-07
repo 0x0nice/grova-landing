@@ -5,8 +5,9 @@ import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
 import { useBizStore } from "@/stores/biz-store";
 import { CategorySection } from "@/components/dashboard/biz/category-section";
-import { EmptyState } from "@/components/ui/empty-state";
+import { EmptyStatePreview } from "@/components/ui/empty-state-preview";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DEMO_BIZ_PENDING } from "@/lib/demo-data";
 
 export default function CategoriesPage() {
   const { session, isDemo } = useAuth();
@@ -31,11 +32,13 @@ export default function CategoriesPage() {
 
   if (items.length === 0 && loaded) {
     return (
-      <EmptyState
+      <EmptyStatePreview
         kind="folder"
         heading="No categories yet"
         description="Messages will be grouped by category once feedback arrives."
         action={{ label: "Install widget", href: "/dashboard/setup" }}
+        previewItems={DEMO_BIZ_PENDING}
+        previewLimit={3}
       />
     );
   }

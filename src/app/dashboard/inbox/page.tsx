@@ -8,9 +8,15 @@ import { effectiveScore } from "@/lib/triage";
 import { FilterTabs } from "@/components/dashboard/dev/filter-tabs";
 import { StatsBar } from "@/components/dashboard/dev/stats-bar";
 import { InboxCard } from "@/components/dashboard/dev/inbox-card";
-import { EmptyState } from "@/components/ui/empty-state";
+import { DashboardHero } from "@/components/dashboard/dashboard-hero";
+import { DashboardPulse } from "@/components/dashboard/dashboard-pulse";
+import { EmptyStatePreview } from "@/components/ui/empty-state-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
+import { useLastVisit, sinceLabel } from "@/hooks/use-last-visit";
+import { DEMO_DEV_PENDING } from "@/lib/demo-data";
+
+const HIGH_PRIORITY_THRESHOLD = 7;
 
 export default function InboxPage() {
   const { session, isDemo } = useAuth();
@@ -27,6 +33,7 @@ export default function InboxPage() {
     undoLast,
   } = useInboxStore();
   const { show } = useToast();
+  const { previousVisit } = useLastVisit(active?.id ?? null);
 
   useEffect(() => {
     if (active && (session?.access_token || isDemo) && !loaded) {
@@ -46,6 +53,16 @@ export default function InboxPage() {
   const sorted = [...filtered].sort(
     (a, b) => effectiveScore(b) - effectiveScore(a)
   );
+
+  const highPriorityCount = items.filter(
+    (i) => effectiveScore(i) >= HIGH_PRIORITY_THRESHOLD
+  ).length;
+  const visitLabel = sinceLabel(previousVisit);
+  const sinceCount = previousVisit
+    ? items.filter(
+        (i) => new Date(i.created_at).getTime() > previousVisit.getTime()
+      ).length
+    : 0;
 
   function handleApprove(id: string) {
     void approve(id, token, isDemo).then(() => {
@@ -77,16 +94,38 @@ export default function InboxPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-3">
-        <Skeleton variant="inbox-card" />
-        <Skeleton variant="inbox-card" />
-        <Skeleton variant="inbox-card" />
+      <div>
+        <DashboardHero title="Inbox" />
+        <div className="flex flex-col gap-3">
+          <Skeleton variant="inbox-card" />
+          <Skeleton variant="inbox-card" />
+          <Skeleton variant="inbox-card" />
+        </div>
       </div>
     );
   }
 
+  const isEmpty = sorted.length === 0;
+  const heroSubtitle = isEmpty
+    ? loaded
+      ? "Your triage queue is empty."
+      : "Loading…"
+    : sinceCount > 0 && visitLabel
+      ? `${items.length} pending · ${highPriorityCount} high priority · ${sinceCount} new since ${visitLabel}`
+      : `${items.length} pending · ${highPriorityCount} high priority`;
+
   return (
     <div>
+      <DashboardHero title="Inbox" subtitle={heroSubtitle} />
+
+      {!isEmpty && (
+        <DashboardPulse
+          items={items}
+          previousVisit={previousVisit}
+          highThreshold={HIGH_PRIORITY_THRESHOLD}
+        />
+      )}
+
       {items.length > 0 && (
         <>
           <FilterTabs items={items} active={filter} onChange={setFilter} />
@@ -94,8 +133,8 @@ export default function InboxPage() {
         </>
       )}
 
-      {sorted.length === 0 ? (
-        <EmptyState
+      {isEmpty ? (
+        <EmptyStatePreview
           kind="inbox"
           heading="Inbox is clear"
           description={
@@ -108,6 +147,8 @@ export default function InboxPage() {
               ? { label: "Install widget", href: "/dashboard/setup" }
               : undefined
           }
+          previewItems={loaded ? DEMO_DEV_PENDING : []}
+          previewLimit={3}
         />
       ) : (
         <div className="flex flex-col gap-3">
