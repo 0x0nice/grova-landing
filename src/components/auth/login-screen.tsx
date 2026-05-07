@@ -15,6 +15,42 @@ type AuthMode = "signin" | "signup" | "forgot";
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
+interface FormError {
+  message: string;
+  isNetwork: boolean;
+}
+
+/**
+ * Translate raw auth/network errors into something a user can act on.
+ * Browsers report fetch failures with vendor-specific messages
+ * ("load failed" on Safari, "Failed to fetch" on Chrome/Firefox);
+ * those are unhelpful in the UI.
+ */
+function classifyError(err: unknown): FormError {
+  const raw = err instanceof Error ? err.message : "";
+  const networkLike =
+    /load failed|failed to fetch|networkerror|network request failed|fetch failed|err_name_not_resolved/i.test(
+      raw
+    );
+  if (networkLike) {
+    return {
+      isNetwork: true,
+      message:
+        "We couldn't reach the auth server. Check your connection — or try Demo mode below.",
+    };
+  }
+  if (/supabase(url|key) is required/i.test(raw)) {
+    return {
+      isNetwork: true,
+      message: "Login isn't configured for this environment. Try Demo mode below.",
+    };
+  }
+  return {
+    isNetwork: false,
+    message: raw || "Something went wrong.",
+  };
+}
+
 const fadeUp = {
   initial: { opacity: 0, y: 14 },
   animate: { opacity: 1, y: 0 },
@@ -27,7 +63,7 @@ export function LoginScreen() {
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<FormError | null>(null);
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
@@ -35,7 +71,7 @@ export function LoginScreen() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
+    setError(null);
     setInfo("");
     setLoading(true);
 
@@ -72,7 +108,7 @@ export function LoginScreen() {
         setInfo("Check your email for a reset link.");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(classifyError(err));
     } finally {
       setLoading(false);
     }
@@ -151,12 +187,20 @@ export function LoginScreen() {
             )}
 
             {error && (
-              <p
+              <div
                 role="alert"
-                className="font-mono font-normal text-footnote text-red"
+                className="font-mono font-normal text-footnote text-red flex flex-col gap-1.5"
               >
-                {error}
-              </p>
+                <p>{error.message}</p>
+                {error.isNetwork && (
+                  <Link
+                    href="/dashboard/inbox?demo"
+                    className="text-accent hover:text-accent/80 transition-colors uppercase tracking-[0.04em]"
+                  >
+                    Try Demo →
+                  </Link>
+                )}
+              </div>
             )}
 
             {info && (
@@ -183,7 +227,7 @@ export function LoginScreen() {
                 <button
                   onClick={() => {
                     setMode("signup");
-                    setError("");
+                    setError(null);
                     setInfo("");
                   }}
                   className="font-mono text-footnote text-text3 hover:text-text2 transition-colors cursor-pointer"
@@ -194,7 +238,7 @@ export function LoginScreen() {
                 <button
                   onClick={() => {
                     setMode("forgot");
-                    setError("");
+                    setError(null);
                     setInfo("");
                   }}
                   className="font-mono text-footnote text-text3 hover:text-text2 transition-colors cursor-pointer"
@@ -207,7 +251,7 @@ export function LoginScreen() {
               <button
                 onClick={() => {
                   setMode("signin");
-                  setError("");
+                  setError(null);
                   setInfo("");
                 }}
                 className="font-mono text-footnote text-text3 hover:text-text2 transition-colors cursor-pointer"
@@ -220,7 +264,7 @@ export function LoginScreen() {
               <button
                 onClick={() => {
                   setMode("signin");
-                  setError("");
+                  setError(null);
                   setInfo("");
                 }}
                 className="font-mono text-footnote text-text3 hover:text-text2 transition-colors cursor-pointer"
