@@ -19,7 +19,7 @@ import { Footer } from "@/components/landing/footer";
 import Script from "next/script";
 
 function Divider() {
-  return <div className="h-px bg-border" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />;
 }
 
 const sectionFade = {

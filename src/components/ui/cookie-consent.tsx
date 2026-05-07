@@ -36,6 +36,7 @@ export function CookieConsent() {
       className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:max-w-[420px]
                  bg-surface border border-border rounded-lg p-4 z-[9999]
                  shadow-lg
+                 [html[data-theme=dark]_&]:shadow-[0_12px_40px_rgba(0,0,0,0.24),inset_0_1px_0_rgba(255,255,255,0.04)]
                  animate-in slide-in-from-bottom-4 duration-300"
       role="alert"
       aria-live="polite"

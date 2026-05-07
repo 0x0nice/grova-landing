@@ -41,7 +41,10 @@ export function Header() {
                        rounded px-3.5 py-1.5
                        font-mono text-[0.65rem] font-semibold tracking-[0.04em]
                        no-underline inline-flex items-center gap-1.5
-                       transition-opacity duration-[180ms] hover:opacity-85`}
+                       [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
+                       transition-all duration-[180ms]
+                       hover:opacity-92 hover:-translate-y-px hover:shadow-sm
+                       active:scale-[0.97] active:translate-y-0`}
           >
             Get Started
           </Link>

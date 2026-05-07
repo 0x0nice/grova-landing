@@ -30,9 +30,9 @@ export function Input({
           w-full bg-bg2 border rounded px-4 py-3
           font-mono text-body text-text
           placeholder:text-text3
-          transition-colors duration-[180ms] ease
+          transition-all duration-[180ms] ease
           focus:outline-none focus:border-accent
-          focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface
+          focus:shadow-[0_0_0_4px_color-mix(in_oklch,var(--color-accent)_15%,transparent)]
           ${error ? "border-red" : "border-border"}
           ${className}
         `}

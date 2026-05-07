@@ -1,0 +1,17 @@
+# Widget JS files — short cache so updates propagate quickly
+/grova-widget.js
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+/grova-business-widget.js
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+# Vendor libs — version-pinned, long cache
+/modern-screenshot.min.js
+  Cache-Control: public, max-age=86400, immutable
+  Access-Control-Allow-Origin: *
+
+/html2canvas.min.js
+  Cache-Control: public, max-age=86400, immutable
+  Access-Control-Allow-Origin: *
