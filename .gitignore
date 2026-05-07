@@ -24,9 +24,9 @@
 .DS_Store
 *.pem
 
-# Finder / iCloud / Dropbox sync duplicates (e.g. "_headers 2", "routes.d 2.ts")
-* 2
-* 2.*
+# Finder / iCloud / Dropbox sync duplicates (e.g. "_headers 2", "routes.d 3.ts")
+* [0-9]
+* [0-9].*
 
 # debug
 npm-debug.log*

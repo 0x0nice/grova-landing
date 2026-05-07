@@ -100,10 +100,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    // Demo mode has no real Supabase session — clear local state only.
+    if (isDemo) {
+      setSession(null);
+      setIsDemo(false);
+      return;
+    }
+    // If Supabase isn't configured (e.g. static export without env vars
+    // baked in), there's nothing to sign out from server-side. Don't
+    // throw — just clear local state.
+    if (
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ) {
+      setSession(null);
+      return;
+    }
     const supabase = createClient();
     await supabase.auth.signOut();
     setSession(null);
-  }, []);
+  }, [isDemo]);
 
   const resetPassword = useCallback(async (email: string) => {
     const supabase = createClient();
