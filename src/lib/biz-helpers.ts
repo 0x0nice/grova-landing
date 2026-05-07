@@ -70,54 +70,81 @@ function thisAndLastWeekItems(items: FeedbackItem[]) {
   return { thisWeek, lastWeek };
 }
 
-/** Build natural language insight lines */
-export function buildInsightLines(items: FeedbackItem[]): string[] {
-  const { thisWeek, lastWeek } = thisAndLastWeekItems(items);
-  const lines: string[] = [];
+export interface InsightEvidence {
+  thisWeekCount: number;
+  totalCount: number;
+  sinceLastVisit?: { count: number; label: string };
+  topTheme?: {
+    category: string;
+    count: number;
+    quote?: string;
+    trend: "up" | "down" | "steady" | "new";
+  };
+  needsReply?: number;
+}
 
-  if (thisWeek.length === 0) {
-    lines.push("No messages received this week yet.");
-    if (items.length === 0) {
-      lines.push(
-        "Submit your first feedback using the widget on your website."
-      );
+/** Build evidence for the InsightProse component — specific facts, not pre-baked sentences. */
+export function buildInsightEvidence(
+  items: FeedbackItem[],
+  opts?: { previousVisit?: Date | null; sinceLabel?: string }
+): InsightEvidence {
+  const { thisWeek, lastWeek } = thisAndLastWeekItems(items);
+
+  const evidence: InsightEvidence = {
+    thisWeekCount: thisWeek.length,
+    totalCount: items.length,
+  };
+
+  if (opts?.previousVisit && opts?.sinceLabel) {
+    const cutoff = opts.previousVisit.getTime();
+    const count = items.filter(
+      (i) => new Date(i.created_at).getTime() > cutoff
+    ).length;
+    if (count > 0) {
+      evidence.sinceLastVisit = { count, label: opts.sinceLabel };
     }
-    return lines;
   }
 
-  lines.push(
-    `${thisWeek.length} customer message${thisWeek.length === 1 ? "" : "s"} this week.`
-  );
-
+  // Top theme — pick from this-week if available, else from full set
+  const sourceForTheme = thisWeek.length > 0 ? thisWeek : items;
   const catCounts: Record<string, number> = {};
-  thisWeek.forEach((i) => {
+  sourceForTheme.forEach((i) => {
     if (i.type) catCounts[i.type] = (catCounts[i.type] || 0) + 1;
   });
   const top = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0];
   if (top) {
-    const lastCnt = lastWeek.filter((i) => i.type === top[0]).length;
-    const tr = trendArrow(top[1], lastCnt);
-    const trendTxt =
-      tr.cls === "trend-up"
-        ? " That's up from last week."
-        : tr.cls === "trend-down"
-          ? " That's down from last week."
-          : "";
-    lines.push(
-      `${top[1]} ${top[1] === 1 ? "message" : "messages"} about ${top[0].toLowerCase()}.${trendTxt}`
-    );
+    const [category, count] = top;
+    const lastCnt = lastWeek.filter((i) => i.type === category).length;
+    const trArrow = trendArrow(count, lastCnt);
+    const trend: InsightEvidence["topTheme"] extends infer T
+      ? T extends { trend: infer U }
+        ? U
+        : never
+      : never =
+      lastCnt === 0 && count > 0
+        ? "new"
+        : trArrow.cls === "trend-up"
+          ? "up"
+          : trArrow.cls === "trend-down"
+            ? "down"
+            : "steady";
+
+    // Pick a representative quote — shortest message in the cluster (most quotable).
+    const themeItems = sourceForTheme
+      .filter((i) => i.type === category)
+      .filter((i) => i.message && i.message.length > 0)
+      .sort((a, b) => a.message.length - b.message.length);
+    const quote = themeItems[0]?.message;
+
+    evidence.topTheme = { category, count, quote, trend };
   }
 
-  const needsReply = thisWeek.filter(
+  const needsReply = items.filter(
     (i) => i.triage?.suggested_reply && i.status === "pending"
-  );
-  if (needsReply.length) {
-    lines.push(
-      `${needsReply.length} message${needsReply.length === 1 ? "" : "s"} might need a reply from you.`
-    );
-  }
+  ).length;
+  if (needsReply > 0) evidence.needsReply = needsReply;
 
-  return lines;
+  return evidence;
 }
 
 /** Chart colors for categories */
