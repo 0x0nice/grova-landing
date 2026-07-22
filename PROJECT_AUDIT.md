@@ -19,9 +19,13 @@ a real master-detail decision surface, onboarding verifies ingestion, feedback
 loading is bounded, tenant access is centralized, AI and scheduled work are
 durable, and previously browser-local operating settings are synchronized.
 
-The code is ready for a controlled staging deployment. It is not honest to call
-the production rollout complete until migrations 007–013 are applied, workers
-are scheduled, and a live Stripe/Resend/Supabase smoke test is performed.
+The verified product build is now deployed to production. Migrations 007–013
+were applied transactionally after a rollback preflight, the API is healthy on
+Railway, and the exact site build is live on Cloudflare Pages. The remaining
+operational work is explicit: provision recurring worker schedules, complete a
+real Stripe test checkout and outbound Resend delivery, add observability, and
+remove the managed Cloudflare challenge currently applied to HTML requests on
+`grova.dev`.
 
 ## Canonical source map
 
@@ -152,6 +156,15 @@ At the end of this pass:
 - Widget scripts: Node syntax checks pass.
 - API scripts and source: Node syntax checks pass.
 - API and site production audits: 0 known vulnerabilities.
+- Supabase migrations 007–013 passed a rollback preflight and then committed in
+  one production transaction; post-migration constraints, policies, functions,
+  tables, columns, and row counts were verified.
+- Railway production deployment `851367c2-8486-465b-9f03-4f0508e9802e` is
+  running API commit `a4ee086`; health, authenticated empty-queue worker calls,
+  authorization rejection, and signed Resend webhook handling passed.
+- Cloudflare Pages production deployment
+  `ddf59813-65d7-4015-a759-ea5f6463ee0a` is running site commit `beb76a3`;
+  its home, demo inbox, and widget routes return 200.
 - Rendered landing pages were inspected at 1440×1000 and 390×844 in both product
   tracks and both themes. The populated demo inbox, docs route, theme control,
   track control, cookie consent, feedback widget, and demo navigation were
@@ -163,30 +176,29 @@ At the end of this pass:
 Performance trace capture remains a follow-up because the Chrome DevTools MCP
 is not configured in this workspace. This is an explicit gap, not a silent pass.
 
-## Deployment sequence
+## Production rollout status
 
-1. Back up the Supabase database and confirm the target project.
-2. Apply every migration in filename order, especially 007–013.
-3. Set new required production variables: `CRON_SECRET` and the existing core,
-   Resend, and conditional Stripe values listed in `.env.example`.
-4. Deploy `grova-api`.
-5. Call `/health` and verify database plus configured-service status.
-6. Invoke `/internal/jobs/triage?limit=1`, `/follow-ups?limit=1`, and `/digests`
-   with the scheduler bearer token.
-7. Configure recurring schedules: triage every minute, follow-ups hourly, and
-   digest weekly after the UTC week closes.
-8. Deploy `grova-site` with all four required public build variables.
-9. Run one live developer and one live business ingestion path.
-10. Complete a Stripe test checkout, resend the webhook once to verify
-    idempotency, send one Resend action, and confirm its webhook state.
+- Complete: permission-restricted logical Supabase backup at
+  `/tmp/grova-production-backup-2026-07-22.json`.
+- Complete: target project confirmation and migrations 007–013.
+- Complete: required production secrets, including `CRON_SECRET` and the
+  existing Resend webhook signing secret.
+- Complete: API deploy, health check, queue endpoint checks, signed webhook
+  check, and private screenshot-bucket verification.
+- Complete: exact verified site export deployed to Cloudflare Pages.
+- Pending: recurring schedules for triage every minute, follow-ups hourly, and
+  digest weekly after the UTC week closes. Digest execution can send live
+  customer email and was deliberately not invoked as a smoke test.
+- Pending: one controlled developer and business ingestion journey against live
+  accounts, one Stripe test checkout with duplicate webhook replay, and one
+  outbound Resend action with delivery-state confirmation.
+- Pending: replace the current managed challenge on `grova.dev` HTML requests
+  with a narrow, evidence-based edge rule. The immutable Pages production URL
+  is healthy while the custom domain challenge is investigated.
 
-Do not deploy the site contract before the matching API migrations and routes.
-
-The code can be pushed and previewed now. Live API release is intentionally
-blocked until Railway and Supabase are authenticated on this machine (or an
-operator applies the migrations and deploys from the merged branch). Neither
-CLI currently has a stored login, so bypassing the migration gate would be an
-unsafe production change.
+The production deployment currently runs the reviewed commits from the draft
+PRs. Merge them before the next Git-connected deployment so the default branch
+cannot later redeploy an older application revision.
 
 ## Next product bets
 
