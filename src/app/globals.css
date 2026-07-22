@@ -109,13 +109,13 @@
   --text-footnote--line-height: 1.5;
   --text-footnote--letter-spacing: 0.04em;
 
-  --text-caption: 0.7rem;
+  --text-caption: 0.74rem;
   --text-caption--line-height: 1.4;
-  --text-caption--letter-spacing: 0.08em;
+  --text-caption--letter-spacing: 0.05em;
 
-  --text-micro: 0.6rem;
-  --text-micro--line-height: 1.3;
-  --text-micro--letter-spacing: 0.1em;
+  --text-micro: 0.68rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.04em;
 }
 
 /* ===================================================================
@@ -169,8 +169,8 @@
   --text-callout: calc(0.9rem * var(--font-scale));
   --text-subheadline: calc(0.835rem * var(--font-scale));
   --text-footnote: calc(0.79rem * var(--font-scale));
-  --text-caption: calc(0.7rem * var(--font-scale));
-  --text-micro: calc(0.6rem * var(--font-scale));
+  --text-caption: calc(0.74rem * var(--font-scale));
+  --text-micro: calc(0.68rem * var(--font-scale));
 }
 
 /* ===================================================================

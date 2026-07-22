@@ -19,6 +19,30 @@ export interface Metadata {
   connection?: string;
   touch?: boolean;
   url?: string;
+  surface_key?: string;
+  platform?: string;
+  app_version?: string;
+  build_number?: string;
+  commit_sha?: string;
+  deployment_id?: string;
+  release_channel?: string;
+  session_id?: string;
+  trace_id?: string;
+}
+
+export interface FeedbackContext {
+  version?: number;
+  surface?: Record<string, unknown>;
+  release?: Record<string, unknown>;
+  device?: Record<string, unknown>;
+  session?: Record<string, unknown>;
+  runtime?: Record<string, unknown>;
+  navigation?: Record<string, unknown>;
+  errors?: Record<string, unknown>;
+  network?: Record<string, unknown>;
+  feature_flags?: Record<string, unknown>;
+  accessibility?: Record<string, unknown>;
+  privacy?: Record<string, unknown>;
 }
 
 export interface SubScores {
@@ -58,6 +82,8 @@ export interface Triage {
   suggested_reply?: string;
   sub_scores?: SubScores;
   suggested_actions?: SuggestedAction[];
+  acceptance_criteria?: string[];
+  model_version?: string;
 }
 
 export interface FeedbackItem {
@@ -68,6 +94,10 @@ export interface FeedbackItem {
   page?: string;
   created_at: string;
   status: "pending" | "approved" | "denied";
+  project_id?: string;
+  surface_id?: string | null;
+  context_version?: number;
+  context?: FeedbackContext | null;
   email?: string;
   metadata?: Metadata;
   console_errors?: ConsoleError[];

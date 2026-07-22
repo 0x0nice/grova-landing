@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import type { FeedbackItem } from "@/types/feedback";
 import { effectiveScore, signalCount, timeAgo } from "@/lib/triage";
 import { generateAIPrompt } from "@/lib/ai-prompt";
@@ -75,15 +74,8 @@ export function DoneCard({ item, projectContext }: DoneCardProps) {
       </div>
 
       {/* AI prompt block */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
+      {expanded && (
+          <div>
             <div className="border-t border-border p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="font-mono text-micro text-text3">
@@ -101,9 +93,8 @@ export function DoneCard({ item, projectContext }: DoneCardProps) {
                 {prompt}
               </pre>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+      )}
     </div>
   );
 }

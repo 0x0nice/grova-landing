@@ -4,6 +4,16 @@ import type {
   ActionSettings,
 } from "@/types/feedback";
 import type { BizConfig } from "@/stores/biz-store";
+import type {
+  AgentProvider,
+  ChangeApprovalResponse,
+  ChangeDetail,
+  ChangePackage,
+  ReleaseApprovalResponse,
+  ProjectSurface,
+  RunnerDevice,
+} from "@/types/change";
+import type { PageResponse } from "@/types/pagination";
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -160,6 +170,120 @@ export function putScoringWeights(projectId: string, weights: Record<string, num
   return apiRequest<ScoringWeightsResponse>(
     `/projects/${projectId}/scoring-weights`,
     { method: "PATCH", body: JSON.stringify({ weights }) },
+    token
+  );
+}
+
+export function getChanges(projectId: string, token: string, page = 1) {
+  return apiGet<PageResponse<ChangePackage>>(
+    `/changes?project_id=${encodeURIComponent(projectId)}&page=${page}&limit=50`,
+    token
+  );
+}
+
+export function getChange(changeId: string, token: string) {
+  return apiGet<ChangeDetail>(`/changes/${changeId}`, token);
+}
+
+export function approveChange(
+  changeId: string,
+  provider: AgentProvider,
+  dispatchMode: "local_automated" | "interactive",
+  token: string
+) {
+  return apiPost<ChangeApprovalResponse>(
+    `/changes/${changeId}/approve`,
+    { provider, dispatch_mode: dispatchMode },
+    token
+  );
+}
+
+export function dismissChange(changeId: string, rationale: string | null, token: string) {
+  return apiPost<{ success: boolean; change_package: ChangePackage }>(
+    `/changes/${changeId}/dismiss`,
+    { rationale },
+    token
+  );
+}
+
+export function cancelChangeRun(changeId: string, token: string) {
+  return apiPost<{ success: boolean }>(`/changes/${changeId}/cancel`, {}, token);
+}
+
+export function approveRelease(
+  releaseId: string,
+  targets: Array<{ surface_id: string; environment: string }>,
+  token: string
+) {
+  return apiPost<ReleaseApprovalResponse>(
+    `/releases/${releaseId}/approve`,
+    { targets },
+    token
+  );
+}
+
+export function requestRollback(
+  releaseId: string,
+  deploymentId: string,
+  rationale: string,
+  token: string
+) {
+  return apiPost<{ success: boolean; deployment: import("@/types/change").Deployment }>(
+    `/releases/${releaseId}/rollback`,
+    { deployment_id: deploymentId, rationale },
+    token
+  );
+}
+
+export function retryRelease(releaseId: string, rationale: string | null, token: string) {
+  return apiPost<ReleaseApprovalResponse>(
+    `/releases/${releaseId}/retry`,
+    { rationale },
+    token
+  );
+}
+
+export function getProjectSurfaces(projectId: string, token: string) {
+  return apiGet<ProjectSurface[]>(`/projects/${projectId}/surfaces`, token);
+}
+
+export function createProjectSurface(
+  projectId: string,
+  surface: Omit<ProjectSurface, "id" | "project_id" | "enabled"> & { enabled?: boolean },
+  token: string
+) {
+  return apiPost<ProjectSurface>(
+    `/projects/${projectId}/surfaces`,
+    surface as unknown as Record<string, unknown>,
+    token
+  );
+}
+
+export function updateProjectSurface(
+  projectId: string,
+  surfaceId: string,
+  updates: Partial<ProjectSurface>,
+  token: string
+) {
+  return apiRequest<ProjectSurface>(
+    `/projects/${projectId}/surfaces/${surfaceId}`,
+    { method: "PATCH", body: JSON.stringify(updates) },
+    token
+  );
+}
+
+export function createRunnerPairingCode(token: string) {
+  return apiPost<{ code: string; expires_at: string }>("/runner/pairing-codes", {}, token);
+}
+
+export function getRunnerDevices(token: string) {
+  return apiGet<RunnerDevice[]>("/runner/devices", token);
+}
+
+export function revokeRunnerDevice(deviceId: string, token: string) {
+  return apiRequest<{ success: boolean }>(
+    `/runner/devices/${deviceId}`,
+    { method: "DELETE" },
     token
   );
 }

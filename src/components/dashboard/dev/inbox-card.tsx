@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { FeedbackItem, SentAction } from "@/types/feedback";
 import {
   effectiveScore,
@@ -209,15 +209,8 @@ export function InboxCard({ item, onApprove, onDeny, defaultExpanded = false }: 
       </div>
 
       {/* Expanded detail panel */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={defaultExpanded ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
+      {expanded && (
+          <div>
             <div className="border-t border-border p-5 flex flex-col gap-5">
               {/* Score anchor */}
               <div className="flex items-center gap-3">
@@ -333,9 +326,8 @@ export function InboxCard({ item, onApprove, onDeny, defaultExpanded = false }: 
                 </div>
               )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+      )}
     </motion.div>
   );
 }

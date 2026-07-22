@@ -10,6 +10,7 @@ import { useInboxStore } from "@/stores/inbox-store";
 import { useDoneStore } from "@/stores/done-store";
 import { useArchiveStore } from "@/stores/archive-store";
 import { useBizStore } from "@/stores/biz-store";
+import { useChangeStore } from "@/stores/change-store";
 import { DEMO_PROJECTS } from "@/lib/demo-data";
 import { NewProjectModal } from "./new-project-modal";
 
@@ -20,8 +21,8 @@ interface Tab {
 }
 
 const devTabs: Tab[] = [
-  { view: "inbox", label: "Inbox", countKey: "inbox" },
-  { view: "done", label: "Resolved", countKey: "done" },
+  { view: "inbox", label: "Changes", countKey: "inbox" },
+  { view: "done", label: "History", countKey: "done" },
   { view: "archive", label: "Dismissed", countKey: "archive" },
   { view: "settings", label: "Settings" },
   { view: "billing", label: "Billing" },
@@ -47,7 +48,8 @@ export function NavBar() {
     selectProject,
     setProjects,
   } = useProjectStore();
-  const inboxCount = useInboxStore((s) => s.total || s.items.length);
+  const inboxCount = useChangeStore((s) => s.total || s.items.length);
+  const resetChanges = useChangeStore((s) => s.reset);
   const resetInbox = useInboxStore((s) => s.reset);
   const doneCount = useDoneStore((s) => s.total || s.items.length);
   const resetDone = useDoneStore((s) => s.reset);
@@ -100,6 +102,7 @@ export function NavBar() {
 
   function handleProjectSwitch(project: (typeof projects)[number]) {
     resetInbox();
+    resetChanges();
     resetDone();
     resetArchive();
     resetBiz();
@@ -186,7 +189,7 @@ export function NavBar() {
                   {active?.mode === "developer" ? "DEV" : "BIZ"}
                 </span>
                 <span className="truncate max-w-[140px] max-md:max-w-[80px]">
-                  {active?.name || (projectsLoading ? "Loading..." : "Select project")}
+                  {active?.name || "Select project"}
                 </span>
                 <svg
                   className={`w-3 h-3 text-text3 transition-transform duration-150 shrink-0 ${

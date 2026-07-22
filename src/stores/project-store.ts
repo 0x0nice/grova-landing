@@ -21,6 +21,16 @@ interface ProjectState {
 
 let projectLoadVersion = 0;
 
+function savedProject(): Project | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const value = localStorage.getItem("grova-active-project");
+    return value ? JSON.parse(value) as Project : null;
+  } catch {
+    return null;
+  }
+}
+
 export const useProjectStore = create<ProjectState>((set, get) => ({
   projects: [],
   active: null,
@@ -34,7 +44,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     // loop in the dashboard shell.
     if (get().loading) return;
     const loadVersion = ++projectLoadVersion;
-    set({ loading: true, error: null });
+    const cached = get().active || savedProject();
+    set({ loading: true, error: null, active: cached });
     try {
       const projects = await apiGet<Project[]>("/projects", token);
       if (loadVersion !== projectLoadVersion) return;
@@ -70,6 +81,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     set({ active: project });
     try {
       localStorage.setItem("grova-active-project-id", project.id);
+      localStorage.setItem("grova-active-project", JSON.stringify(project));
     } catch {}
   },
 

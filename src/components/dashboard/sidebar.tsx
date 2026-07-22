@@ -8,6 +8,7 @@ import { useInboxStore } from "@/stores/inbox-store";
 import { useDoneStore } from "@/stores/done-store";
 import { useArchiveStore } from "@/stores/archive-store";
 import { useBizStore } from "@/stores/biz-store";
+import { useChangeStore } from "@/stores/change-store";
 import { DEMO_PROJECTS } from "@/lib/demo-data";
 import { NewProjectModal } from "./new-project-modal";
 
@@ -19,6 +20,7 @@ export function Sidebar() {
   const resetDone = useDoneStore((s) => s.reset);
   const resetArchive = useArchiveStore((s) => s.reset);
   const resetBiz = useBizStore((s) => s.reset);
+  const resetChanges = useChangeStore((s) => s.reset);
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -34,6 +36,7 @@ export function Sidebar() {
   function handleSelect(project: (typeof projects)[number]) {
     // Reset all view stores so data reloads for the new project
     resetInbox();
+    resetChanges();
     resetDone();
     resetArchive();
     resetBiz();

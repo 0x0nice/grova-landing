@@ -12,6 +12,12 @@ export interface Project {
     categories: string[];
   } | null;
   scoring_weights?: Record<string, number>;
+  developer_config?: {
+    preferred_agent?: "codex" | "claude";
+    auto_dispatch?: boolean;
+    release_gate?: "manual" | "automatic_after_proof";
+    protected_change_gate?: "manual";
+  } | null;
   created_at: string;
   user_id?: string;
 }

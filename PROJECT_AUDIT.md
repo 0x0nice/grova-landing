@@ -13,19 +13,19 @@ feedback inbox. Its defensible workflow is:
 4. Keep a person in control of customer-facing or build-facing actions.
 5. Learn from project-specific operating rules over time.
 
-The restart pass aligned the product and implementation around that loop. The
-site now has a distinctive editorial/operational design language, the inbox is
-a real master-detail decision surface, onboarding verifies ingestion, feedback
-loading is bounded, tenant access is centralized, AI and scheduled work are
-durable, and previously browser-local operating settings are synchronized.
+The restart pass now carries that loop through code delivery. Reports capture
+safe browser, device, build, route, console, and network context. Grova turns
+the evidence into a versioned Change Package. An owner or admin can approve it
+for Codex or Claude Code, either as an interactive handoff or through a paired
+Mac runner. The runner works in isolated git worktrees, accepts only structured
+agent output, runs independent proof, and creates a release candidate only when
+every required check passes. Release remains a separate manual decision across
+every affected product surface.
 
-The verified product build is now deployed to production. Migrations 007–013
-were applied transactionally after a rollback preflight, the API is healthy on
-Railway, and the exact site build is live on Cloudflare Pages. The remaining
-operational work is explicit: provision recurring worker schedules, complete a
-real Stripe test checkout and outbound Resend delivery, add observability, and
-remove the managed Cloudflare challenge currently applied to HTML requests on
-`grova.dev`.
+The overhaul is implemented and verified locally. Production migrations
+007–016 are applied and verified. The new API and site builds are ready for
+rollout after the previously exposed Supabase service credential is rotated.
+That credential rotation is a release gate, not a documentation follow-up.
 
 ## Canonical source map
 
@@ -52,6 +52,56 @@ That led to the signature landing-page object—the decision brief—and the
 desktop inbox’s ranked queue plus persistent detail pane. Lower landing sections
 were changed from icon/card grids to a pipeline, operating steps, definition
 rows, and a plan ledger.
+
+### Anti-slop point-by-point recheck
+
+The final UI pass re-read the full design law and checked every listed failure
+mode. The applicable findings are grouped here so exceptions remain explicit:
+
+- Composition: the landing page is built around Grova's populated decision
+  brief, not a split SaaS hero, fake app window, feature-card row, generic CTA
+  slab, pricing highlight preset, testimonial card, or standard footer stack.
+  The dashboard is an operational queue and evidence dossier, not a card-grid
+  reskin.
+- Palette and atmosphere: the system holds one quiet mineral-green, rust, black,
+  and lichen-white palette. It has no blue-purple, candy, aurora, radial halo,
+  cut-off glow, banded gradient, full-page graph paper, or cool slate default.
+  Grain remains on the page substrate behind live content.
+- Type: Sentient is the single character display face, with the system sans as
+  the workhorse and system mono reserved for real code. Microcopy was raised to
+  0.68rem and tracking reduced so labels remain readable. There is no gradient
+  headline, cramped display statistic, all-caps label costume, default Google
+  tech stack, or decorative quote glyph.
+- Geometry and depth: the decision brief owns one deliberate clipped corner and
+  pads content clear of it. Controls and evidence panels use restrained tonal
+  surfaces. There are no icon tiles, faux shadow boxes, kitchen-sink cards,
+  default floating cards, glow borders, or symmetric cloud shadows. Rounded
+  status shapes remain only where containment communicates state.
+- Alignment and edges: desktop navigation, project selection, primary tabs,
+  theme, refresh, and sign-out share one row. The inbox title, stage filters,
+  counts, and refresh share one contextual row. Mobile keeps the stage row
+  scrollable, hides redundant statistics, uses queue-to-detail drill-in, and
+  gives every text block a real gutter. Screenshots confirmed no shaved text,
+  ragged action rows, off-center controls, or unintended section overlap.
+- Motion: visible content never starts at opacity zero. Landing track changes
+  and onboarding steps move already-visible content; optional dashboard details
+  now render directly when opened instead of depending on a height/opacity
+  reveal. Buttons do not jump, scale, glow, or animate underlines. Reduced-motion
+  rules collapse every remaining transition.
+- Controls: project selection, theme, stage tabs, provider and handoff selectors,
+  dismiss confirmation, mobile back, Settings, and Smart Actions were clicked
+  in the browser. No dead control, stranded loading label, or console warning
+  remained. Focus-visible state and skip navigation are present.
+- Content and legitimacy: product examples use Grova-specific reports, proof
+  criteria, surfaces, providers, and release states. There are no invented
+  customer logos, fake company claims, fake countdowns, placeholder dashboards,
+  or decorative integrations. Icons are bare marks where needed and absent
+  where words are clearer.
+
+The deliberate exceptions are functional: status labels can use compact
+contained shapes; true code and commit hashes use mono; scrollable operational
+lists use overflow; skeletons use a faint directional sweep while data is
+actually pending. None gates readable content or imitates a marketing effect.
 
 ## What works now
 
@@ -80,6 +130,18 @@ rows, and a plan ledger.
   the API instead of disappearing with localStorage or a different device.
 - Project scoring weights are persisted, dimension-validated, used by triage,
   and editable for Builder/Agency projects.
+- Developer reports become immutable, versioned Change Packages containing the
+  interpreted problem, affected surfaces, risk, constraints, acceptance
+  criteria, proof recipe, and provider-ready prompt.
+- Approval supports Codex and Claude Code. Interactive mode opens or copies the
+  approved prompt without sending it silently. Automated mode queues work for a
+  paired runner owned by the same developer.
+- One project can describe distinct web, mobile web, iPhone, iPad, Mac, and API
+  surfaces, each with its own repository root, build target, verification
+  commands, protected paths, release channels, and deployment recipe.
+- Release approval is independent of code approval. Only the exact proven
+  commit can ship, every affected surface must be included, failed targets stop
+  queued siblings, retry preserves earlier attempts, and rollback is explicit.
 
 ### AI and automation
 
@@ -94,6 +156,12 @@ rows, and a plan ledger.
   timer.
 - Customer-facing actions remain human-reviewed. The unused auto-send setting
   is no longer exposed.
+- Coding-agent work runs in isolated worktrees with a sanitized environment.
+  Free-form prose cannot be mistaken for successful structured output.
+- Verification executes outside the coding agent and records commands, output,
+  artifacts, commit mappings, and proof status before release is possible.
+- The launchd-capable local runner discovers both installed Codex and Claude
+  Code binaries and can remain available without keeping a terminal open.
 
 ### Tenancy and security
 
@@ -114,24 +182,33 @@ rows, and a plan ledger.
   the API is the authorization boundary.
 - Missing production email or core service configuration fails closed.
 - Both production dependency graphs currently report zero known vulnerabilities.
+- Collection keys can submit and identify a project but cannot approve code,
+  pair a runner, release a build, retry deployment, or request rollback.
+- Runner and desktop tokens are hashed at rest, scoped to one owner, revocable,
+  and split by capability so a desktop review client is not a job runner.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-  W[Website widget or QR form] -->|project collection key| A[Express API]
-  D[Next.js static dashboard] -->|Supabase JWT| A
-  A --> P[(Supabase Postgres)]
-  A --> S[(Private screenshot storage)]
-  A --> Q[Durable triage and follow-up queues]
-  C[Authenticated scheduler] --> Q
-  Q --> AI[Anthropic triage]
-  Q --> E[Resend delivery]
-  A --> B[Stripe checkout and webhooks]
+  U[Web widget, QR form, or native SDK] -->|report plus safe context| A[Grova API]
+  A --> T[AI interpretation]
+  T --> C[(Versioned Change Package)]
+  D[Web dashboard or Grova Mac] -->|owner decision| C
+  C -->|approved prompt| R[Paired Mac runner]
+  R --> X[Codex or Claude Code]
+  X --> W[Isolated git worktree]
+  W --> V[Independent proof recipe]
+  V -->|passed| L[Manual coordinated release]
+  L --> P[Web, API, iPhone, iPad, or Mac targets]
+  L -->|failed target| K[Stop siblings, retry, or rollback]
+  A --> DB[(Supabase audit history)]
 ```
 
-The static site owns presentation and client state. The API owns authorization,
-entitlements, data validation, external side effects, and durable work. Supabase
+The static site and native Mac app own presentation and developer decisions.
+The API owns authorization, validation, lifecycle transitions, and immutable
+audit history. The local runner owns on-device repositories, coding-agent
+processes, proof commands, deployment commands, and rollback commands. Supabase
 Auth proves identity; browser clients do not query protected application tables
 directly.
 
@@ -144,34 +221,39 @@ directly.
 - Model calls and email sends happen behind claimable jobs or explicit user
   actions.
 - Project preferences are data, not local UI settings.
+- Approval, proof, and release are three separate gates.
+- A coding agent never receives production deployment authority.
+- Deployment records snapshot the proven commit and exact release recipe so a
+  later settings edit cannot change work already approved.
 
 ## Verification evidence
 
 At the end of this pass:
 
-- API: 15 suites, 80 tests passing.
-- Site: TypeScript passes.
-- Site: ESLint passes with zero warnings.
-- Site: 27-route Next.js production export passes.
-- Widget scripts: Node syntax checks pass.
-- API scripts and source: Node syntax checks pass.
-- API and site production audits: 0 known vulnerabilities.
-- Supabase migrations 007–013 passed a rollback preflight and then committed in
-  one production transaction; post-migration constraints, policies, functions,
-  tables, columns, and row counts were verified.
-- Railway production deployment `851367c2-8486-465b-9f03-4f0508e9802e` is
-  running API commit `a4ee086`; health, authenticated empty-queue worker calls,
-  authorization rejection, and signed Resend webhook handling passed.
-- Cloudflare Pages production deployment
-  `ddf59813-65d7-4015-a759-ea5f6463ee0a` is running site commit `beb76a3`;
-  its home, demo inbox, and widget routes return 200.
-- Rendered landing pages were inspected at 1440×1000 and 390×844 in both product
-  tracks and both themes. The populated demo inbox, docs route, theme control,
-  track control, cookie consent, feedback widget, and demo navigation were
-  exercised with real clicks.
-- The mobile document width matched the viewport, live text was not clipped,
-  the hero owned the first frame, and the widget cleared the cookie/footer
-  controls.
+- API: 21 suites, 102 tests passing.
+- Local runner: 6 tests passing, including structured output, worktree escape,
+  proof, deployment, provider discovery, and launchd XML safety.
+- Site: TypeScript and ESLint pass with zero warnings.
+- Site: all 27 routes pass the optimized Next.js production build.
+- GrovaFeedbackKit: 2 Swift tests pass for scalar context encoding and sensitive
+  route-query redaction.
+- Native Grova Mac app: Xcode macOS build succeeds.
+- Supabase migration 016 passes compilation plus a real rollback-only behavior
+  scenario proving that a failed attempt stays in history while its successful
+  retry advances the release and change to deployed.
+- Production tables, columns, claim functions, and four atomic release
+  functions were verified after migrations 014–016.
+- The local runner doctor finds Codex CLI 0.144.1 and Claude Code 2.1.138.
+- The pre-overhaul Railway and Cloudflare deployments remain the production
+  baseline until credential rotation and the rollout below are complete.
+- The dashboard was exercised with real browser clicks in dark and light modes
+  at desktop and 430px mobile widths. Project switching, stage filtering,
+  Codex/Claude selection, local/interactive handoff, dismiss confirmation,
+  mobile drill-in/back, theme control, Settings, and legacy Smart Actions all
+  responded without console errors.
+- Repeated checks found no visible `Loading` label in the project selector,
+  change queue, or expanded Smart Actions panel. The project-store reload loop
+  and active-object dependency that caused the flicker were removed.
 
 Performance trace capture remains a follow-up because the Chrome DevTools MCP
 is not configured in this workspace. This is an explicit gap, not a silent pass.
@@ -180,12 +262,16 @@ is not configured in this workspace. This is an explicit gap, not a silent pass.
 
 - Complete: permission-restricted logical Supabase backup at
   `/tmp/grova-production-backup-2026-07-22.json`.
-- Complete: target project confirmation and migrations 007–013.
+- Complete: target project confirmation and migrations 007–016.
 - Complete: required production secrets, including `CRON_SECRET` and the
   existing Resend webhook signing secret.
-- Complete: API deploy, health check, queue endpoint checks, signed webhook
-  check, and private screenshot-bucket verification.
-- Complete: exact verified site export deployed to Cloudflare Pages.
+- Pending: rotate the exposed Supabase service credential, update Railway, and
+  prove database-backed health before revoking the old key.
+- Pending: deploy the reviewed API and site branches, then repeat production
+  health, authorization, route, and browser smoke checks.
+- Pending: pair the local runner and native Mac review app, map all Grova and
+  TradeOS surface roots, install the launchd runner service, and exercise one
+  controlled end-to-end change with a harmless test repository.
 - Pending: recurring schedules for triage every minute, follow-ups hourly, and
   digest weekly after the UTC week closes. Digest execution can send live
   customer email and was deliberately not invoked as a smoke test.
@@ -196,9 +282,9 @@ is not configured in this workspace. This is an explicit gap, not a silent pass.
   with a narrow, evidence-based edge rule. The immutable Pages production URL
   is healthy while the custom domain challenge is investigated.
 
-The production deployment currently runs the reviewed commits from the draft
-PRs. Merge them before the next Git-connected deployment so the default branch
-cannot later redeploy an older application revision.
+The production application still needs the reviewed overhaul branches. Merge
+them after the production smoke test so the default branch cannot later
+redeploy an older application revision.
 
 ## Next product bets
 
@@ -221,10 +307,12 @@ cannot later redeploy an older application revision.
   treating a project row as the long-term billing account.
 - Explicit owner transfer and organization deletion workflows.
 
-### P2: close the build loop
+### P2: extend the build loop
 
-- GitHub/Linear issue creation from an approved decision brief.
-- A small editor extension only after the API contract proves useful without it.
+- GitHub/Linear issue creation as an optional output from the same approved
+  Change Package, never as a parallel source of truth.
+- Signed build and TestFlight adapters after command recipes prove reliable on
+  controlled iPhone, iPad, and Mac releases.
 - Webhooks for feedback.created, triage.completed, decision.resolved, and
   action.delivered.
 - Import/backfill for existing support channels with deduplication.

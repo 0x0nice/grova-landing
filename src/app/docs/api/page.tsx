@@ -141,7 +141,7 @@ export default function ApiReferencePage() {
           <p className="font-mono text-footnote text-text3 mb-2">Request</p>
           <pre className="bg-bg2 border border-border rounded p-4 overflow-x-auto font-mono text-footnote text-text2 mb-4">
 {`POST /feedback HTTP/1.1
-Host: api.grova.dev
+Host: grova-api-production.up.railway.app
 Content-Type: application/json
 x-grova-key: gv_your_project_key
 

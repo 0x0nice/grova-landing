@@ -1,5 +1,5 @@
 /*!
- * Grova Widget v1.2
+ * Grova Widget v2.0
  * https://grova.dev
  *
  * Drop-in feedback widget for any web app.
@@ -19,7 +19,7 @@
 (function () {
   'use strict';
 
-  const GROVA_WIDGET_VERSION = '1.2.0';
+  const GROVA_WIDGET_VERSION = '2.0.0';
 
   if (window.__grovaWidget) return;
   window.__grovaWidget = true;
@@ -30,11 +30,41 @@
   // ── Console error capture (ring buffer of last 10) ─────────────────────
 
   const _grovaErrors = [];
+  const _grovaBreadcrumbs = [];
+  const _grovaNetworkFailures = [];
   const MAX_ERRORS = 10;
+  const MAX_BREADCRUMBS = 30;
+  const MAX_NETWORK_FAILURES = 20;
+
+  function safeUrl(value) {
+    try {
+      const parsed = new URL(String(value), window.location.origin);
+      return parsed.origin + parsed.pathname + (parsed.search ? '?[redacted]' : '') + (parsed.hash ? '#[redacted]' : '');
+    } catch {
+      return String(value || '').split(/[?#]/)[0];
+    }
+  }
+
+  function pushBounded(target, maximum, entry) {
+    if (target.length >= maximum) target.shift();
+    target.push(entry);
+  }
+
+  function addBreadcrumb(type, detail) {
+    pushBounded(_grovaBreadcrumbs, MAX_BREADCRUMBS, {
+      type: type,
+      label: String(detail?.label || '').slice(0, 500),
+      route: safeUrl(detail?.route || window.location.href),
+      timestamp: new Date().toISOString(),
+    });
+  }
+  window.grovaBreadcrumb = function (type, label) {
+    addBreadcrumb(String(type || 'custom').slice(0, 100), { label: label });
+  };
 
   function pushError(entry) {
-    if (_grovaErrors.length >= MAX_ERRORS) _grovaErrors.shift();
-    _grovaErrors.push(entry);
+    entry.source = safeUrl(entry.source || '');
+    pushBounded(_grovaErrors, MAX_ERRORS, entry);
   }
 
   window.addEventListener('error', (e) => {
@@ -56,6 +86,78 @@
       timestamp: new Date().toISOString(),
     });
   });
+
+  addBreadcrumb('navigation', { label: 'Initial page' });
+  ['pushState', 'replaceState'].forEach(function (method) {
+    const original = history[method];
+    if (typeof original !== 'function') return;
+    history[method] = function () {
+      const result = original.apply(this, arguments);
+      addBreadcrumb('navigation', { label: method });
+      return result;
+    };
+  });
+  window.addEventListener('popstate', function () { addBreadcrumb('navigation', { label: 'Back or forward' }); });
+  document.addEventListener('click', function (event) {
+    const target = event.target?.closest?.('button,a,[role="button"]');
+    if (!target || target.closest('#gv-root')) return;
+    const label = target.getAttribute('data-grova-label') || target.getAttribute('aria-label') || target.id || target.tagName.toLowerCase();
+    addBreadcrumb('interaction', { label: label });
+  }, true);
+
+  const originalFetch = window.fetch;
+  if (typeof originalFetch === 'function') {
+    window.fetch = async function () {
+      const request = arguments[0];
+      const method = arguments[1]?.method || request?.method || 'GET';
+      const requestUrl = typeof request === 'string' ? request : request?.url;
+      try {
+        const response = await originalFetch.apply(this, arguments);
+        if (!response.ok) {
+          pushBounded(_grovaNetworkFailures, MAX_NETWORK_FAILURES, {
+            method: String(method).toUpperCase().slice(0, 20),
+            url: safeUrl(requestUrl),
+            status: response.status,
+            message: response.statusText || 'Request failed',
+            timestamp: new Date().toISOString(),
+          });
+        }
+        return response;
+      } catch (error) {
+        pushBounded(_grovaNetworkFailures, MAX_NETWORK_FAILURES, {
+          method: String(method).toUpperCase().slice(0, 20),
+          url: safeUrl(requestUrl),
+          status: 0,
+          message: String(error?.message || 'Network request failed').slice(0, 2000),
+          timestamp: new Date().toISOString(),
+        });
+        throw error;
+      }
+    };
+  }
+
+  if (window.XMLHttpRequest?.prototype) {
+    const originalOpen = XMLHttpRequest.prototype.open;
+    const originalSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.open = function (method, url) {
+      this.__grovaRequest = { method: method, url: url };
+      return originalOpen.apply(this, arguments);
+    };
+    XMLHttpRequest.prototype.send = function () {
+      this.addEventListener('loadend', function () {
+        if (this.status === 0 || this.status >= 400) {
+          pushBounded(_grovaNetworkFailures, MAX_NETWORK_FAILURES, {
+            method: String(this.__grovaRequest?.method || 'GET').toUpperCase().slice(0, 20),
+            url: safeUrl(this.__grovaRequest?.url || ''),
+            status: this.status || 0,
+            message: this.statusText || 'Request failed',
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }, { once: true });
+      return originalSend.apply(this, arguments);
+    };
+  }
 
   // ── Metadata collection ────────────────────────────────────────────────
 
@@ -105,7 +207,104 @@
   const unbranded = script?.hasAttribute('data-unbranded') || false;
   const SOURCE = script?.dataset.source   || window.location.hostname;
   const SIDE   = script?.dataset.position === 'left' ? 'left' : 'right';
+  const SURFACE = script?.dataset.surface || null;
+  const PLATFORM = script?.dataset.platform || null;
+  const APP_VERSION = script?.dataset.version || null;
+  const BUILD_NUMBER = script?.dataset.build || null;
+  const COMMIT_SHA = script?.dataset.commit || null;
+  const DEPLOYMENT_ID = script?.dataset.deployment || null;
+  const RELEASE_CHANNEL = script?.dataset.channel || null;
   const TRANSCRIBE_URL = API.replace(/\/feedback\/?$/, '/feedback/transcribe');
+
+  function readFeatureFlags() {
+    const configured = script?.dataset.featureFlags;
+    if (!configured) return {};
+    try {
+      const parsed = JSON.parse(configured);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+      return Object.fromEntries(Object.entries(parsed).slice(0, 100).map(function (entry) {
+        const value = entry[1];
+        return [String(entry[0]).slice(0, 200), ['string', 'number', 'boolean'].includes(typeof value) ? value : null];
+      }));
+    } catch {
+      return {};
+    }
+  }
+
+  function collectContext(metadata) {
+    let runtimeContext = {};
+    try {
+      runtimeContext = typeof window.grovaContext === 'function'
+        ? (window.grovaContext() || {})
+        : (window.grovaContext && typeof window.grovaContext === 'object' ? window.grovaContext : {});
+    } catch {}
+    const mobile = metadata.device_type === 'mobile' || metadata.device_type === 'tablet';
+    const allowedPlatforms = ['web', 'mobile_web', 'ios', 'ipados', 'macos', 'backend', 'other'];
+    const requestedPlatform = PLATFORM || runtimeContext.platform || (mobile ? 'mobile_web' : 'web');
+    const platform = allowedPlatforms.includes(requestedPlatform) ? requestedPlatform : 'other';
+    let storedSession = null;
+    try { storedSession = sessionStorage.getItem('grova-session-id'); } catch {}
+    const sessionId = runtimeContext.session_id || storedSession || (window.crypto?.randomUUID ? window.crypto.randomUUID() : 'gv-' + Date.now() + '-' + Math.random().toString(16).slice(2));
+    try { sessionStorage.setItem('grova-session-id', sessionId); } catch {}
+    const runtimeFlags = runtimeContext.feature_flags && typeof runtimeContext.feature_flags === 'object'
+      ? Object.fromEntries(Object.entries(runtimeContext.feature_flags).slice(0, 100).map(function (entry) {
+        const value = entry[1];
+        return [String(entry[0]).slice(0, 200), ['string', 'number', 'boolean'].includes(typeof value) ? value : null];
+      }))
+      : {};
+    return {
+      version: 2,
+      surface: {
+        key: SURFACE || runtimeContext.surface_key || null,
+        platform: platform,
+        bundle_id: null,
+      },
+      release: {
+        version: APP_VERSION || runtimeContext.app_version || null,
+        build: BUILD_NUMBER || runtimeContext.build_number || null,
+        commit: COMMIT_SHA || runtimeContext.commit_sha || null,
+        deployment: DEPLOYMENT_ID || runtimeContext.deployment_id || null,
+        channel: RELEASE_CHANNEL || runtimeContext.release_channel || null,
+        widget_version: GROVA_WIDGET_VERSION,
+      },
+      device: {
+        browser: metadata.browser,
+        os: metadata.os,
+        type: metadata.device_type,
+        viewport: metadata.viewport,
+        screen: metadata.screen,
+        pixel_ratio: metadata.pixel_ratio,
+        touch: metadata.touch,
+      },
+      session: {
+        id: sessionId,
+        trace_id: runtimeContext.trace_id || null,
+        user_id: runtimeContext.user_id || null,
+      },
+      runtime: {
+        url: safeUrl(window.location.href),
+        route: window.location.pathname,
+        view: runtimeContext.view || null,
+        language: metadata.language,
+        locale: navigator.languages || [navigator.language],
+        timezone: metadata.timezone,
+        connection: metadata.connection,
+        color_scheme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+      },
+      navigation: { breadcrumbs: _grovaBreadcrumbs.slice() },
+      errors: { console: _grovaErrors.slice() },
+      network: { failures: _grovaNetworkFailures.slice() },
+      feature_flags: { ...readFeatureFlags(), ...runtimeFlags },
+      accessibility: {
+        reduced_motion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+        high_contrast: matchMedia('(prefers-contrast: more)').matches,
+        forced_colors: matchMedia('(forced-colors: active)').matches,
+      },
+      privacy: {
+        redacted_fields: ['runtime.url.query', 'runtime.url.fragment', 'network.failures.url.query'],
+      },
+    };
+  }
 
   // ── Fonts ────────────────────────────────────────────────────────────────
 
@@ -698,6 +897,7 @@
     if (subEl) { subEl.disabled = true; subEl.textContent = 'Sending\u2026'; subEl.style.textTransform = 'none'; }
 
     const metadata = collectMetadata();
+    const context = collectContext(metadata);
     const console_errors = _grovaErrors.length ? [].concat(_grovaErrors) : null;
 
     // Voice metadata
@@ -761,13 +961,15 @@
           widget_version: GROVA_WIDGET_VERSION,
           ...(apiKey ? { api_key: apiKey } : {}),
           metadata,
+          context_version: 2,
+          context,
           console_errors,
           screenshot,
         }),
       });
       status = res.ok ? 'success' : 'error';
     } catch {
-      status = 'success';
+      status = 'error';
     }
 
     if (status === 'success') {
