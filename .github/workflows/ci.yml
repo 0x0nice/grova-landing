@@ -16,6 +16,11 @@ jobs:
   build:
     name: typecheck + lint + build
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+      NEXT_PUBLIC_API_URL: https://api.example.com
+      NEXT_PUBLIC_FORMSPREE_ID: ci-placeholder
     steps:
       - uses: actions/checkout@v4
 
@@ -27,13 +32,13 @@ jobs:
       - run: npm ci
 
       - name: typecheck
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: lint
         run: npm run lint
-        # Lint is non-blocking for now — codebase has known
-        # set-state-in-effect warnings the team accepts.
-        continue-on-error: true
+
+      - name: production dependency audit
+        run: npm audit --omit=dev --audit-level=high
 
       - name: build (next export)
         run: npm run build

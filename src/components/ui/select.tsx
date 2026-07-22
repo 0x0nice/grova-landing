@@ -18,7 +18,7 @@ export function Select({
       {label && (
         <label
           htmlFor={id}
-          className="font-mono text-footnote text-text2 uppercase tracking-[0.04em]"
+          className="text-footnote text-text2"
         >
           {label}
         </label>
@@ -27,7 +27,7 @@ export function Select({
         id={id}
         className={`
           w-full bg-bg2 border border-border rounded px-4 py-3
-          font-mono text-body text-text
+          text-body text-text
           transition-colors duration-[180ms] ease
           focus:outline-none focus:border-accent
           appearance-none cursor-pointer

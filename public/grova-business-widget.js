@@ -13,14 +13,16 @@
  *   </script>
  *
  * Config attributes:
- *   data-source         — your business identifier (required)
- *   data-business-type  — restaurant | salon | retail (optional, sets category presets)
- *   data-categories     — comma-separated list to override preset categories
- *   data-name           — your business name, shown in widget header
- *   data-accent         — brand color for the trigger button & active states (default: #00c87a)
- *   data-position       — left | right (default: right)
- *   data-api-url        — override the API endpoint (default: https://grova-api-production.up.railway.app/feedback)
- *   data-key            — your Grova project API key for per-project routing
+ *   data-source         - your business identifier (required)
+ *   data-business-type  - restaurant | salon | retail (optional, sets category presets)
+ *   data-categories     - comma-separated list to override preset categories
+ *   data-name           - your business name, shown in widget header
+ *   data-accent         - brand color for the trigger button and active states (default: #3f7556)
+ *   data-position       - left | right (default: right)
+ *   data-api-url        - override the API endpoint (default: https://grova-api-production.up.railway.app/feedback)
+ *   data-key            - your Grova project API key for per-project routing
+ *   data-no-badge       - hide the "Powered by Grova" footer link
+ *   data-unbranded      - hide Grova identity in the panel header
  *
  * Public API:
  *   window.GrovaContact.open()
@@ -31,7 +33,7 @@
 
   const GROVA_BIZ_WIDGET_VERSION = '2.0.0';
 
-  // ── Guard — prevent double load ────────────────────────────────────────────
+  // ── Guard - prevent double load ────────────────────────────────────────────
   if (window.__grovaContactWidget) return;
   window.__grovaContactWidget = true;
 
@@ -115,8 +117,11 @@
   const SOURCE      = script?.dataset.source    || window.location.hostname;
   const BIZ_TYPE    = script?.dataset.businessType || 'default';
   const BIZ_NAME    = script?.dataset.name      || '';
-  const ACCENT      = script?.dataset.accent    || '#00c87a';
+  const requestedAccent = script?.dataset.accent || '';
+  const ACCENT      = /^#[0-9a-f]{6}$/i.test(requestedAccent) ? requestedAccent : '#3f7556';
   const SIDE        = script?.dataset.position === 'left' ? 'left' : 'right';
+  const noBadge     = script?.hasAttribute('data-no-badge') || false;
+  const unbranded   = script?.hasAttribute('data-unbranded') || false;
   const CUSTOM_CATS = script?.dataset.categories
     ? script.dataset.categories.split(',').map(s => s.trim()).filter(Boolean)
     : null;
@@ -153,10 +158,16 @@
     return PLACEHOLDERS[cat] || "Tell us more…";
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;',
+    })[char]);
+  }
+
   // ── Accent colour helpers ──────────────────────────────────────────────────
   function hexToRgb(hex) {
     const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return r ? `${parseInt(r[1],16)}, ${parseInt(r[2],16)}, ${parseInt(r[3],16)}` : '0, 200, 122';
+    return r ? `${parseInt(r[1],16)}, ${parseInt(r[2],16)}, ${parseInt(r[3],16)}` : '74, 128, 98';
   }
 
   const ACCENT_RGB = hexToRgb(ACCENT);
@@ -177,19 +188,15 @@
     return CATEGORY_COLORS[cat] || ACCENT;
   }
 
-  function getCategoryColorRgb(cat) {
-    return hexToRgb(getCategoryColor(cat));
-  }
-
   // ── CSS injection ──────────────────────────────────────────────────────────
   if (!document.querySelector('style[data-grova-biz]')) {
     const style = document.createElement('style');
     style.setAttribute('data-grova-biz', '');
     style.textContent = `
-      /* ── Grova Business Widget — gb- namespace ── */
+      /* ── Grova Business Widget - gb- namespace ── */
 
       .gb-root {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         position: fixed;
         bottom: 24px;
         ${SIDE}: 24px;
@@ -199,14 +206,14 @@
         --gb-cat-color: ${ACCENT};
         --gb-cat-color-rgb: ${ACCENT_RGB};
         /* Light theme tokens (default for biz widget) */
-        --gb-bg: #f5f5f7; --gb-surface: #ffffff; --gb-border: rgba(0,0,0,0.06); --gb-border2: rgba(0,0,0,0.10);
-        --gb-text: #1d1d1f; --gb-text2: #48484a; --gb-text3: #8e8e93;
-        --gb-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04);
+        --gb-bg: #e7ece6; --gb-surface: #f9fbf8; --gb-border: rgba(38,55,42,0.10); --gb-border2: rgba(38,55,42,0.17);
+        --gb-text: #151915; --gb-text2: #424a43; --gb-text3: #687069;
+        --gb-shadow: 0 10px 24px rgba(36,51,40,0.12);
       }
       .gb-root.gb-dark {
-        --gb-bg: #1a1a1e; --gb-surface: #242428; --gb-border: rgba(255,255,255,0.08); --gb-border2: rgba(255,255,255,0.12);
-        --gb-text: #f5f5f7; --gb-text2: #a1a1aa; --gb-text3: #52525b;
-        --gb-shadow: 0 8px 60px rgba(0,0,0,0.5), 0 2px 16px rgba(0,0,0,0.25);
+        --gb-bg: #151715; --gb-surface: #202320; --gb-border: rgba(255,255,255,0.09); --gb-border2: rgba(255,255,255,0.14);
+        --gb-text: #f5f6f4; --gb-text2: #b5bbb5; --gb-text3: #858d85;
+        --gb-shadow: 0 10px 24px rgba(0,0,0,0.34);
       }
 
       /* ── Trigger ── */
@@ -215,8 +222,7 @@
         align-items: center;
         background: var(--gb-accent);
         border: none;
-        border-radius: 100px;
-        box-shadow: 0 4px 20px rgba(var(--gb-accent-rgb), 0.38);
+        border-radius: 6px;
         color: #fff;
         cursor: pointer;
         display: flex;
@@ -225,21 +231,18 @@
         font-weight: 600;
         gap: 8px;
         padding: 12px 22px;
-        transition: opacity 0.15s, box-shadow 0.15s, background 0.15s;
+        transition: background 0.15s, color 0.15s;
         white-space: nowrap;
       }
       .gb-trigger:hover {
-        box-shadow: 0 6px 28px rgba(var(--gb-accent-rgb), 0.55);
-        opacity: 0.92;
+        filter: brightness(0.88);
       }
       .gb-trigger-open {
         background: var(--gb-surface);
-        box-shadow: var(--gb-shadow);
         color: var(--gb-text2);
       }
       .gb-trigger-open:hover {
-        box-shadow: var(--gb-shadow);
-        opacity: 1;
+        filter: none;
       }
       .gb-trigger svg { flex-shrink: 0; }
 
@@ -259,12 +262,12 @@
         .gb-backdrop.gb-open { opacity: 1; pointer-events: all; }
       }
 
-      /* ── Panel — desktop ── */
+      /* ── Panel - desktop ── */
 
       .gb-panel {
         background: var(--gb-surface);
         border: 1px solid var(--gb-border);
-        border-radius: 20px;
+        border-radius: 12px;
         bottom: 58px;
         box-shadow: var(--gb-shadow);
         opacity: 0;
@@ -282,7 +285,7 @@
         transform: translateY(0);
       }
 
-      /* ── Panel — mobile bottom sheet ── */
+      /* ── Panel - mobile bottom sheet ── */
 
       @media (max-width: 640px) {
         .gb-root { bottom: 20px; ${SIDE}: 20px; }
@@ -338,9 +341,8 @@
         color: var(--gb-accent);
         font-size: 0.65rem;
         font-weight: 500;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.01em;
         margin-bottom: 5px;
-        text-transform: uppercase;
       }
       .gb-logo {
         align-items: center;
@@ -357,7 +359,7 @@
       }
       .gb-logo-name {
         color: var(--gb-text);
-        font-family: 'Instrument Serif', Georgia, serif;
+        font-family: 'Sentient', Georgia, serif;
         font-size: 1.45rem;
         font-weight: 400;
         letter-spacing: -0.02em;
@@ -365,7 +367,7 @@
       }
       .gb-title {
         color: var(--gb-text);
-        font-family: 'Playfair Display', 'New York', Georgia, serif;
+        font-family: 'Sentient', Georgia, serif;
         font-size: 1.15rem;
         font-weight: 500;
         line-height: 1.2;
@@ -374,7 +376,7 @@
       }
       .gb-close {
         align-items: center;
-        background: rgba(0,0,0,0.04);
+        background: none;
         border: none;
         border-radius: 50%;
         color: var(--gb-text3);
@@ -388,9 +390,9 @@
         transition: background 0.15s, color 0.15s;
         width: 28px;
       }
-      .gb-close:hover { background: rgba(0,0,0,0.08); color: var(--gb-text); }
-      .gb-root.gb-dark .gb-close { background: rgba(255,255,255,0.06); }
-      .gb-root.gb-dark .gb-close:hover { background: rgba(255,255,255,0.12); color: var(--gb-text); }
+      .gb-close:hover { color: var(--gb-text); }
+      .gb-root.gb-dark .gb-close { background: none; }
+      .gb-root.gb-dark .gb-close:hover { color: var(--gb-text); }
 
       /* ── Step navigation ── */
 
@@ -447,14 +449,12 @@
         gap: 12px;
         line-height: 1;
         padding: 15px 16px;
-        transition: border-color 0.2s, background 0.2s, transform 0.15s;
+        transition: border-color 0.2s, background 0.2s;
       }
       .gb-cat:hover {
         border-color: var(--gb-border2);
         background: var(--gb-bg);
-        transform: translateY(-1px);
       }
-      .gb-cat:active { transform: translateY(0); }
       .gb-cat-dot {
         border-radius: 50%;
         flex-shrink: 0;
@@ -487,7 +487,7 @@
         line-height: 1.65;
         outline: none;
         padding: 12px 14px;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        transition: border-color 0.2s;
         width: 100%;
       }
       .gb-textarea {
@@ -503,7 +503,6 @@
       .gb-textarea:focus,
       .gb-email:focus {
         border-color: rgba(var(--gb-cat-color-rgb), 0.25);
-        box-shadow: 0 0 0 3px rgba(var(--gb-cat-color-rgb), 0.1);
       }
 
       /* ── Submit ── */
@@ -511,7 +510,7 @@
       .gb-submit {
         background: var(--gb-cat-color);
         border: none;
-        border-radius: 999px;
+        border-radius: 6px;
         box-sizing: border-box;
         color: #fff;
         cursor: pointer;
@@ -519,7 +518,7 @@
         font-size: 0.88rem;
         font-weight: 600;
         padding: 14px;
-        transition: opacity 0.15s, filter 0.15s, box-shadow 0.15s;
+        transition: filter 0.15s;
         width: 100%;
       }
       @media (max-width: 640px) {
@@ -529,7 +528,7 @@
           margin-bottom: env(safe-area-inset-bottom, 0px);
         }
       }
-      .gb-submit:hover:not(:disabled) { filter: brightness(1.1); box-shadow: 0 4px 16px rgba(var(--gb-cat-color-rgb), 0.35); }
+      .gb-submit:hover:not(:disabled) { filter: brightness(0.88); }
       .gb-submit:disabled              { cursor: not-allowed; opacity: 0.3; }
 
       /* ── Screenshot checkbox ── */
@@ -574,19 +573,18 @@
       }
       .gb-success-check {
         align-items: center;
-        background: rgba(var(--gb-cat-color-rgb), 0.10);
-        border: 1.5px solid rgba(var(--gb-cat-color-rgb), 0.25);
-        border-radius: 50%;
+        background: none;
+        border: none;
         color: var(--gb-cat-color);
         display: flex;
         font-size: 1.3rem;
-        height: 52px;
+        height: 34px;
         justify-content: center;
-        width: 52px;
+        width: 34px;
       }
       .gb-success-title {
         color: var(--gb-text);
-        font-family: 'Playfair Display', 'New York', Georgia, serif;
+        font-family: 'Sentient', Georgia, serif;
         font-size: 1.5rem;
         font-weight: 500;
         letter-spacing: -0.02em;
@@ -602,7 +600,7 @@
       .gb-success-close {
         background: none;
         border: 1px solid var(--gb-border2);
-        border-radius: 999px;
+        border-radius: 6px;
         color: var(--gb-text3);
         cursor: pointer;
         font-family: inherit;
@@ -625,33 +623,32 @@
       }
       .gb-footer a {
         color: var(--gb-text3);
-        font-family: 'Instrument Serif', Georgia, serif;
-        font-style: italic;
+        font-family: 'Sentient', Georgia, serif;
         text-decoration: none;
         transition: color 0.15s;
       }
       .gb-footer a:hover { color: var(--gb-text2); }
 
       /* ── Step transitions ── */
-      .gb-step-content { animation: gb-fade-in 0.25s ease; }
-      @keyframes gb-fade-in {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
+      .gb-step-content { animation: gb-settle 0.25s ease; }
+      @keyframes gb-settle {
+        from { transform: translateY(8px); }
+        to { transform: translateY(0); }
       }
     `;
     document.head.appendChild(style);
   }
 
-  // ── Google Fonts ───────────────────────────────────────────────────────────
-  if (!document.querySelector('link[href*="Playfair+Display"]')) {
+  // ── Display font ───────────────────────────────────────────────────────────
+  if (!document.querySelector('link[href*="api.fontshare.com"]')) {
     const preconnect = document.createElement('link');
     preconnect.rel  = 'preconnect';
-    preconnect.href = 'https://fonts.googleapis.com';
+    preconnect.href = 'https://api.fontshare.com';
     document.head.appendChild(preconnect);
 
     const fonts = document.createElement('link');
     fonts.rel  = 'stylesheet';
-    fonts.href = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap';
+    fonts.href = 'https://api.fontshare.com/v2/css?f[]=sentient@400,500&display=swap';
     document.head.appendChild(fonts);
   }
 
@@ -704,26 +701,25 @@
       renderSuccess();
       return;
     }
-    step === 1 ? renderStep1() : renderStep2();
+    if (step === 1) renderStep1();
+    else renderStep2();
   }
 
   function renderStep1() {
     const cats = getCategories();
-    const title = BIZ_NAME ? `Contact ${BIZ_NAME}` : 'How can we help?';
+    const title = escapeHtml(BIZ_NAME ? `Contact ${BIZ_NAME}` : 'How can we help?');
 
-    // NOTE: innerHTML usage is safe here — all interpolated values (title, category names)
-    // are controlled server-side config, not user input. BIZ_NAME comes from the script
-    // tag's data-name attribute set by the site owner. Category names come from hardcoded
-    // PRESETS or the site owner's data-categories attribute.
+    // Script-tag configuration is escaped before interpolation because a copied
+    // customer-controlled category or business name can contain HTML.
     panel.innerHTML = `
       <div class="gb-inner gb-step-content">
         <div class="gb-header">
           <div class="gb-header-left">
             <div class="gb-eyebrow">Feedback</div>
-            <div class="gb-logo">
+            ${unbranded ? '' : `<div class="gb-logo">
               <div class="gb-logo-mark"></div>
               <span class="gb-logo-name">grova</span>
-            </div>
+            </div>`}
           </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
@@ -731,15 +727,15 @@
         <div class="gb-cats" id="gb-cats">
           ${cats.map(c => {
             const color = getCategoryColor(c);
-            return `<button class="gb-cat" data-cat="${c.replace(/"/g, '&quot;')}">
+            return `<button class="gb-cat" data-cat="${escapeHtml(c)}">
               <span class="gb-cat-dot" style="background:${color}"></span>
-              <span>${c}</span>
+              <span>${escapeHtml(c)}</span>
               <span class="gb-cat-arrow">›</span>
             </button>`;
           }).join('')}
         </div>
       </div>
-      <div class="gb-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">Grova</a></div>
+      ${noBadge ? '' : '<div class="gb-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">Grova</a></div>'}
     `;
 
     panel.querySelector('.gb-close').onclick = close;
@@ -764,22 +760,22 @@
   function renderStep2() {
     const cat = selectedCategory || 'Other';
 
-    // NOTE: innerHTML usage is safe — cat comes from hardcoded PRESETS/owner config,
+    // NOTE: innerHTML usage is safe - cat comes from hardcoded PRESETS/owner config,
     // placeholder from PLACEHOLDERS constant. No user-generated content is interpolated.
     panel.innerHTML = `
       <div class="gb-inner gb-step-content">
         <div class="gb-header">
           <div class="gb-header-left">
             <div class="gb-eyebrow">Feedback</div>
-            <div class="gb-logo">
+            ${unbranded ? '' : `<div class="gb-logo">
               <div class="gb-logo-mark"></div>
               <span class="gb-logo-name">grova</span>
-            </div>
+            </div>`}
           </div>
           <button class="gb-close" aria-label="Close">×</button>
         </div>
         <button class="gb-back" id="gb-back">← Back</button>
-        <button class="gb-breadcrumb" id="gb-breadcrumb">${cat} · change</button>
+        <button class="gb-breadcrumb" id="gb-breadcrumb">${escapeHtml(cat)} · change</button>
         <textarea
           class="gb-textarea"
           id="gb-msg"
@@ -792,14 +788,14 @@
           type="email"
           placeholder="Your email (optional)" />
         <div class="gb-screenshot-row">
-          <div class="gb-toggle gb-toggle-on" id="gb-toggle" role="switch" aria-checked="true" tabindex="0"></div>
-          <input type="checkbox" id="gb-screenshot" style="display:none" checked />
-          <span class="gb-screenshot-text">Attach screenshot</span>
+          <div class="gb-toggle" id="gb-toggle" role="switch" aria-checked="false" tabindex="0"></div>
+          <input type="checkbox" id="gb-screenshot" style="display:none" />
+          <span class="gb-screenshot-text">Include a screenshot of this page</span>
         </div>
-        ${status === 'error' ? `<p class="gb-err">Something went wrong — please try again.</p>` : ''}
+        ${status === 'error' ? `<p class="gb-err">Something went wrong - please try again.</p>` : ''}
         <button class="gb-submit" id="gb-sub" disabled>Send Message</button>
       </div>
-      <div class="gb-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">Grova</a></div>
+      ${noBadge ? '' : '<div class="gb-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">Grova</a></div>'}
     `;
 
     const msgEl = panel.querySelector('#gb-msg');
@@ -839,7 +835,7 @@
       <div class="gb-success gb-step-content">
         <div class="gb-success-check">✓</div>
         <p class="gb-success-title">Received.</p>
-        <p class="gb-success-sub">Someone from ${name} will follow up.</p>
+        <p class="gb-success-sub">Someone from ${escapeHtml(name)} will follow up.</p>
         <button class="gb-success-close" id="gb-sdone">Done</button>
       </div>
     `;

@@ -51,10 +51,10 @@ export function FontSizeProvider({ children }: { children: ReactNode }) {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved !== null) {
         const p = Number(saved) as FontSizePreset;
-        if (p in SCALE_MAP) setPresetState(p);
+        if (p in SCALE_MAP) queueMicrotask(() => setPresetState(p));
       }
     } catch {
-      // localStorage blocked — keep default
+      // localStorage blocked - keep default
     }
   }, []);
 

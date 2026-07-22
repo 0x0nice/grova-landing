@@ -83,7 +83,7 @@ export function StepProject({
         Step 3 of 5
       </span>
       <h2 className="font-serif text-title font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        Create a <em className="text-text2">project.</em>
+        Create a <span className="text-text2">project.</span>
       </h2>
       <p className="font-mono text-callout text-text2 leading-[1.7] mb-6">
         {data.track === "developer"
@@ -104,7 +104,7 @@ export function StepProject({
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="project-source"
-            className="font-mono text-footnote text-text2 uppercase tracking-[0.04em] flex items-center"
+            className="font-mono text-footnote text-text2 flex items-center"
           >
             Source Identifier (optional)
             <HelpTip>

@@ -24,7 +24,7 @@ function ChipView({ label, value, emphasis }: Chip) {
         emphasis ? "border-accent/40" : "border-border"
       }`}
     >
-      <span className="font-mono text-micro text-text3 uppercase tracking-[0.1em]">
+      <span className="font-mono text-micro text-text3">
         {label}
       </span>
       <span

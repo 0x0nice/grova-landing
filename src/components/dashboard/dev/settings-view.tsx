@@ -7,12 +7,24 @@ import { Button } from "@/components/ui/button";
 import { useProjectStore } from "@/stores/project-store";
 import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/providers/auth-provider";
-import { getActionSettings, putActionSettings } from "@/lib/api";
+import { getActionSettings, putActionSettings, putProjectPreferences, putScoringWeights } from "@/lib/api";
 import { demoGet } from "@/lib/demo-data";
 import type { ActionSettings } from "@/types/feedback";
 import { FontSizeControl } from "@/components/ui/font-size-control";
 import { QRCodeCanvas } from "qrcode.react";
 import { WidgetInstallSection } from "@/components/dashboard/widget-install-section";
+import { dimLabel } from "@/lib/triage";
+
+const DEFAULT_SCORING_WEIGHTS: Record<string, number> = {
+  actionability: 0.25,
+  specificity: 0.15,
+  severity: 0.25,
+  frequency_signal: 0.1,
+  sentiment_intensity: 0.05,
+  user_effort: 0.05,
+  technical_clarity: 0.1,
+  scope_estimate: 0.05,
+};
 
 /* ------------------------------------------------------------------ */
 /*  Icons                                                              */
@@ -103,19 +115,22 @@ export function SettingsView() {
   );
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaving, setSettingsSaving] = useState(false);
+  const [scoringWeights, setScoringWeights] = useState(DEFAULT_SCORING_WEIGHTS);
+  const [scoringSaving, setScoringSaving] = useState(false);
   const [keyVisible, setKeyVisible] = useState(false);
   const [keyCopied, setKeyCopied] = useState(false);
   const [qrLinkCopied, setQrLinkCopied] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
-  const storageKey = active ? `grova-ctx-${active.id}` : null;
-
   useEffect(() => {
-    if (storageKey) {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) setContext(saved);
+    if (!active) return;
+    if (isDemo) {
+      setContext(localStorage.getItem(`grova-ctx-${active.id}`) || "");
+    } else {
+      setContext(active.project_context || "");
     }
-  }, [storageKey]);
+    setScoringWeights({ ...DEFAULT_SCORING_WEIGHTS, ...(active.scoring_weights || {}) });
+  }, [active, isDemo]);
 
   // Load action settings when project changes
   useEffect(() => {
@@ -135,12 +150,19 @@ export function SettingsView() {
     }
   }, [active, session?.access_token, isDemo]);
 
-  function handleSave() {
-    if (storageKey) {
-      localStorage.setItem(storageKey, context);
+  async function handleSave() {
+    if (!active) return;
+    try {
+      if (isDemo) {
+        localStorage.setItem(`grova-ctx-${active.id}`, context);
+      } else {
+        await putProjectPreferences(active.id, { project_context: context || null }, session?.access_token || "");
+      }
       setSaved(true);
       show("Context saved");
       setTimeout(() => setSaved(false), 2000);
+    } catch {
+      show("Could not save project context");
     }
   }
 
@@ -158,6 +180,21 @@ export function SettingsView() {
       show("Failed to save settings");
     } finally {
       setSettingsSaving(false);
+    }
+  }
+
+  async function handleSaveScoring() {
+    if (!active) return;
+    setScoringSaving(true);
+    try {
+      if (!isDemo) {
+        await putScoringWeights(active.id, scoringWeights, session?.access_token || "");
+      }
+      show("Scoring weights saved");
+    } catch {
+      show("Could not save scoring weights");
+    } finally {
+      setScoringSaving(false);
     }
   }
 
@@ -208,14 +245,14 @@ export function SettingsView() {
           <SectionHeader title="Project Info" />
           <h2 className="font-serif text-title text-text mb-4">{active.name}</h2>
           <div className="flex flex-col gap-3">
-            <InfoRow label="Source" value={active.source || "—"} />
+            <InfoRow label="Source" value={active.source || "-"} />
             <InfoRow label="Mode" value={active.mode} />
           </div>
 
-          {/* API Key — hidden by default */}
+          {/* API Key - hidden by default */}
           {active.api_key && (
             <div className="mt-5 pt-5 border-t border-border">
-              <label className="block font-mono text-footnote text-text3 uppercase tracking-[0.08em] mb-2">
+              <label className="block font-mono text-footnote text-text3 mb-2">
                 API Key
               </label>
               <div className="flex items-center gap-2 bg-bg2 rounded-lg px-4 py-3 border border-border">
@@ -250,7 +287,7 @@ export function SettingsView() {
           mode="developer"
           source={active.source || ""}
           apiKey={active.api_key || ""}
-          projectName={active.name}
+          planTier={active.plan_tier}
           onCopy={(msg) => show(msg)}
         />
 
@@ -317,7 +354,7 @@ export function SettingsView() {
         <Section>
           <SectionHeader
             title="Triage Lens"
-            description="Paste your README or product description. This context is injected into every AI prompt when you approve feedback."
+            description="Describe your product and operating rules. Grova uses this context during triage and when writing approved decision briefs."
           />
           <Textarea
             id="project-ctx"
@@ -330,11 +367,48 @@ export function SettingsView() {
             charCount
           />
           <div className="mt-4">
-            <Button variant="primary" onClick={handleSave}>
+            <Button variant="primary" onClick={() => void handleSave()}>
               {saved ? "Saved ✓" : "Save context"}
             </Button>
           </div>
         </Section>
+
+        {(["builder", "agency"].includes(active.plan_tier || "") || isDemo) && (
+          <Section>
+            <SectionHeader
+              title="Scoring Weights"
+              description="Change the relative influence of each signal. A higher value makes that dimension matter more; changes affect new triage runs."
+            />
+            <div className="flex flex-col divide-y divide-border">
+              {Object.entries(scoringWeights).map(([dimension, weight]) => (
+                <label key={dimension} className="grid grid-cols-[minmax(140px,1fr)_minmax(120px,1.2fr)_44px] items-center gap-3 py-3 max-sm:grid-cols-[1fr_44px]">
+                  <span className="font-mono text-footnote text-text2">{dimLabel(dimension)}</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="3"
+                    step="0.05"
+                    value={weight}
+                    onChange={(event) => setScoringWeights((current) => ({ ...current, [dimension]: Number(event.target.value) }))}
+                    className="accent-[var(--color-accent)] max-sm:col-span-2"
+                  />
+                  <span className="font-mono text-footnote text-text tabular-nums text-right">{weight.toFixed(2)}</span>
+                </label>
+              ))}
+            </div>
+            <div className="mt-5 flex items-center gap-3">
+              <Button variant="primary" onClick={() => void handleSaveScoring()} loading={scoringSaving}>
+                Save weights
+              </Button>
+              <button
+                onClick={() => setScoringWeights(DEFAULT_SCORING_WEIGHTS)}
+                className="font-mono text-footnote text-text3 hover:text-text2 cursor-pointer"
+              >
+                Reset defaults
+              </button>
+            </div>
+          </Section>
+        )}
 
         {/* ── Smart Actions ── */}
         <Section>
@@ -375,7 +449,7 @@ export function SettingsView() {
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor="brand-color"
-                  className="font-mono text-footnote text-text2 uppercase tracking-[0.04em]"
+                  className="font-mono text-footnote text-text2"
                 >
                   Brand color
                 </label>
@@ -383,7 +457,7 @@ export function SettingsView() {
                   <input
                     id="brand-color"
                     type="color"
-                    value={actionSettings.brand_color || "#00c87a"}
+                    value={actionSettings.brand_color || "#3f7556"}
                     onChange={(e) =>
                       setActionSettings({
                         ...actionSettings,
@@ -393,7 +467,7 @@ export function SettingsView() {
                     className="w-10 h-10 rounded-lg border border-border cursor-pointer bg-transparent"
                   />
                   <span className="font-mono text-footnote text-text3">
-                    {actionSettings.brand_color || "#00c87a"}
+                    {actionSettings.brand_color || "#3f7556"}
                   </span>
                 </div>
               </div>
@@ -493,7 +567,7 @@ export function SettingsView() {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline gap-3">
-      <span className="font-mono text-footnote text-text3 uppercase tracking-[0.08em] w-16 shrink-0">
+      <span className="font-mono text-footnote text-text3 w-16 shrink-0">
         {label}
       </span>
       <span className="font-mono text-footnote text-text2">{value}</span>

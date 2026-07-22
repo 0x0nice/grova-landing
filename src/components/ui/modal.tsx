@@ -67,7 +67,7 @@ export function Modal({
       {open && (
         <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center"
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
@@ -85,10 +85,10 @@ export function Modal({
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            className="relative z-10 bg-surface border border-border rounded-lg shadow-lg p-8 mx-4"
+            className="relative z-10 bg-surface border border-border rounded-lg shadow-[0_5px_18px_rgba(0,0,0,0.24)] p-8 mx-4"
             style={{ maxWidth, width: "100%" }}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ scale: 0.98 }}
+            animate={{ scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.32 }}
           >

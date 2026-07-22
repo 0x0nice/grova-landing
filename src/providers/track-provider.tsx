@@ -16,23 +16,23 @@ interface TrackContextValue {
 }
 
 export const TrackContext = createContext<TrackContextValue>({
-  track: "biz",
+  track: "dev",
   setTrack: () => {},
 });
 
 export function TrackProvider({ children }: { children: ReactNode }) {
-  const [track, setTrackState] = useState<Track>("biz");
+  const [track, setTrackState] = useState<Track>("dev");
 
   useEffect(() => {
     try {
       const hash = window.location.hash === "#developers" ? "dev" : null;
       let saved: string | null = null;
       try { saved = localStorage.getItem("grova-track"); } catch {}
-      const initial = hash || (saved as Track) || "biz";
-      setTrackState(initial);
+      const initial = hash || (saved as Track) || "dev";
       document.documentElement.setAttribute("data-track", initial);
+      queueMicrotask(() => setTrackState(initial));
     } catch {
-      // Fallback: keep default "biz" track
+      // Fallback: keep the developer product as the primary track.
     }
   }, []);
 

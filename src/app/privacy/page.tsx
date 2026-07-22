@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Grova",
+  title: "Privacy Policy - Grova",
   description: "Privacy Policy for Grova, the feedback triage platform.",
 };
 
@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors uppercase tracking-[0.04em]"
+            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors"
           >
             Back
           </Link>
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
           Legal
         </span>
         <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-          Privacy <em className="text-text2">Policy.</em>
+          Privacy <span className="text-text2">Policy.</span>
         </h1>
         <p className="text-callout text-text3 font-light mb-10">
           Last updated: February 24, 2026
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
 
         <div className="flex flex-col gap-8">
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               1. Information We Collect
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7] mb-3">
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               2. How We Use Your Data
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               3. Third-Party Services
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               4. Data Retention
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               5. Data Security
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -109,7 +109,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               6. Your Rights
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -128,7 +128,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               7. Cookies
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -140,7 +140,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               8. Changes to This Policy
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -151,7 +151,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               9. Contact
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">

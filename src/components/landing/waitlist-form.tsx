@@ -48,14 +48,14 @@ export function WaitlistForm({ className = "" }: WaitlistFormProps) {
   if (status === "success") {
     return (
       <p className={`text-[0.76rem] text-[var(--track-accent)] tracking-[0.02em] py-3 ${className}`}>
-        You&apos;re on the list — we&apos;ll be in touch.
+        You&apos;re on the list. We&apos;ll be in touch.
       </p>
     );
   }
 
   return (
     <div className={className}>
-      <div className="flex gap-2 max-w-[420px]">
+      <div className="grid grid-cols-[1fr_auto] gap-2 max-w-[460px] max-sm:grid-cols-1">
         <input
           type="email"
           value={email}
@@ -65,26 +65,23 @@ export function WaitlistForm({ className = "" }: WaitlistFormProps) {
           aria-label="Email address"
           className={`
             flex-1 bg-surface border rounded
-            px-4 py-3 font-mono text-callout font-light text-text
+            px-4 py-3 text-callout text-text
             placeholder:text-text3
-            outline-none transition-all duration-[180ms]
+            outline-none transition-colors duration-[180ms]
             focus:border-[var(--track-accent)]
-            focus:shadow-[0_0_0_4px_color-mix(in_oklch,var(--track-accent)_15%,transparent)]
             ${error ? "border-[#e74c3c]" : "border-border2"}
           `}
         />
         <button
           onClick={handleSubmit}
           disabled={status === "loading"}
-          className="bg-[var(--track-accent)] text-black border-none rounded
-                     px-[18px] py-3 font-mono text-[0.75rem] font-medium
-                     cursor-pointer whitespace-nowrap tracking-[0.04em] uppercase
+          className="bg-[var(--track-accent)] text-white border-none rounded
+                     px-[18px] py-3 text-[0.78rem] font-semibold
+                     cursor-pointer whitespace-nowrap
                      inline-flex items-center justify-center gap-2
-                     [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
-                     transition-all duration-[180ms]
-                     hover:opacity-92 hover:-translate-y-px hover:shadow-sm
-                     active:scale-[0.98] active:translate-y-0
-                     disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:transform-none"
+                     transition-colors duration-[180ms]
+                     hover:brightness-90
+                     disabled:opacity-35 disabled:cursor-not-allowed"
         >
           {status === "loading" ? (
             <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">

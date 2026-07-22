@@ -36,7 +36,7 @@ function classifyError(err: unknown): FormError {
     return {
       isNetwork: true,
       message:
-        "We couldn't reach the auth server. Check your connection — or try Demo mode below.",
+        "We couldn't reach the auth server. Check your connection - or try Demo mode below.",
     };
   }
   if (/supabase(url|key) is required/i.test(raw)) {
@@ -52,8 +52,8 @@ function classifyError(err: unknown): FormError {
 }
 
 const fadeUp = {
-  initial: { opacity: 0, y: 14 },
-  animate: { opacity: 1, y: 0 },
+  initial: { y: 14 },
+  animate: { y: 0 },
   transition: { duration: 0.32, ease: "easeOut" as const },
 };
 
@@ -143,15 +143,15 @@ export function LoginScreen() {
           <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal leading-[1.1] text-text mb-2">
             {mode === "forgot" ? (
               <>
-                Reset <em className="text-text2">password.</em>
+                Reset <span className="text-text2">password.</span>
               </>
             ) : mode === "signup" ? (
               <>
-                Sign <em className="text-text2">up.</em>
+                Sign <span className="text-text2">up.</span>
               </>
             ) : (
               <>
-                Sign <em className="text-text2">in.</em>
+                Sign <span className="text-text2">in.</span>
               </>
             )}
           </h1>
@@ -195,7 +195,7 @@ export function LoginScreen() {
                 {error.isNetwork && (
                   <Link
                     href="/dashboard/inbox?demo"
-                    className="text-accent hover:text-accent/80 transition-colors uppercase tracking-[0.04em]"
+                    className="text-accent hover:text-accent/80 transition-colors"
                   >
                     Try Demo →
                   </Link>

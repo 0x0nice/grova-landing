@@ -14,9 +14,9 @@ export function ThemeToggle({ className = "" }: ThemeToggleProps) {
       onClick={toggle}
       className={`
         inline-flex items-center justify-center
-        w-[34px] h-[34px] rounded
-        border border-border
-        text-text2 hover:text-text hover:border-border2
+        w-[34px] h-[34px]
+        border-none bg-transparent
+        text-text2 hover:text-text
         transition-colors duration-[180ms] ease
         cursor-pointer
         ${className}

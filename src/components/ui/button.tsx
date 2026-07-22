@@ -20,21 +20,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-accent text-black hover:bg-accent/90 hover:-translate-y-px hover:shadow-sm font-mono font-medium text-subheadline uppercase",
+    "bg-accent text-black hover:bg-accent/82 font-medium text-subheadline",
   ghost:
-    "bg-transparent border border-border text-text2 hover:border-border2 hover:text-text active:bg-surface-hover font-mono font-medium text-subheadline uppercase",
+    "bg-transparent border border-border text-text2 hover:border-border2 hover:text-text active:bg-surface-hover font-medium text-subheadline",
   approve:
-    "bg-accent-dim text-accent hover:bg-accent hover:text-black font-mono font-medium text-subheadline uppercase",
+    "bg-accent-dim text-accent hover:bg-accent hover:text-black font-medium text-subheadline",
   deny:
-    "bg-orange-dim text-orange hover:bg-orange hover:text-white font-mono font-medium text-subheadline uppercase",
+    "bg-orange-dim text-orange hover:bg-orange hover:text-white font-medium text-subheadline",
   restore:
-    "bg-transparent border border-border text-text3 hover:text-text2 hover:border-border2 active:bg-surface-hover font-mono font-medium text-subheadline uppercase",
+    "bg-transparent border border-border text-text3 hover:text-text2 hover:border-border2 active:bg-surface-hover font-medium text-subheadline",
   icon:
     "bg-transparent border border-border text-text2 hover:text-text hover:border-border2 active:bg-surface-hover p-2",
   copy:
-    "bg-transparent border border-border text-text2 hover:border-accent hover:text-accent active:bg-surface-hover font-mono font-medium text-subheadline uppercase",
+    "bg-transparent border border-border text-text2 hover:border-accent hover:text-accent active:bg-surface-hover font-medium text-subheadline",
   fill:
-    "bg-accent text-black hover:bg-accent/90 hover:-translate-y-px hover:shadow-sm font-mono font-medium text-subheadline uppercase",
+    "bg-accent text-black hover:bg-accent/82 font-medium text-subheadline",
 };
 
 function Spinner() {
@@ -70,10 +70,9 @@ export function Button({
     <button
       className={`
         relative inline-flex items-center justify-center gap-2 rounded px-6 py-3
-        transition-all duration-[180ms] ease
+        transition-colors duration-[180ms] ease
         cursor-pointer select-none
-        active:scale-[0.98] active:translate-y-0
-        disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100
+        disabled:opacity-40 disabled:cursor-not-allowed
         [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]
         ${variantClasses[variant]}
         ${className}

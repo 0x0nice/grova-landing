@@ -29,7 +29,7 @@ export function ActionCard({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [quickSending, setQuickSending] = useState(false);
   const [quickSent, setQuickSent] = useState(false);
-  const { session, isDemo } = useAuth();
+  const { session } = useAuth();
   const { show } = useToast();
   const icon = actionIcon(action.type);
   const template = action.template_id ? getTemplate(action.template_id) : null;
@@ -63,7 +63,7 @@ export function ActionCard({
               {action.headline}
             </p>
             <span
-              className={`font-mono text-micro uppercase tracking-[0.08em] ${
+              className={`font-mono text-micro ${
                 action.confidence >= 0.8
                   ? "text-accent"
                   : action.confidence >= 0.5

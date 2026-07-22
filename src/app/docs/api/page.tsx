@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "API Reference — Grova Docs",
+  title: "API Reference - Grova Docs",
   description:
     "Authenticate, submit feedback, and trigger actions with the Grova API.",
 };
@@ -13,7 +13,7 @@ export default function ApiReferencePage() {
         API Reference
       </span>
       <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        API <em className="text-text2">Reference.</em>
+        API <span className="text-text2">Reference.</span>
       </h1>
       <p className="text-callout text-text3 font-light mb-10">
         Integrate Grova into your stack with the REST API.
@@ -21,7 +21,7 @@ export default function ApiReferencePage() {
 
       <div className="prose-grova flex flex-col gap-8">
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Authentication
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-3">
@@ -29,14 +29,14 @@ export default function ApiReferencePage() {
           </p>
           <ul className="font-mono text-callout text-text2 leading-[1.7] list-none p-0 flex flex-col gap-2 mb-3">
             <li>
-              <strong className="text-text">JWT Bearer Token</strong> &mdash;
+              <strong className="text-text">JWT Bearer Token</strong> -
               Pass your session token in the Authorization header:{" "}
               <code className="text-accent">
                 Authorization: Bearer &lt;token&gt;
               </code>
             </li>
             <li>
-              <strong className="text-text">API Key</strong> &mdash; Use a
+              <strong className="text-text">API Key</strong> - Use a
               per-project API key via the{" "}
               <code className="text-accent">x-grova-key</code> header. Keys
               are prefixed with <code className="text-accent">gv_</code> and
@@ -51,7 +51,7 @@ export default function ApiReferencePage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Endpoints
           </h2>
           <div className="overflow-x-auto">
@@ -85,8 +85,8 @@ export default function ApiReferencePage() {
                   </td>
                   <td className="py-2 pr-4">/feedback</td>
                   <td className="py-2">
-                    List feedback for a project. Supports filtering and
-                    pagination.
+                    List a paginated feedback page for one authorized project. Requires the
+                    project_id query parameter for JWT or administrative keys.
                   </td>
                 </tr>
                 <tr className="border-b border-border">
@@ -131,7 +131,7 @@ export default function ApiReferencePage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Example: Submit Feedback
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -146,7 +146,8 @@ Content-Type: application/json
 x-grova-key: gv_your_project_key
 
 {
-  "content": "The checkout page crashes on Safari when I click pay.",
+  "message": "The checkout page crashes on Safari when I click pay.",
+  "type": "bug",
   "source": "your-app",
   "email": "user@example.com",
   "metadata": {
@@ -159,23 +160,45 @@ x-grova-key: gv_your_project_key
           <p className="font-mono text-footnote text-text3 mb-2">Response</p>
           <pre className="bg-bg2 border border-border rounded p-4 overflow-x-auto font-mono text-footnote text-text2">
 {`{
+  "success": true,
   "id": "fb_abc123",
-  "status": "triaging",
-  "score": null,
-  "message": "Feedback received. Triage in progress."
+  "triage_status": "queued"
 }`}
           </pre>
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
+            Example: List Feedback
+          </h2>
+          <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
+            List requests require an authorized project scope. Pages default to
+            50 items and the limit is capped at 100.
+          </p>
+          <pre className="bg-bg2 border border-border rounded p-4 overflow-x-auto font-mono text-footnote text-text2">
+{`GET /feedback?project_id=project_123&page=1&limit=50
+
+{
+  "items": [],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 0,
+    "total_pages": 0,
+    "has_more": false
+  }
+}`}
+          </pre>
+        </section>
+
+        <section>
+          <h2 className="font-mono text-footnote text-text mb-3">
             Rate Limiting
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
-            Public endpoints (feedback submission via widget or API key) are
-            rate limited to 10 requests per minute per source IP. Authenticated
-            endpoints using JWT tokens have higher limits based on your plan
-            tier. Rate limit headers are included in every response:{" "}
+            Public feedback and transcription endpoints are rate limited to 10
+            requests per minute per source IP. Standard rate limit headers are
+            returned with those endpoints:{" "}
             <code className="text-accent">X-RateLimit-Limit</code>,{" "}
             <code className="text-accent">X-RateLimit-Remaining</code>, and{" "}
             <code className="text-accent">X-RateLimit-Reset</code>.

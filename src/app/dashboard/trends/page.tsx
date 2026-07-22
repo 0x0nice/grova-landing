@@ -10,11 +10,13 @@ import { TrendTable } from "@/components/dashboard/biz/trend-table";
 import { EmptyStatePreview } from "@/components/ui/empty-state-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEMO_BIZ_PENDING } from "@/lib/demo-data";
+import { LoadError } from "@/components/dashboard/load-error";
+import { LoadMore } from "@/components/dashboard/load-more";
 
 export default function TrendsPage() {
   const { session, isDemo } = useAuth();
   const active = useProjectStore((s) => s.active);
-  const { items, loading, loaded, loadFeedback } = useBizStore();
+  const { items, loading, loaded, error, loadFeedback, loadMore, total, hasMore, loadingMore } = useBizStore();
 
   useEffect(() => {
     if (active && (session?.access_token || isDemo) && !loaded) {
@@ -28,6 +30,15 @@ export default function TrendsPage() {
         <Skeleton className="h-[200px]" />
         <Skeleton className="h-[120px]" />
       </div>
+    );
+  }
+
+  if (error && active) {
+    return (
+      <LoadError
+        message={error}
+        onRetry={() => void loadFeedback(active.id, session?.access_token || "demo", isDemo)}
+      />
     );
   }
 
@@ -48,11 +59,14 @@ export default function TrendsPage() {
 
   return (
     <div>
-      <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.14em] mb-4">
+      <span className="block font-mono text-footnote text-text3 mb-4">
         Weekly message volume
       </span>
       <TrendChart byWeek={byWeek} weeks={weeks} cats={cats} />
       <TrendTable byWeek={byWeek} weeks={weeks} cats={cats} />
+      {hasMore && active && (
+        <LoadMore loaded={items.length} total={total} loading={loadingMore} onLoad={() => void loadMore(active.id, session?.access_token || "demo", isDemo)} context="responses in this trend" />
+      )}
     </div>
   );
 }

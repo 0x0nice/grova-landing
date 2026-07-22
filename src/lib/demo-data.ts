@@ -26,7 +26,7 @@ export const DEMO_DEV_PENDING: FeedbackItem[] = [
     id: "dd1",
     type: "bug",
     message:
-      "Payment silently fails on checkout. I clicked 'Pay now' three times and nothing happened — no error, no spinner, just frozen. Had to refresh and re-enter everything. This is losing you money.",
+      "Payment silently fails on checkout. I clicked 'Pay now' three times and nothing happened - no error, no spinner, just frozen. Had to refresh and re-enter everything. This is losing you money.",
     page: "https://acme.app/checkout",
     created_at: h(2),
     status: "pending",
@@ -54,7 +54,7 @@ export const DEMO_DEV_PENDING: FeedbackItem[] = [
         line: 0,
       },
       {
-        message: "Error: Payment intent creation failed — missing customer ID",
+        message: "Error: Payment intent creation failed - missing customer ID",
         source: "payment-service.js",
         line: 89,
         col: 5,
@@ -63,7 +63,7 @@ export const DEMO_DEV_PENDING: FeedbackItem[] = [
     triage: {
       score: 9.2,
       category: "bug",
-      summary: "Silent payment failure on checkout — Stripe integration broken",
+      summary: "Silent payment failure on checkout - Stripe integration broken",
       persona_type: "developer",
       signal_count: 3,
       reasoning:
@@ -121,7 +121,7 @@ export const DEMO_DEV_PENDING: FeedbackItem[] = [
     triage: {
       score: 7.8,
       category: "feature_request",
-      summary: "Dark mode feature request — common user pain point",
+      summary: "Dark mode feature request - common user pain point",
       persona_type: "developer",
       signal_count: 2,
       reasoning:
@@ -210,7 +210,7 @@ export const DEMO_DEV_PENDING: FeedbackItem[] = [
     triage: {
       score: 5.4,
       category: "ux",
-      summary: "Navigation mismatch — 'Projects' link goes to marketing page instead of dashboard",
+      summary: "Navigation mismatch - 'Projects' link goes to marketing page instead of dashboard",
       persona_type: "developer",
       signal_count: 1,
       reasoning:
@@ -239,7 +239,7 @@ export const DEMO_DEV_PENDING: FeedbackItem[] = [
     triage: {
       score: 3.1,
       category: "complaint",
-      summary: "Vague complaint — no specific issue identified",
+      summary: "Vague complaint - no specific issue identified",
       persona_type: "developer",
       signal_count: 1,
       reasoning:
@@ -266,7 +266,7 @@ export const DEMO_DEV_PENDING: FeedbackItem[] = [
     triage: {
       score: 1.5,
       category: "spam",
-      summary: "Test/spam submission — no real feedback",
+      summary: "Test/spam submission - no real feedback",
       persona_type: "developer",
       signal_count: 1,
       reasoning: "Clearly a test submission with no meaningful content.",
@@ -289,7 +289,7 @@ export const DEMO_DEV_APPROVED: FeedbackItem[] = [
     id: "dd7",
     type: "bug",
     message:
-      "CSV export is empty when I filter by date range. The file downloads but has only headers, no data rows. Tried multiple date ranges — same result.",
+      "CSV export is empty when I filter by date range. The file downloads but has only headers, no data rows. Tried multiple date ranges - same result.",
     page: "https://acme.app/reports/export",
     created_at: h(48),
     status: "approved",
@@ -341,7 +341,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
     triage: {
       score: 8.7,
       category: "complaint",
-      summary: "Wrong order delivered — repeat issue with kitchen accuracy",
+      summary: "Wrong order delivered - repeat issue with kitchen accuracy",
       persona_type: "business",
       signal_count: 1,
       reasoning:
@@ -349,7 +349,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
       recommended_action:
         "Send recovery email with apology and offer. Flag kitchen process for review.",
       suggested_reply:
-        "Hi Jane, I'm so sorry about the mix-up — especially since it's happened before. That's not the experience we want for you. I'd like to offer you a complimentary meal on your next visit. We're reviewing our kitchen process to make sure this doesn't happen again.",
+        "Hi Jane, I'm so sorry about the mix-up - especially since it's happened before. That's not the experience we want for you. I'd like to offer you a complimentary meal on your next visit. We're reviewing our kitchen process to make sure this doesn't happen again.",
       sub_scores: {
         severity: 0.9,
         actionability: 0.85,
@@ -414,7 +414,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
     triage: {
       score: 7.2,
       category: "complaint",
-      summary: "Long wait despite reservation — recurring weekend staffing issue",
+      summary: "Long wait despite reservation - recurring weekend staffing issue",
       persona_type: "business",
       signal_count: 1,
       reasoning:
@@ -422,7 +422,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
       recommended_action:
         "Review weekend staffing levels. Consider additional host on busy nights.",
       suggested_reply:
-        "Hi Mike, thank you for your patience and for letting us know. You're right — weekends have been busier than expected and we're working on bringing in extra staff. We value your time and want to do better.",
+        "Hi Mike, thank you for your patience and for letting us know. You're right - weekends have been busier than expected and we're working on bringing in extra staff. We value your time and want to do better.",
       sub_scores: {
         severity: 0.7,
         actionability: 0.75,
@@ -522,7 +522,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
     id: "db4",
     type: "other",
     message:
-      "Just wanted to say the new seasonal menu is incredible. The mushroom risotto was the best I've had anywhere. Only complaint — the portion could be a touch bigger!",
+      "Just wanted to say the new seasonal menu is incredible. The mushroom risotto was the best I've had anywhere. Only complaint - the portion could be a touch bigger!",
     page: "https://cornerbistro.com/feedback",
     created_at: h(48),
     status: "pending",
@@ -536,7 +536,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
       reasoning:
         "Overwhelmingly positive feedback with minor constructive note. Great opportunity for review ask.",
       suggested_reply:
-        "Hi Alex, thank you so much! We're thrilled you loved the mushroom risotto — it's our chef's favorite too. We appreciate the note about portions and we'll pass that along. Hope to see you again soon!",
+        "Hi Alex, thank you so much! We're thrilled you loved the mushroom risotto - it's our chef's favorite too. We appreciate the note about portions and we'll pass that along. Hope to see you again soon!",
       sub_scores: {
         severity: 0.1,
         actionability: 0.3,
@@ -553,7 +553,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
           type: "thank_you_email",
           confidence: 0.9,
           headline: "Send thank you with review request",
-          reasoning: "Happy customer — great opportunity for public review",
+          reasoning: "Happy customer - great opportunity for public review",
           priority: "medium",
           requires_customer_email: true,
           template_id: "thank_you_review",
@@ -601,7 +601,7 @@ export const DEMO_BIZ_PENDING: FeedbackItem[] = [
           type: "direct_reply",
           confidence: 0.95,
           headline: "Reply with holiday hours info",
-          reasoning: "Simple factual question — quick win",
+          reasoning: "Simple factual question - quick win",
           priority: "low",
           requires_customer_email: true,
           template_id: "question_response",
@@ -629,7 +629,7 @@ export function demoGet(path: string): unknown {
       actions_enabled: true,
       owner_name: "Demo Owner",
       reply_to_email: null,
-      brand_color: "#00c87a",
+      brand_color: "#3f7556",
       logo_url: null,
       preferred_review_platform: "google",
       review_url: null,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Widget Installation — Grova Docs",
+  title: "Widget Installation - Grova Docs",
   description:
     "Install the Grova feedback widget on your site with a single script tag.",
 };
@@ -13,7 +13,7 @@ export default function WidgetPage() {
         Widget Installation
       </span>
       <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        Install the <em className="text-text2">Widget.</em>
+        Install the <span className="text-text2">Widget.</span>
       </h1>
       <p className="text-callout text-text3 font-light mb-10">
         Drop in a single script tag to start collecting feedback.
@@ -21,24 +21,25 @@ export default function WidgetPage() {
 
       <div className="prose-grova flex flex-col gap-8">
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Developer Widget
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
             For developer projects collecting bug reports and technical
             feedback. The widget captures browser metadata, console errors, and
-            optional screenshots automatically.
+            optional screenshots when the submitter chooses to include one.
           </p>
           <pre className="bg-bg2 border border-border rounded p-4 overflow-x-auto font-mono text-footnote text-text2">
 {`<script
-  src="https://cdn.grova.dev/widget/grova-widget.js"
+  src="https://grova.dev/grova-widget.js"
   data-source="your-app"
+  data-key="YOUR_PROJECT_KEY"
 ></script>`}
           </pre>
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Business Widget
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -48,15 +49,15 @@ export default function WidgetPage() {
           </p>
           <pre className="bg-bg2 border border-border rounded p-4 overflow-x-auto font-mono text-footnote text-text2">
 {`<script
-  src="https://cdn.grova.dev/widget/grova-business-widget.js"
+  src="https://grova.dev/grova-business-widget.js"
   data-source="your-business"
-  data-project="YOUR_PROJECT_ID"
+  data-key="YOUR_PROJECT_KEY"
 ></script>`}
           </pre>
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Configuration Options
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -91,11 +92,12 @@ export default function WidgetPage() {
                 </tr>
                 <tr className="border-b border-border">
                   <td className="py-2 pr-4">
-                    <code className="text-accent">data-project</code>
+                    <code className="text-accent">data-key</code>
                   </td>
-                  <td className="py-2 pr-4">Business only</td>
+                  <td className="py-2 pr-4">Yes</td>
                   <td className="py-2">
-                    Your Grova project ID. Found in your project settings.
+                    Your publishable project collection key. Found in project
+                    settings.
                   </td>
                 </tr>
                 <tr className="border-b border-border">
@@ -127,7 +129,7 @@ export default function WidgetPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Customization Notes
           </h2>
           <ul className="font-mono text-callout text-text2 leading-[1.7] list-none p-0 flex flex-col gap-2">
@@ -145,8 +147,8 @@ export default function WidgetPage() {
             </li>
             <li>
               The widget respects Content Security Policy headers. If you use
-              CSP, add cdn.grova.dev to your script-src and connect-src
-              directives.
+              CSP, add grova.dev to script-src and the Grova API host to
+              connect-src.
             </li>
           </ul>
         </section>

@@ -3,111 +3,94 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTrack } from "@/hooks/use-track";
-import { WaitlistForm } from "./waitlist-form";
-
-// CSS fade-up for initial page load (works without JS).
-// framer-motion is only used for the dev↔biz crossfade transition.
-function fadeUp(delayMs: number): { style: React.CSSProperties } {
-  return {
-    style: {
-      animation: `fadeUp 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) ${delayMs}ms both`,
-    },
-  };
-}
 
 const crossfade = {
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
+  initial: { y: 6 },
+  animate: { y: 0 },
   exit: { opacity: 0, y: -6 },
-  transition: { duration: 0.32, ease: "easeOut" as const },
+  transition: { duration: 0.24, ease: "easeOut" as const },
 };
+
+function DecisionArtifact({ track }: { track: "dev" | "biz" }) {
+  const developer = track === "dev";
+
+  return (
+    <aside
+      className="decision-artifact mt-14 bg-surface-raised px-7 py-7 pr-12 max-md:mt-10 max-md:px-5 max-md:py-6 max-md:pr-10"
+      aria-label={developer ? "Example developer decision brief" : "Example business decision brief"}
+    >
+      <div className="grid grid-cols-[150px_1fr_1fr] gap-8 items-start max-lg:grid-cols-[120px_1fr] max-lg:[&>*:last-child]:col-start-2 max-md:grid-cols-1 max-md:gap-6 max-md:[&>*:last-child]:col-start-1">
+        <div>
+          <p className="text-[0.72rem] text-text3 mb-1">Decision score</p>
+          <p className={`font-serif text-[4.3rem] leading-[0.9] tabular-nums ${developer ? "text-orange" : "text-accent"}`}>
+            {developer ? "9.2" : "8.6"}
+          </p>
+          <p className="text-[0.72rem] text-text2 mt-3">
+            {developer ? "Ship-blocking" : "Retention risk"}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-[0.72rem] text-text3 mb-2">What the evidence says</p>
+          <h2 className="font-serif text-[1.45rem] text-text leading-[1.15] mb-3">
+            {developer ? "Revenue-blocking checkout failure" : "Friday wait times are becoming a pattern"}
+          </h2>
+          <p className="text-[0.84rem] text-text2 leading-[1.65]">
+            {developer
+              ? "Payment intent creation fails when customer identity is missing. Three console signals point to payment-service.js:89."
+              : "Three guests reported waits above twenty minutes. Two said the delay changed whether they would return."}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-[0.72rem] text-text3 mb-2">The next move</p>
+          <p className="font-serif text-[1.25rem] text-text leading-[1.35]">
+            {developer
+              ? "Repair customer lookup, add a visible failure state, and open the issue with the captured evidence attached."
+              : "Reply to the affected guests and add one host to Friday's 6 to 8 PM shift."}
+          </p>
+          <p className="text-[0.7rem] text-text3 mt-5">
+            {developer ? "3 console errors · Chrome 121 · 2 hours ago" : "3 related messages · High confidence · This week"}
+          </p>
+        </div>
+      </div>
+    </aside>
+  );
+}
 
 export function Hero() {
   const { track } = useTrack();
 
   return (
-    <section className="pt-[108px] pb-[88px] max-w-[680px] max-md:pt-[60px] max-md:pb-[52px]">
-      <AnimatePresence mode="wait">
-        {track === "dev" ? (
-          <motion.div key="dev" {...crossfade}>
-            <span
-              {...fadeUp(50)}
-              className="block text-[0.72rem] tracking-[0.16em] uppercase mb-[34px] text-orange"
-            >
-              Feedback triage for developers
-            </span>
-            <h1
-              {...fadeUp(150)}
-              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px] [text-wrap:balance]"
-            >
-              Better feedback.
-              <br />
-              <em className="text-text2">Faster fixes.</em>
+    <section className="min-h-[calc(100svh-92px)] py-[68px] flex items-center max-md:min-h-0 max-md:py-[52px]">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={track} {...crossfade} className="w-full">
+          <div className="grid grid-cols-12 gap-x-8 gap-y-8 items-end max-lg:grid-cols-1">
+            <h1 className="col-span-8 font-serif text-[clamp(3.3rem,7vw,5.75rem)] leading-[0.92] tracking-[-0.025em] text-text font-normal max-lg:col-span-1 [text-wrap:balance]">
+              {track === "dev" ? (
+                <>Feedback in.<br /><span className="text-text2">A decision out.</span></>
+              ) : (
+                <>Hear patterns.<br /><span className="text-text2">Act early.</span></>
+              )}
             </h1>
-            <p
-              {...fadeUp(250)}
-              className="text-[1.06rem] text-text2 leading-[1.85] max-w-[500px] mb-[44px] font-light [text-wrap:pretty]"
-            >
-              Grova captures user feedback, filters the noise, and delivers ranked
-              fix briefs straight to your inbox — ready to drop into Cursor or
-              Claude Code. You stay in control. Your AI does the work.
-            </p>
-            <div {...fadeUp(350)}>
-              <WaitlistForm />
-              <p className="mt-2.5 text-[0.7rem] text-text3 tracking-[0.04em]">
-                No spam. Unsubscribe any time.
+
+            <div className="col-span-4 pb-2 max-lg:col-span-1 max-lg:max-w-[620px]">
+              <p className="text-[1rem] text-text2 leading-[1.75] mb-6 [text-wrap:pretty]">
+                {track === "dev"
+                  ? "Grova turns a vague report into ranked evidence, likely cause, priority, and the next action your team should take."
+                  : "Collect private feedback through your site or QR code. Grova connects recurring themes, flags retention risk, and prepares the right response."}
               </p>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div key="biz" {...crossfade}>
-            <span
-              {...fadeUp(50)}
-              className="block text-[0.72rem] tracking-[0.16em] uppercase mb-[34px] text-accent"
-            >
-              Smart feedback for your business
-            </span>
-            <h1
-              {...fadeUp(150)}
-              className="font-serif text-[clamp(2.8rem,6vw,4.6rem)] leading-[1.07] tracking-[-0.02em] text-text font-normal mb-[26px] [text-wrap:balance]"
-            >
-              Your customers have something to say.
-              <br />
-              <em className="text-text2">Make it easy to hear them.</em>
-            </h1>
-            <p
-              {...fadeUp(250)}
-              className="text-[1.06rem] text-text2 leading-[1.85] max-w-[540px] mb-[44px] font-light [text-wrap:pretty]"
-            >
-              Grova makes it easy for customers to share honest feedback — through
-              a widget on your site, a QR code at your register, or a simple
-              link. AI filters the noise and surfaces what actually matters. No
-              dashboards to learn. No data to crunch. Just a weekly brief in your
-              inbox telling you what to fix, what&apos;s working, and what your
-              customers really think.
-            </p>
-            <div {...fadeUp(350)} className="flex items-center gap-4 flex-wrap">
               <Link
                 href="/login?mode=signup"
-                className="bg-accent text-black rounded px-6 py-3
-                           font-mono text-[0.85rem] font-semibold tracking-[0.04em]
-                           no-underline inline-flex items-center gap-2
-                           [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
-                           transition-all duration-[180ms]
-                           hover:opacity-92 hover:-translate-y-px hover:shadow-sm
-                           active:scale-[0.98] active:translate-y-0"
+                className={`${track === "dev" ? "bg-orange hover:bg-[#ad4d19]" : "bg-accent hover:bg-[#356448]"} inline-flex rounded px-6 py-3 text-[0.9rem] font-semibold text-white no-underline transition-colors`}
               >
-                Start free <span className="inline-block -translate-y-px">→</span>
+                {track === "dev" ? "Start with real feedback" : "Start listening"}
               </Link>
-              <a
-                href="#pipeline"
-                className="text-[0.85rem] text-text2 font-light hover:text-accent transition-colors"
-              >
-                See how it works ↓
-              </a>
             </div>
-          </motion.div>
-        )}
+          </div>
+
+          <DecisionArtifact track={track} />
+        </motion.div>
       </AnimatePresence>
     </section>
   );

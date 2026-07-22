@@ -15,7 +15,7 @@ const variantClasses: Record<CardVariant, string> = {
   default: "bg-surface border border-border",
   raised: "bg-surface-raised border border-border shadow-sm",
   interactive:
-    "bg-surface border border-border cursor-pointer transition-all duration-[180ms] hover:bg-surface-hover hover:border-border2 hover:-translate-y-px hover:shadow-sm",
+    "bg-surface border border-border cursor-pointer transition-colors duration-[180ms] hover:bg-surface-hover hover:border-border2",
 };
 
 export function Card({

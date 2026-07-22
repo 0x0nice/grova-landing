@@ -115,6 +115,7 @@ export interface ActionSettings {
   default_offer_type: string;
   default_offer_value: string;
   default_offer_expiry_days: number;
+  max_offer_value?: string | null;
   owner_name: string | null;
   reply_to_email: string | null;
   brand_color: string;
@@ -125,4 +126,6 @@ export interface ActionSettings {
   follow_up_delay_days: number;
   escalation_email: string | null;
   tone: string;
+  never_mention_staff_names?: boolean;
+  never_auto_refund?: boolean;
 }

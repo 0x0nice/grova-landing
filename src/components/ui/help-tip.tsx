@@ -29,9 +29,9 @@ export function HelpTip({ children }: { children: React.ReactNode }) {
         onClick={toggle}
         onFocus={enter}
         onBlur={leave}
-        className="inline-flex items-center justify-center w-[15px] h-[15px] rounded-full
-                   border border-border2 text-text3 text-[0.5rem] leading-none cursor-help
-                   hover:border-accent hover:text-accent transition-colors"
+        className="inline-flex items-center justify-center w-[15px] h-[15px]
+                   text-text3 text-[0.62rem] font-semibold leading-none cursor-help
+                   hover:text-accent transition-colors"
         aria-label="Help"
       >
         ?
@@ -39,7 +39,7 @@ export function HelpTip({ children }: { children: React.ReactNode }) {
       {show && (
         <span
           className="absolute bottom-full right-0 mb-2 w-[260px]
-                     bg-bg2 border border-border rounded p-3 shadow-lg z-50
+                     bg-bg2 border border-border rounded p-3 shadow-[0_6px_16px_rgba(0,0,0,0.2)] z-50
                      font-mono text-[0.62rem] text-text2 leading-[1.65] font-normal
                      normal-case tracking-normal"
         >

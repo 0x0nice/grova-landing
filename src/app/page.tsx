@@ -18,13 +18,9 @@ import { CTASection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
 import Script from "next/script";
 
-function Divider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />;
-}
-
 const sectionFade = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
+  initial: { y: 10 },
+  animate: { y: 0 },
   exit: { opacity: 0, y: -10 },
   transition: { duration: 0.32, ease: "easeOut" as const },
 };
@@ -36,55 +32,45 @@ function LandingContent() {
     <>
       <Header />
 
-      <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+      <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
         <Hero />
       </div>
 
       {/* Track-specific content with crossfade */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         {track === "dev" ? (
           <motion.div key="dev-sections" {...sectionFade}>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <PipelineSection />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <StepsSection />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <FeaturesGrid />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <PricingGrid />
             </div>
           </motion.div>
         ) : (
           <motion.div key="biz-sections" {...sectionFade}>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <BizPipelineSection />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <BizStopGuessingSection />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <BizThreeStepsSection />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <BizBounceBackSection />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <BizFeaturesSection />
             </div>
-            <Divider />
-            <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <PricingGrid />
             </div>
           </motion.div>
@@ -92,8 +78,7 @@ function LandingContent() {
       </AnimatePresence>
 
       {/* Shared CTA + Footer */}
-      <Divider />
-      <div className="max-w-[980px] mx-auto px-10 max-md:px-5">
+      <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
         <CTASection />
         <Footer />
       </div>
@@ -106,7 +91,7 @@ export default function Home() {
     <TrackProvider>
       <LandingContent />
       <Script
-        src="https://grova.dev/grova-business-widget.js"
+        src="/grova-widget.js"
         data-source="grova.dev"
         strategy="lazyOnload"
       />

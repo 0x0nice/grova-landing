@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { useRef, useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { useTrack } from "@/hooks/use-track";
 
 export function TrackToggle() {
@@ -11,7 +11,7 @@ export function TrackToggle() {
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
   // Measure the active button and position the sliding indicator
-  const updateIndicator = () => {
+  const updateIndicator = useCallback(() => {
     const activeRef = track === "dev" ? devRef : bizRef;
     const container = containerRef.current;
     if (activeRef.current && container) {
@@ -22,19 +22,19 @@ export function TrackToggle() {
         width: buttonRect.width,
       });
     }
-  };
+  }, [track]);
 
   // Use layoutEffect for synchronous measurement to avoid flash
-  useLayoutEffect(updateIndicator, [track]);
+  useLayoutEffect(updateIndicator, [updateIndicator]);
   // Re-measure on resize
   useEffect(() => {
     window.addEventListener("resize", updateIndicator);
     return () => window.removeEventListener("resize", updateIndicator);
-  }, [track]);
+  }, [updateIndicator]);
 
   return (
     <div className="flex items-center">
-      <span className="font-mono text-[0.62rem] text-text3 tracking-[0.06em] px-2.5 pl-4 shrink-0 leading-none">
+      <span className="text-[0.7rem] text-text3 px-2.5 pl-4 shrink-0 leading-none">
         for
       </span>
       <div
@@ -56,11 +56,12 @@ export function TrackToggle() {
           ref={bizRef}
           onClick={() => setTrack("biz")}
           className={`
-            relative z-10 border-none rounded-pill cursor-pointer font-mono text-caption font-medium
-            tracking-[0.05em] px-3 py-[5px] leading-none whitespace-nowrap
+            relative z-10 border-none rounded-pill cursor-pointer text-[0.7rem] font-medium
+            px-3 py-[5px] leading-none whitespace-nowrap
             transition-colors duration-300
             ${track === "biz" ? "text-black" : "bg-transparent text-text3 hover:text-text2"}
           `}
+          aria-pressed={track === "biz"}
         >
           Business
         </button>
@@ -68,11 +69,12 @@ export function TrackToggle() {
           ref={devRef}
           onClick={() => setTrack("dev")}
           className={`
-            relative z-10 border-none rounded-pill cursor-pointer font-mono text-caption font-medium
-            tracking-[0.05em] px-3 py-[5px] leading-none whitespace-nowrap
+            relative z-10 border-none rounded-pill cursor-pointer text-[0.7rem] font-medium
+            px-3 py-[5px] leading-none whitespace-nowrap
             transition-colors duration-300
             ${track === "dev" ? "text-white" : "bg-transparent text-text3 hover:text-text2"}
           `}
+          aria-pressed={track === "dev"}
         >
           Developers
         </button>

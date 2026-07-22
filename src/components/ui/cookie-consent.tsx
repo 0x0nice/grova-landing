@@ -15,7 +15,7 @@ export function CookieConsent() {
         return () => clearTimeout(timer);
       }
     } catch {
-      // localStorage may be blocked by corporate browser policies — silently skip
+      // localStorage may be blocked by corporate browser policies - silently skip
     }
   }, []);
 
@@ -33,15 +33,13 @@ export function CookieConsent() {
 
   return (
     <div
-      className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:max-w-[420px]
-                 bg-surface border border-border rounded-lg p-4 z-[9999]
-                 shadow-lg
-                 [html[data-theme=dark]_&]:shadow-[0_12px_40px_rgba(0,0,0,0.24),inset_0_1px_0_rgba(255,255,255,0.04)]
+      className="fixed bottom-20 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:max-w-[420px]
+                 bg-surface-raised border border-border rounded-lg p-4 z-[9999]
                  animate-in slide-in-from-bottom-4 duration-300"
       role="alert"
       aria-live="polite"
     >
-      <p className="font-mono text-footnote text-text2 mb-3">
+      <p className="text-footnote text-text2 mb-3">
         We use essential cookies for authentication and preferences. Optional
         analytics cookies help us improve the product.{" "}
         <Link
@@ -54,7 +52,7 @@ export function CookieConsent() {
       <div className="flex items-center gap-2">
         <button
           onClick={handleDecline}
-          className="font-mono font-medium text-micro text-text3 hover:text-text2 uppercase
+          className="font-medium text-[0.7rem] text-text3 hover:text-text2
                      px-3 py-1.5 rounded border border-border hover:border-border2
                      transition-colors cursor-pointer"
         >
@@ -62,7 +60,7 @@ export function CookieConsent() {
         </button>
         <button
           onClick={handleAccept}
-          className="font-mono font-medium text-micro text-black uppercase
+          className="font-medium text-[0.7rem] text-black
                      px-3 py-1.5 rounded bg-accent hover:opacity-90
                      transition-opacity cursor-pointer"
         >

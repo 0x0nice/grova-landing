@@ -102,7 +102,7 @@ export function EmptyState({
       ) : null}
       <h3 className="font-serif text-title text-text2 mb-2">{heading}</h3>
       {description && (
-        <p className="font-mono text-callout text-text3 max-w-[360px] leading-[1.55]">
+        <p className="text-callout text-text3 max-w-[360px] leading-[1.55]">
           {description}
         </p>
       )}
@@ -110,16 +110,16 @@ export function EmptyState({
         (action.href ? (
           <a
             href={action.href}
-            className="mt-5 font-mono text-footnote text-accent hover:text-accent/80 transition-colors uppercase tracking-[0.04em]"
+            className="mt-5 text-footnote text-accent hover:text-accent/80 transition-colors"
           >
-            {action.label} →
+            {action.label}
           </a>
         ) : action.onClick ? (
           <button
             onClick={action.onClick}
-            className="mt-5 font-mono text-footnote text-accent hover:text-accent/80 transition-colors cursor-pointer uppercase tracking-[0.04em]"
+            className="mt-5 text-footnote text-accent hover:text-accent/80 transition-colors cursor-pointer"
           >
-            {action.label} →
+            {action.label}
           </button>
         ) : null)}
     </div>

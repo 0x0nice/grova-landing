@@ -6,53 +6,29 @@ import { WaitlistForm } from "./waitlist-form";
 
 export function CTASection() {
   const { track } = useTrack();
-  const accentBg = track === "biz" ? "bg-accent text-black" : "bg-orange text-white";
+  const developer = track === "dev";
 
   return (
-    <section className="py-24 text-center" id="waitlist">
-      {track === "dev" ? (
-        <>
-          <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text max-w-[500px] mx-auto mb-3.5">
-            Your product,
-            <br />
-            <em className="text-text2">always improving.</em>
+    <section className="my-20 bg-surface px-8 py-10 max-md:my-14 max-md:px-5" id="waitlist">
+      <div className="grid grid-cols-[1.1fr_0.9fr] gap-16 items-end max-md:grid-cols-1 max-md:gap-10">
+        <div>
+          <h2 className="font-serif text-[clamp(2.2rem,5vw,4.5rem)] font-normal tracking-[-0.03em] leading-[0.95] text-text max-w-[700px] mb-7">
+            {developer ? "Put one real report through the loop." : "Give one customer a better place to be heard."}
           </h2>
-          <p className="text-body text-text2 mb-[34px] font-light leading-[1.75]">
-            Start free today. No credit card required.
-          </p>
-        </>
-      ) : (
-        <>
-          <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text max-w-[500px] mx-auto mb-3.5">
-            Your customers are already talking.
-            <br />
-            <em className="text-text2">Start listening.</em>
-          </h2>
-          <p className="text-body text-text2 mb-[34px] font-light leading-[1.75]">
-            Start free today. No credit card required.
-          </p>
-        </>
-      )}
-
-      <div className="flex flex-col items-center gap-6">
-        <Link
-          href="/login?mode=signup"
-          className={`${accentBg} rounded px-8 py-3
-                     font-mono text-footnote font-semibold tracking-[0.04em]
-                     no-underline inline-flex items-center gap-2
-                     [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
-                     transition-all duration-[180ms]
-                     hover:opacity-92 hover:-translate-y-px hover:shadow-sm
-                     active:scale-[0.98] active:translate-y-0`}
-        >
-          Get started free <span className="inline-block -translate-y-px">→</span>
-        </Link>
-        <div className="flex items-center gap-3 text-text3">
-          <span className="h-px w-12 bg-gradient-to-r from-transparent to-border" />
-          <span className="font-mono text-caption uppercase tracking-[0.12em]">or join the paid-tier waitlist</span>
-          <span className="h-px w-12 bg-gradient-to-l from-transparent to-border" />
+          <Link
+            href="/login?mode=signup"
+            className={`${developer ? "bg-orange hover:bg-[#ad4d19]" : "bg-accent hover:bg-[#356448]"} inline-flex rounded px-7 py-3 text-[0.9rem] font-semibold text-white no-underline transition-colors`}
+          >
+            Start free
+          </Link>
         </div>
-        <WaitlistForm className="flex justify-center" />
+
+        <div>
+          <p className="text-[0.84rem] text-text2 leading-[1.65] mb-5">
+            Paid plans are opening in stages. Leave your email if you want early access when the workflow fits your team.
+          </p>
+          <WaitlistForm />
+        </div>
       </div>
     </section>
   );

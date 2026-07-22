@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Getting Started — Grova Docs",
+  title: "Getting Started - Grova Docs",
   description: "Quick start guide to set up Grova and start collecting feedback.",
 };
 
@@ -13,7 +13,7 @@ export default function GettingStartedPage() {
         Getting Started
       </span>
       <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        Quick <em className="text-text2">Start.</em>
+        Quick <span className="text-text2">Start.</span>
       </h1>
       <p className="text-callout text-text3 font-light mb-10">
         Go from zero to triaged feedback in under five minutes.
@@ -21,7 +21,7 @@ export default function GettingStartedPage() {
 
       <div className="prose-grova flex flex-col gap-8">
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             1. Sign Up
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -35,7 +35,7 @@ export default function GettingStartedPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             2. Create Your First Project
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -48,7 +48,7 @@ export default function GettingStartedPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             3. Install the Widget
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -63,7 +63,7 @@ export default function GettingStartedPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             4. Receive Your First Feedback
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -74,7 +74,7 @@ export default function GettingStartedPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             5. Review Triage Results
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -87,7 +87,7 @@ export default function GettingStartedPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             6. Send Your First Smart Action
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">

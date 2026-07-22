@@ -85,7 +85,7 @@ export function EmptyStatePreview({
       {previews.length > 0 && (
         <div className="mt-2">
           <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-micro text-text3 uppercase tracking-[0.14em]">
+            <span className="font-mono text-micro text-text3">
               Preview · Sample data
             </span>
             <span

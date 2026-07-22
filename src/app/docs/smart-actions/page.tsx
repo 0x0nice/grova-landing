@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Smart Actions — Grova Docs",
+  title: "Smart Actions - Grova Docs",
   description:
     "AI-suggested email responses, templates, and follow-up workflows in Grova.",
 };
@@ -13,7 +13,7 @@ export default function SmartActionsPage() {
         Smart Actions
       </span>
       <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        Smart <em className="text-text2">Actions.</em>
+        Smart <span className="text-text2">Actions.</span>
       </h1>
       <p className="text-callout text-text3 font-light mb-10">
         AI-powered email responses you can send with one click.
@@ -21,7 +21,7 @@ export default function SmartActionsPage() {
 
       <div className="prose-grova flex flex-col gap-8">
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             What Are Smart Actions?
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -34,7 +34,7 @@ export default function SmartActionsPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Available Templates
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -122,7 +122,7 @@ export default function SmartActionsPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Send vs Preview Workflow
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -137,7 +137,7 @@ export default function SmartActionsPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Template Variables
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -206,7 +206,7 @@ export default function SmartActionsPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Follow-Up Scheduling
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -219,15 +219,15 @@ export default function SmartActionsPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Action Settings
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
             Configure default action behavior in your project settings.
             Options include default offer type for recovery emails, review
             platform URL, sender name and reply-to address, follow-up delay
-            in days, and whether to auto-send suggested actions or require
-            manual approval. These settings apply to all feedback items in the
+            in days, and whether follow-ups are enabled. Suggested actions
+            always require a person to review and send them. These settings apply to all feedback items in the
             project unless overridden at send time.
           </p>
         </section>

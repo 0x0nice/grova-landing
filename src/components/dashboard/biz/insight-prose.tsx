@@ -12,11 +12,11 @@ function truncate(text: string, max = 100): string {
 function trendPhrase(trend: NonNullable<InsightEvidence["topTheme"]>["trend"]): string {
   switch (trend) {
     case "up":
-      return " — up from last week";
+      return " - up from last week";
     case "down":
-      return " — down from last week";
+      return " - down from last week";
     case "new":
-      return " — new this week";
+      return " - new this week";
     case "steady":
     default:
       return "";
@@ -31,7 +31,7 @@ export function InsightProse({ evidence }: InsightProseProps) {
 
   const sentences: React.ReactNode[] = [];
 
-  // Sentence 1 — volume framing.
+  // Sentence 1 - volume framing.
   if (sinceLastVisit && sinceLastVisit.count > 0) {
     sentences.push(
       <>
@@ -54,10 +54,10 @@ export function InsightProse({ evidence }: InsightProseProps) {
       </>
     );
   } else {
-    sentences.push(<>No messages this week — your stream is quiet.</>);
+    sentences.push(<>No messages this week - your stream is quiet.</>);
   }
 
-  // Sentence 2 — top theme + representative quote.
+  // Sentence 2 - top theme + representative quote.
   if (topTheme) {
     sentences.push(
       <>
@@ -75,7 +75,7 @@ export function InsightProse({ evidence }: InsightProseProps) {
     );
   }
 
-  // Sentence 3 — pending replies.
+  // Sentence 3 - pending replies.
   if (needsReply && needsReply > 0) {
     sentences.push(
       <>

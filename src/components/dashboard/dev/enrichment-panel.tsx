@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Metadata, ConsoleError } from "@/types/feedback";
 
 interface EnrichmentPanelProps {
@@ -21,7 +22,7 @@ export function EnrichmentPanel({
       {/* Device / environment info */}
       {hasMetadata && (
         <div>
-          <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2.5">
+          <span className="block font-mono text-micro text-text3 mb-2.5">
             Environment
           </span>
           <div className="flex flex-wrap gap-x-5 gap-y-1.5">
@@ -57,7 +58,7 @@ export function EnrichmentPanel({
       {/* Console errors */}
       {hasErrors && (
         <div>
-          <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2.5">
+          <span className="block font-mono text-micro text-text3 mb-2.5">
             Console errors ({consoleErrors.length})
           </span>
           <div className="flex flex-col gap-1.5">
@@ -79,12 +80,15 @@ export function EnrichmentPanel({
       {/* Screenshot */}
       {screenshot && (
         <div>
-          <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2.5">
+          <span className="block font-mono text-micro text-text3 mb-2.5">
             Screenshot
           </span>
-          <img
+          <Image
             src={screenshot}
             alt="User screenshot"
+            width={1200}
+            height={800}
+            unoptimized
             className="max-w-full rounded border border-border cursor-pointer"
           />
         </div>

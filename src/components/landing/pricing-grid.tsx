@@ -4,77 +4,47 @@ import Link from "next/link";
 import { useTrack } from "@/hooks/use-track";
 
 interface PriceTier {
-  popular?: boolean;
+  recommended?: boolean;
   tier: string;
   amount: string;
   desc: string;
-  features: { text: string; yes: boolean; soon?: boolean }[];
+  features: string[];
   cta: string;
   href: string;
-  fill?: boolean;
 }
 
 const devTiers: PriceTier[] = [
   {
     tier: "Free",
     amount: "$0",
-    desc: "Grova\u2019s default triage. Works great out of the box.",
-    features: [
-      { text: "25 submissions/month", yes: true },
-      { text: "Full AI triage & scoring", yes: true },
-      { text: "Pre-built triage rules", yes: true },
-      { text: "AI-ready prompts", yes: true },
-      { text: "Embeddable widget", yes: true },
-      { text: "Custom triage rules", yes: false },
-    ],
-    cta: "Get started",
+    desc: "Prove the loop on one product.",
+    features: ["25 submissions / month", "Default triage", "AI-ready briefs", "Embeddable widget"],
+    cta: "Start free",
     href: "/login?mode=signup",
   },
   {
-    popular: true,
+    recommended: true,
     tier: "Solo",
     amount: "$19",
-    desc: "You know your project best. Set your own rules.",
-    features: [
-      { text: "Unlimited submissions", yes: true },
-      { text: "Full AI triage & scoring", yes: true },
-      { text: "Custom triage rules", yes: true },
-      { text: "Custom AI prompt format", yes: true },
-      { text: "Approval inbox", yes: true },
-      { text: "No Grova badge", yes: true },
-    ],
-    cta: "Join waitlist",
+    desc: "Run a serious product with your own rules.",
+    features: ["Unlimited submissions", "Project-aware triage", "Synchronized context", "No Grova badge"],
+    cta: "Join Solo waitlist",
     href: "#waitlist",
-    fill: true,
   },
   {
     tier: "Builder",
     amount: "$49",
-    desc: "For developers running multiple products.",
-    features: [
-      { text: "Unlimited submissions", yes: true },
-      { text: "Full AI triage & scoring", yes: true },
-      { text: "Unlimited projects", yes: true },
-      { text: "Custom triage rules", yes: true },
-      { text: "Approval inbox", yes: true },
-      { text: "AI editor extension", yes: true, soon: true },
-    ],
-    cta: "Join waitlist",
+    desc: "Operate multiple products from one account.",
+    features: ["Everything in Solo", "Unlimited projects", "Approval inbox", "Editor extension when released"],
+    cta: "Join Builder waitlist",
     href: "#waitlist",
   },
   {
     tier: "Agency",
     amount: "$149",
-    desc: "Manage feedback for multiple clients.",
-    features: [
-      { text: "Everything in Builder", yes: true },
-      { text: "White label widget", yes: true },
-      { text: "Client management", yes: true },
-      { text: "Client reporting", yes: true },
-      { text: "Custom branding", yes: true },
-      { text: "Priority support", yes: true },
-    ],
-    cta: "Join waitlist",
+    desc: "Separate client products without per-seat pricing.",
+    features: ["Everything in Builder", "Unbranded widget", "Unlimited projects", "Priority support"],
+    cta: "Join Agency waitlist",
     href: "#waitlist",
   },
 ];
@@ -83,179 +53,94 @@ const bizTiers: PriceTier[] = [
   {
     tier: "Free",
     amount: "$0",
-    desc: "Start collecting feedback today. See every submission in your inbox.",
-    features: [
-      { text: "50 submissions/month", yes: true },
-      { text: "Widget, QR code & direct link", yes: true },
-      { text: "AI spam & noise filtering", yes: true },
-      { text: "Feedback inbox (all sources unified)", yes: true },
-      { text: "Embeddable widget", yes: true },
-      { text: "QR code for your location", yes: true },
-      { text: "Weekly intelligence brief", yes: false },
-      { text: "Pattern detection", yes: false },
-      { text: "Bounce-Back Offers", yes: false },
-    ],
-    cta: "Get started free",
+    desc: "Start collecting across one location.",
+    features: ["50 submissions / month", "Widget, QR, and direct link", "Noise filtering", "Unified inbox"],
+    cta: "Start free",
     href: "/login?mode=signup",
   },
   {
-    popular: true,
-    tier: "Growth",
+    recommended: true,
+    tier: "Essentials",
     amount: "$19",
-    desc: "Stop reading every submission. Let Grova tell you what matters.",
-    features: [
-      { text: "Unlimited submissions", yes: true },
-      { text: "Full AI triage & scoring", yes: true },
-      { text: "Weekly intelligence brief", yes: true },
-      { text: "Pattern detection & trend alerts", yes: true },
-      { text: "Smart Actions & recommendations", yes: true },
-      { text: "Bounce-Back Offers", yes: true },
-      { text: "Custom triage rules", yes: true },
-      { text: "No Grova badge", yes: true },
-    ],
-    cta: "Join waitlist",
-    href: "#waitlist",
-    fill: true,
-  },
-  {
-    tier: "Pro",
-    amount: "$49",
-    desc: "For businesses with multiple locations or high volume.",
-    features: [
-      { text: "Everything in Growth", yes: true },
-      { text: "Unlimited locations/projects", yes: true },
-      { text: "Daily briefs available", yes: true },
-      { text: "Exportable reports", yes: true },
-      { text: "Team access (up to 3)", yes: true },
-      { text: "Priority support", yes: true },
-    ],
-    cta: "Join waitlist",
+    desc: "Understand the signal without reading everything.",
+    features: ["Unlimited submissions", "Suggested replies", "Smart Actions", "Trend analysis"],
+    cta: "Join Essentials waitlist",
     href: "#waitlist",
   },
   {
-    tier: "Agency",
-    amount: "$149",
-    desc: "Manage feedback for multiple clients.",
-    features: [
-      { text: "Everything in Pro", yes: true },
-      { text: "White label widget", yes: true },
-      { text: "Client management", yes: true },
-      { text: "Client reporting", yes: true },
-      { text: "Custom branding", yes: true },
-      { text: "Priority support", yes: true },
-    ],
+    tier: "Growth",
+    amount: "$39",
+    desc: "Coordinate feedback across up to three locations.",
+    features: ["Everything in Essentials", "Three locations", "Custom categories", "Priority support"],
+    cta: "Join Growth waitlist",
+    href: "#waitlist",
+  },
+  {
+    tier: "Multi-location",
+    amount: "$99",
+    desc: "Give a larger operation one feedback system.",
+    features: ["Everything in Growth", "Unlimited locations", "Unbranded widget", "Priority support"],
     cta: "Join waitlist",
     href: "#waitlist",
   },
 ];
 
-function PriceCard({ tier: t, isBiz }: { tier: PriceTier; isBiz: boolean }) {
-  const accentCheck = isBiz ? "text-accent" : "text-orange";
-  const accentPop = isBiz ? "text-accent" : "text-orange";
-  const accentLine = isBiz ? "bg-accent" : "bg-orange";
-  const fillBg = isBiz ? "bg-accent text-black" : "bg-orange text-white";
-  const outlineStyle = isBiz
-    ? "border-accent/40 text-text2 hover:border-accent hover:text-accent"
-    : "border-orange/40 text-text2 hover:border-orange hover:text-orange";
-
-  return (
-    <div
-      className={`
-        bg-bg p-[26px_20px] border-r border-border flex flex-col relative
-        last:border-r-0
-        [html[data-theme=light]_&]:bg-surface
-        ${t.popular ? "bg-bg2 [html[data-theme=light]_&]:bg-bg2" : ""}
-      `}
-    >
-      {t.popular && (
-        <span className={`absolute top-0 left-0 right-0 h-[1px] ${accentLine}`} />
-      )}
-      {t.popular && (
-        <span className={`text-[0.62rem] ${accentPop} tracking-[0.12em] uppercase block mb-2.5`}>
-          Most popular
-        </span>
-      )}
-      <span className="text-caption text-text3 tracking-[0.12em] uppercase block mb-2">
-        {t.tier}
-      </span>
-      <div className="font-serif text-[2.2rem] text-text font-normal tracking-[-0.03em] leading-none mb-1 tabular-nums">
-        {t.amount} <span className="font-mono text-[0.76rem] text-text3 font-light">/mo</span>
-      </div>
-      <p className="text-[0.8rem] text-text2 leading-[1.7] my-2.5 font-light">{t.desc}</p>
-      <ul className="list-none flex flex-col gap-[7px] flex-1 mb-5">
-        {t.features.map((f, i) => (
-          <li key={i} className={`text-[0.76rem] font-light pl-4 relative leading-[1.5] ${f.yes ? "text-text" : "text-text3"}`}>
-            <span className={`absolute left-0 ${f.yes ? accentCheck : "text-border2"}`}>
-              {f.yes ? "✓" : "—"}
-            </span>
-            {f.text}
-            {f.soon && (
-              <span className="text-[0.58rem] text-orange border border-orange/30 bg-orange/[0.07] px-[5px] py-[1px] rounded-pill tracking-[0.06em] uppercase ml-1 align-middle">
-                soon
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
-      {t.href.startsWith("/") ? (
-        <Link
-          href={t.href}
-          className={`
-            block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
-            no-underline cursor-pointer tracking-[0.04em]
-            transition-all duration-[180ms] active:scale-[0.98]
-            ${t.fill
-              ? `${fillBg} border-none hover:opacity-90 hover:-translate-y-px hover:shadow-sm [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]`
-              : `bg-transparent border border-solid ${outlineStyle}`
-            }
-          `}
-        >
-          {t.cta}
-        </Link>
-      ) : (
-        <a
-          href={t.href}
-          className={`
-            block text-center p-[10px_14px] rounded font-mono text-footnote font-medium
-            no-underline cursor-pointer tracking-[0.04em]
-            transition-all duration-[180ms] active:scale-[0.98]
-            ${t.fill
-              ? `${fillBg} border-none hover:opacity-90 hover:-translate-y-px hover:shadow-sm [html[data-theme=dark]_&]:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]`
-              : `bg-transparent border border-solid ${outlineStyle}`
-            }
-          `}
-        >
-          {t.cta}
-        </a>
-      )}
-    </div>
-  );
-}
-
 export function PricingGrid() {
   const { track } = useTrack();
   const tiers = track === "biz" ? bizTiers : devTiers;
-  const isBiz = track === "biz";
 
   return (
-    <section className="py-[68px]">
-      <div className="grid grid-cols-2 gap-[72px] items-start mb-12 max-md:grid-cols-1 max-md:gap-6">
-        <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text">
-          {track === "dev" ? (
-            <>Start free.<br /><em className="text-text2">Scale when it clicks.</em></>
-          ) : (
-            <>Start free.<br /><em className="text-text2">Upgrade when it clicks.</em></>
-          )}
+    <section className="py-[72px]" aria-labelledby="pricing-title">
+      <div className="mb-12 grid grid-cols-[1.25fr_0.75fr] gap-16 items-end max-md:grid-cols-1 max-md:gap-5">
+        <h2 id="pricing-title" className="font-serif text-[clamp(2.5rem,6vw,5rem)] font-normal tracking-[-0.03em] leading-[0.95] text-text">
+          Start free. Pay when Grova earns its place.
         </h2>
-        <p className="text-[0.98rem] text-text2 leading-[1.85] font-light pt-1">
+        <p className="text-[0.92rem] text-text2 leading-[1.8]">
           {track === "dev"
-            ? "No credit card to start. Upgrade when Grova earns it. Per-project pricing — not per seat — because you\u2019re building alone."
-            : "Free gets you collecting. Paid gets you understanding. No credit card to start. No contracts. Cancel anytime."}
+            ? "Per-project value without per-seat pricing. The free plan proves the workflow; Solo is the default for an active product."
+            : "Free gets feedback flowing. Paid plans add judgment, replies, and multi-location operations. No annual contract required."}
         </p>
       </div>
-      <div className="grid grid-cols-4 border border-border rounded overflow-hidden max-lg:grid-cols-2 max-lg:[&>*:nth-child(2)]:border-r-0 max-lg:[&>*:nth-child(-n+2)]:border-b max-lg:[&>*:nth-child(-n+2)]:border-b-border max-lg:[&>*:nth-child(3)]:border-r max-lg:[&>*:nth-child(3)]:border-r-border max-md:grid-cols-1 max-md:[&>*]:border-r-0 max-md:[&>*]:border-b max-md:[&>*]:border-b-border max-md:[&>*:last-child]:border-b-0">
-        {tiers.map((t, i) => (
-          <PriceCard key={i} tier={t} isBiz={isBiz} />
+
+      <div className="border-t border-border">
+        {tiers.map((tier) => (
+          <article
+            key={tier.tier}
+            className="grid grid-cols-[140px_110px_1fr_160px] gap-6 py-7 border-b border-border items-start max-lg:grid-cols-[120px_90px_1fr] max-lg:[&>*:last-child]:col-start-3 max-md:grid-cols-[1fr_auto] max-md:gap-x-4 max-md:gap-y-3 max-md:[&>*:nth-child(3)]:col-span-2 max-md:[&>*:last-child]:col-start-1 max-md:[&>*:last-child]:col-span-2"
+          >
+            <div>
+              {tier.recommended && (
+                <span className="text-[0.68rem] text-orange block mb-2">
+                  Recommended
+                </span>
+              )}
+              <h3 className="font-serif text-[1.2rem] text-text">{tier.tier}</h3>
+            </div>
+            <p className="font-serif text-[1.75rem] text-text tabular-nums leading-none">
+              {tier.amount}<span className="font-mono text-[0.62rem] text-text3"> / mo</span>
+            </p>
+            <div>
+              <p className="text-[0.82rem] text-text mb-2.5">{tier.desc}</p>
+              <p className="text-[0.7rem] text-text3 leading-[1.7]">
+                {tier.features.join(" · ")}
+              </p>
+            </div>
+            {tier.href.startsWith("/") ? (
+              <Link
+                href={tier.href}
+                className="text-[0.7rem] text-text underline underline-offset-4 decoration-border2 hover:decoration-orange hover:text-orange transition-colors"
+              >
+                {tier.cta} →
+              </Link>
+            ) : (
+              <a
+                href={tier.href}
+                className="text-[0.7rem] text-text underline underline-offset-4 decoration-border2 hover:decoration-orange hover:text-orange transition-colors"
+              >
+                {tier.cta} →
+              </a>
+            )}
+          </article>
         ))}
       </div>
     </section>

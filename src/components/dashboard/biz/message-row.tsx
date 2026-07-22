@@ -6,16 +6,16 @@ import { scoreClass, scoreColor, timeAgo } from "@/lib/triage";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { ActionCard } from "@/components/dashboard/dev/action-card";
+import { feedbackCategory } from "@/lib/biz-helpers";
 
 interface MessageRowProps {
   item: FeedbackItem;
   showScore?: boolean;
-  isDemo?: boolean;
   onApprove?: (id: string) => void;
   onDeny?: (id: string) => void;
 }
 
-export function MessageRow({ item, showScore = false, isDemo = false, onApprove, onDeny }: MessageRowProps) {
+export function MessageRow({ item, showScore = false, onApprove, onDeny }: MessageRowProps) {
   const [replyOpen, setReplyOpen] = useState(false);
   const { show } = useToast();
   const t = item.triage;
@@ -52,7 +52,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
         {/* Body */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <Badge type={item.type} />
+            <Badge type={feedbackCategory(item)} />
             {item.email && (
               <span className="font-mono text-footnote text-text3">
                 {item.email}
@@ -63,7 +63,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
             </span>
             {!isPending && (
               <span
-                className={`font-mono text-micro uppercase tracking-[0.06em] px-2 py-0.5 rounded ${
+                className={`font-mono text-micro px-2 py-0.5 rounded ${
                   item.status === "approved"
                     ? "bg-accent/10 text-accent"
                     : "bg-orange/10 text-orange"
@@ -86,11 +86,11 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
                 className="font-mono text-footnote text-accent hover:text-accent/80
                            transition-colors cursor-pointer"
               >
-                💬 Suggested reply
+                Suggested reply
               </button>
               {replyOpen && (
                 <div className="mt-2 bg-bg2 border border-border rounded p-4 [html[data-theme=light]_&]:bg-surface">
-                  <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2">
+                  <span className="block font-mono text-micro text-text3 mb-2">
                     Suggested reply
                   </span>
                   <p className="font-mono text-callout text-text2 leading-[1.7] italic mb-3">
@@ -132,7 +132,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
           <div className="flex flex-col gap-2 shrink-0 self-center">
             <button
               onClick={() => onApprove(item.id)}
-              className="rounded px-3 py-1.5 font-mono text-micro font-medium uppercase tracking-[0.04em]
+              className="rounded px-3 py-1.5 font-mono text-micro font-medium
                          bg-accent-dim text-accent hover:bg-accent hover:text-black
                          transition-all duration-[180ms] cursor-pointer"
             >
@@ -140,7 +140,7 @@ export function MessageRow({ item, showScore = false, isDemo = false, onApprove,
             </button>
             <button
               onClick={() => onDeny(item.id)}
-              className="rounded px-3 py-1.5 font-mono text-micro font-medium uppercase tracking-[0.04em]
+              className="rounded px-3 py-1.5 font-mono text-micro font-medium
                          bg-orange-dim text-orange hover:bg-orange hover:text-white
                          transition-all duration-[180ms] cursor-pointer"
             >

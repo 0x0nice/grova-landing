@@ -2,6 +2,8 @@ import { create } from "zustand";
 import type { FeedbackItem } from "@/types/feedback";
 import { apiGet, apiPost } from "@/lib/api";
 import { demoGet, demoPost } from "@/lib/demo-data";
+import { errorMessage } from "@/lib/errors";
+import { arrayPage, type PageResponse } from "@/types/pagination";
 
 type Filter = "all" | "bug" | "feature" | "ux" | "spam";
 
@@ -15,9 +17,15 @@ interface InboxState {
   filter: Filter;
   loading: boolean;
   loaded: boolean;
+  error: string | null;
+  page: number;
+  total: number;
+  hasMore: boolean;
+  loadingMore: boolean;
   lastRemoved: RemovedSnapshot | null;
 
   loadInbox: (projectId: string, token: string, isDemo: boolean) => Promise<void>;
+  loadMore: (projectId: string, token: string, isDemo: boolean) => Promise<void>;
   setFilter: (filter: Filter) => void;
   approve: (id: string, token: string, isDemo: boolean) => Promise<void>;
   deny: (id: string, token: string, isDemo: boolean) => Promise<void>;
@@ -30,18 +38,51 @@ export const useInboxStore = create<InboxState>((set, get) => ({
   filter: "all",
   loading: false,
   loaded: false,
+  error: null,
+  page: 0,
+  total: 0,
+  hasMore: false,
+  loadingMore: false,
   lastRemoved: null,
 
   loadInbox: async (projectId, token, isDemo) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
-      const path = `/feedback?project_id=${projectId}&status=pending`;
-      const items = isDemo
-        ? (demoGet(path) as FeedbackItem[])
-        : await apiGet<FeedbackItem[]>(path, token);
-      set({ items, loading: false, loaded: true });
-    } catch {
-      set({ loading: false });
+      const path = `/feedback?project_id=${projectId}&status=pending&page=1&limit=50`;
+      const result = isDemo
+        ? arrayPage(demoGet(path) as FeedbackItem[])
+        : await apiGet<PageResponse<FeedbackItem>>(path, token);
+      set({
+        items: result.items,
+        page: result.pagination.page,
+        total: result.pagination.total,
+        hasMore: result.pagination.has_more,
+        loading: false,
+        loaded: true,
+      });
+    } catch (error) {
+      set({ loading: false, error: errorMessage(error, "Could not load feedback") });
+    }
+  },
+
+  loadMore: async (projectId, token, isDemo) => {
+    const nextPage = get().page + 1;
+    if (get().loadingMore || !get().hasMore) return;
+    set({ loadingMore: true, error: null });
+    try {
+      const path = `/feedback?project_id=${projectId}&status=pending&page=${nextPage}&limit=50`;
+      const result = isDemo
+        ? arrayPage(demoGet(path) as FeedbackItem[])
+        : await apiGet<PageResponse<FeedbackItem>>(path, token);
+      set((state) => ({
+        items: [...state.items, ...result.items.filter((item) => !state.items.some((current) => current.id === item.id))],
+        page: result.pagination.page,
+        total: result.pagination.total,
+        hasMore: result.pagination.has_more,
+        loadingMore: false,
+      }));
+    } catch (error) {
+      set({ loadingMore: false, error: errorMessage(error, "Could not load more feedback") });
     }
   },
 
@@ -49,36 +90,30 @@ export const useInboxStore = create<InboxState>((set, get) => ({
 
   approve: async (id, token, isDemo) => {
     const snapshot = get().items.find((i) => i.id === id);
-    try {
-      if (isDemo) {
-        demoPost(`/feedback/${id}/approve`);
-      } else {
-        await apiPost(`/feedback/${id}/approve`, {}, token);
-      }
-      set((s) => ({
-        items: s.items.filter((i) => i.id !== id),
-        lastRemoved: snapshot ? { item: snapshot, action: "approve" } : s.lastRemoved,
-      }));
-    } catch {
-      // keep item in list on failure
+    if (isDemo) {
+      demoPost(`/feedback/${id}/approve`);
+    } else {
+      await apiPost(`/feedback/${id}/approve`, {}, token);
     }
+    set((s) => ({
+      items: s.items.filter((i) => i.id !== id),
+      total: Math.max(0, s.total - 1),
+      lastRemoved: snapshot ? { item: snapshot, action: "approve" } : s.lastRemoved,
+    }));
   },
 
   deny: async (id, token, isDemo) => {
     const snapshot = get().items.find((i) => i.id === id);
-    try {
-      if (isDemo) {
-        demoPost(`/feedback/${id}/deny`);
-      } else {
-        await apiPost(`/feedback/${id}/deny`, {}, token);
-      }
-      set((s) => ({
-        items: s.items.filter((i) => i.id !== id),
-        lastRemoved: snapshot ? { item: snapshot, action: "deny" } : s.lastRemoved,
-      }));
-    } catch {
-      // keep item in list on failure
+    if (isDemo) {
+      demoPost(`/feedback/${id}/deny`);
+    } else {
+      await apiPost(`/feedback/${id}/deny`, {}, token);
     }
+    set((s) => ({
+      items: s.items.filter((i) => i.id !== id),
+      total: Math.max(0, s.total - 1),
+      lastRemoved: snapshot ? { item: snapshot, action: "deny" } : s.lastRemoved,
+    }));
   },
 
   undoLast: async (token, isDemo) => {
@@ -92,6 +127,7 @@ export const useInboxStore = create<InboxState>((set, get) => ({
       }
       set((s) => ({
         items: s.items.some((i) => i.id === last.item.id) ? s.items : [last.item, ...s.items],
+        total: s.items.some((i) => i.id === last.item.id) ? s.total : s.total + 1,
         lastRemoved: null,
       }));
       return true;
@@ -106,6 +142,11 @@ export const useInboxStore = create<InboxState>((set, get) => ({
       filter: "all",
       loading: false,
       loaded: false,
+      error: null,
+      page: 0,
+      total: 0,
+      hasMore: false,
+      loadingMore: false,
       lastRemoved: null,
     }),
 }));

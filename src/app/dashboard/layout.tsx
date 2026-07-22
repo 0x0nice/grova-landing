@@ -32,14 +32,14 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       {isDemo && (
         <div className="bg-accent/10 border-b border-accent/20 px-5 py-2 text-center">
           <span className="font-mono text-footnote text-accent">
-            Demo Mode — data is simulated
+            Demo Mode - data is simulated
           </span>
         </div>
       )}
 
       <NavBar />
 
-      {/* Main content — full width */}
+      {/* Main content - full width */}
       <main id="main-content" className="flex-1 overflow-y-auto p-6 max-md:p-3 lg:p-8 xl:p-10">
         {children}
       </main>

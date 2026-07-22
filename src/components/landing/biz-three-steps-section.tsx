@@ -1,43 +1,39 @@
 const steps = [
   {
-    badge: "once",
+    badge: "Set up once",
     num: "01",
-    title: "Set up your feedback channels",
-    desc: "Add a widget to your website and grab a printable QR code for your register, receipts, or table cards. Give customers an easy, private way to tell you what they think. Five minutes and you\u2019re live.",
+    title: "Open the right channels",
+    desc: "Place the widget online and a printable QR code where customers already are. No app or customer account is required.",
   },
   {
-    badge: "automatic",
+    badge: "Runs continuously",
     num: "02",
-    title: "AI handles the rest",
-    desc: "Every submission is scored, categorized, and filtered. Spam, rants, and one-off gripes get quietly dropped. Real, actionable feedback gets flagged and grouped by theme.",
+    title: "Let Grova connect the signal",
+    desc: "Responses are categorized, filtered, and grouped so repeated concerns rise above one-off noise.",
   },
   {
-    badge: "your call",
+    badge: "You keep control",
     num: "03",
-    title: "Act on what matters",
-    desc: "A clean inbox ranked by priority. Or just wait for the weekly brief — a plain-English summary of what your customers are telling you, what\u2019s trending, and what to do about it.",
+    title: "Act with context",
+    desc: "Review the ranked inbox and trends, then reply, resolve, or create a follow-up without losing the original evidence.",
   },
 ];
 
 export function BizThreeStepsSection() {
   return (
-    <section className="py-[68px]">
-      <div className="grid grid-cols-3 border border-border rounded overflow-hidden max-md:grid-cols-1 max-md:[&>*]:border-r-0 max-md:[&>*]:border-b max-md:[&>*]:border-b-border max-md:[&>*:last-child]:border-b-0">
-        {steps.map((s) => (
-          <div key={s.num} className="bg-bg p-[28px_22px] border-r border-border last:border-r-0 [html[data-theme=light]_&]:bg-surface">
-            <span className="text-[0.62rem] text-accent tracking-[0.12em] uppercase block mb-3">
-              {s.badge}
-            </span>
-            <div className="font-serif text-[2.4rem] text-text leading-none mb-4 font-normal opacity-15">
-              {s.num}
+    <section className="py-[68px]" aria-label="Three-step setup">
+      <ol className="border-t border-border">
+        {steps.map((step) => (
+          <li key={step.num} className="grid grid-cols-[72px_220px_1fr] gap-8 py-7 border-b border-border items-start max-md:grid-cols-[46px_1fr] max-md:gap-x-4 max-md:gap-y-2">
+            <span className="font-serif text-[1.8rem] text-text3 leading-none">{step.num}</span>
+            <div>
+              <span className="text-[0.68rem] text-accent block mb-2">{step.badge}</span>
+              <h3 className="font-serif text-[1.12rem] text-text leading-[1.2]">{step.title}</h3>
             </div>
-            <h3 className="font-serif text-[1.18rem] font-normal tracking-[-0.01em] mb-2.5 text-text leading-[1.2]">
-              {s.title}
-            </h3>
-            <p className="text-[0.87rem] text-text2 leading-[1.8] font-light">{s.desc}</p>
-          </div>
+            <p className="text-[0.86rem] text-text2 leading-[1.75] max-md:col-start-2">{step.desc}</p>
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }

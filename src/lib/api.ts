@@ -3,6 +3,7 @@ import type {
   SendActionResponse,
   ActionSettings,
 } from "@/types/feedback";
+import type { BizConfig } from "@/stores/biz-store";
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -14,7 +15,7 @@ async function throwApiError(res: Response): Promise<never> {
     if (body.error) message = body.error;
     if (body.details) message += `: ${JSON.stringify(body.details)}`;
   } catch {
-    // body wasn't JSON — use status text
+    // body wasn't JSON - use status text
     if (res.statusText) message = `${res.status} ${res.statusText}`;
   }
   throw new Error(message);
@@ -107,9 +108,71 @@ export async function putActionSettings(
   settings: Partial<ActionSettings>,
   token: string
 ) {
+  const allowedKeys: (keyof ActionSettings)[] = [
+    "actions_enabled", "default_offer_type", "default_offer_value",
+    "default_offer_expiry_days", "max_offer_value", "owner_name",
+    "reply_to_email", "brand_color", "logo_url", "preferred_review_platform",
+    "review_url", "follow_up_enabled", "follow_up_delay_days",
+    "escalation_email", "tone", "never_mention_staff_names", "never_auto_refund",
+  ];
+  const body: Record<string, unknown> = {};
+  for (const key of allowedKeys) {
+    if (settings[key] !== undefined) body[key] = settings[key];
+  }
   return apiPut<ActionSettings>(
     `/projects/${projectId}/action-settings`,
-    settings as Record<string, unknown>,
+    body,
     token
   );
+}
+
+export interface ProjectPreferences {
+  project_context: string | null;
+  business_config: BizConfig | null;
+}
+
+export function getProjectPreferences(projectId: string, token: string) {
+  return apiGet<ProjectPreferences>(`/projects/${projectId}/preferences`, token);
+}
+
+export function putProjectPreferences(
+  projectId: string,
+  preferences: Partial<ProjectPreferences>,
+  token: string
+) {
+  return apiPut<ProjectPreferences>(
+    `/projects/${projectId}/preferences`,
+    preferences as Record<string, unknown>,
+    token
+  );
+}
+
+export interface ScoringWeightsResponse {
+  weights: Record<string, number>;
+  valid_dimensions: string[];
+}
+
+export function getScoringWeights(projectId: string, token: string) {
+  return apiGet<ScoringWeightsResponse>(`/projects/${projectId}/scoring-weights`, token);
+}
+
+export function putScoringWeights(projectId: string, weights: Record<string, number>, token: string) {
+  return apiRequest<ScoringWeightsResponse>(
+    `/projects/${projectId}/scoring-weights`,
+    { method: "PATCH", body: JSON.stringify({ weights }) },
+    token
+  );
+}
+
+async function apiRequest<T>(path: string, init: RequestInit, token: string): Promise<T> {
+  const res = await fetch(API + path, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
+    },
+  });
+  if (!res.ok) await throwApiError(res);
+  return res.json();
 }

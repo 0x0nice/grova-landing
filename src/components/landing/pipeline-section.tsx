@@ -1,76 +1,62 @@
 const steps = [
-  { num: "01", icon: "💬", title: "User submits feedback", tag: "auto" as const },
-  { num: "02", icon: "🧠", title: "AI triages & scores it", tag: "auto" as const },
-  { num: "03", icon: "📋", title: "AI-ready prompt written", tag: "auto" as const },
-  { num: "04", icon: "📥", title: "Lands in your inbox", tag: "you" as const },
-  { num: "05", icon: "⚡", title: "Drop into your AI editor", tag: "you" as const },
+  { num: "01", stage: "Capture", title: "A user reports what happened", owner: "automatic" },
+  { num: "02", stage: "Enrich", title: "Context and console signals are attached", owner: "automatic" },
+  { num: "03", stage: "Judge", title: "Grova scores impact and confidence", owner: "automatic" },
+  { num: "04", stage: "Decide", title: "The next move is written for you", owner: "review" },
+  { num: "05", stage: "Ship", title: "Move the brief into your build loop", owner: "you" },
 ];
-
-function Tag({ type }: { type: "auto" | "you" }) {
-  const cls =
-    type === "auto"
-      ? "text-orange border-orange/30 bg-orange/[0.07]"
-      : "text-accent border-accent/30 bg-accent/[0.07]";
-  return (
-    <span className={`text-[0.6rem] tracking-[0.09em] uppercase px-1.5 py-[2px] rounded-pill inline-block border ${cls}`}>
-      {type}
-    </span>
-  );
-}
 
 export function PipelineSection() {
   return (
-    <section className="py-[52px]">
-      <span className="block text-caption text-text3 tracking-[0.16em] uppercase mb-5">
-        The pipeline
-      </span>
-      <div className="grid grid-cols-5 border border-border rounded overflow-hidden max-lg:grid-cols-3 max-lg:[&>*:nth-child(3)]:border-r-0 max-lg:[&>*:nth-child(-n+3)]:border-b max-lg:[&>*:nth-child(-n+3)]:border-b-border">
-        {steps.map((s) => (
-          <div key={s.num} className="p-[18px_14px] border-r border-border last:border-r-0">
-            <span className="text-[0.62rem] text-text3 tracking-[0.1em] block mb-2">{s.num}</span>
-            <span className="text-[1rem] block mb-[7px]">{s.icon}</span>
-            <span className="text-footnote text-text font-medium block leading-[1.4] mb-[9px]">{s.title}</span>
-            <Tag type={s.tag} />
-          </div>
+    <section className="py-[58px]" aria-labelledby="pipeline-title">
+      <div className="grid grid-cols-[0.85fr_1.15fr] gap-16 items-end mb-8 max-md:grid-cols-1 max-md:gap-4">
+        <h2 id="pipeline-title" className="font-serif text-[clamp(2rem,4vw,3.4rem)] leading-[1] text-text">
+          A report only matters when it changes the next move.
+        </h2>
+        <p className="text-[0.88rem] text-text2 leading-[1.75] max-w-[620px] justify-self-end max-md:justify-self-start">
+          Collection is only the first step. Grova adds the evidence, judgment, and next action
+          that a normal feedback inbox leaves for you to figure out.
+        </p>
+      </div>
+
+      <ol className="grid grid-cols-5 border-y border-border max-lg:grid-cols-3 max-md:grid-cols-1">
+        {steps.map((step) => (
+          <li
+            key={step.num}
+            className="relative py-5 pr-5 border-r border-border last:border-r-0 max-md:border-r-0 max-md:border-b max-md:last:border-b-0 max-md:grid max-md:grid-cols-[48px_82px_1fr] max-md:items-baseline max-md:gap-3"
+          >
+            <span className="text-[0.62rem] text-text3 tracking-[0.12em] block mb-7 max-md:mb-0">
+              {step.num}
+            </span>
+            <span className="font-serif text-[1rem] text-text block mb-2 max-md:mb-0">{step.stage}</span>
+            <span className="text-[0.76rem] text-text2 leading-[1.55] block pr-2">{step.title}</span>
+            <span className="text-[0.68rem] text-orange block mt-4 max-md:col-start-3 max-md:mt-1">
+              {step.owner}
+            </span>
+          </li>
         ))}
-      </div>
+      </ol>
 
-      {/* Upgrade note */}
-      <div className="mt-3 flex items-center gap-2.5 p-[12px_16px] border border-border rounded bg-surface max-md:flex-col max-md:items-start">
-        <span className="text-[0.95rem] shrink-0">🔌</span>
-        <span className="text-footnote text-text2 leading-[1.5] flex-1">
-          Builder plan: skip the inbox entirely — feedback lands directly in your AI editor.
-          One click sends the prompt to Composer.
-        </span>
-        <span className="text-[0.6rem] tracking-[0.09em] uppercase px-1.5 py-[2px] rounded-pill border text-orange border-orange/35 bg-orange/[0.07] whitespace-nowrap shrink-0">
-          coming soon
-        </span>
-      </div>
-
-      {/* Custom rules banner */}
-      <div className="mt-3 grid grid-cols-2 gap-8 p-7 border border-border rounded bg-surface items-center max-md:grid-cols-1 max-md:gap-5">
+      <div className="grid grid-cols-[1fr_1.15fr] gap-12 py-9 border-b border-border max-md:grid-cols-1 max-md:gap-7">
         <div>
-          <span className="inline-block text-[0.62rem] text-orange tracking-[0.12em] uppercase mb-2.5">
-            Paid plans
+          <span className="text-[0.72rem] text-orange block mb-2.5">
+            Your operating rules
           </span>
-          <span className="block font-serif text-title text-text tracking-[-0.02em] leading-[1.15] mb-2.5">
-            You know your project best.
-          </span>
-          <span className="block text-[0.84rem] text-text2 leading-[1.8] font-light">
-            Tell Grova what great feedback means for your product. Set your own triage rules,
-            define your priorities, and customise how your AI prompts are structured.
-            Your standards, your workflow.
-          </span>
+          <p className="font-serif text-[1.35rem] leading-[1.25] text-text mb-3">
+            Grova should think like your team does.
+          </p>
+          <p className="text-[0.82rem] text-text2 leading-[1.75]">
+            Paid plans let you define what matters, what can wait, and how a useful build brief
+            should be structured.
+          </p>
         </div>
-        <div className="bg-bg border border-border2 rounded p-[16px_18px] dark:bg-bg light:bg-bg2">
-          <span className="block text-[0.62rem] text-orange tracking-[0.1em] uppercase mb-2">
-            Your triage rule
-          </span>
-          <span className="block text-subheadline text-text2 leading-[1.7] italic">
-            &ldquo;Only surface bugs that affect the checkout flow or mobile users.
-            Ignore feature requests until v2.&rdquo;
-          </span>
-        </div>
+        <blockquote className="bg-surface px-6 py-5 self-center">
+          <p className="text-[0.72rem] text-text3 mb-2">Example triage rule</p>
+          <p className="font-serif text-[1.12rem] text-text2 leading-[1.55]">
+            Surface checkout and mobile bugs immediately. Hold feature requests until the v2
+            planning window.
+          </p>
+        </blockquote>
       </div>
     </section>
   );

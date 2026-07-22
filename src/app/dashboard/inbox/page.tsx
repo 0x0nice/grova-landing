@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
 import { useInboxStore } from "@/stores/inbox-store";
@@ -15,6 +15,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { useLastVisit, sinceLabel } from "@/hooks/use-last-visit";
 import { DEMO_DEV_PENDING } from "@/lib/demo-data";
+import { LoadError } from "@/components/dashboard/load-error";
+import { DecisionQueue } from "@/components/dashboard/dev/decision-queue";
+import { errorMessage } from "@/lib/errors";
+import { LoadMore } from "@/components/dashboard/load-more";
 
 const HIGH_PRIORITY_THRESHOLD = 7;
 
@@ -26,14 +30,20 @@ export default function InboxPage() {
     filter,
     loading,
     loaded,
+    error,
     loadInbox,
     setFilter,
     approve,
     deny,
     undoLast,
+    total,
+    hasMore,
+    loadingMore,
+    loadMore,
   } = useInboxStore();
   const { show } = useToast();
   const { previousVisit } = useLastVisit(active?.id ?? null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (active && (session?.access_token || isDemo) && !loaded) {
@@ -53,6 +63,7 @@ export default function InboxPage() {
   const sorted = [...filtered].sort(
     (a, b) => effectiveScore(b) - effectiveScore(a)
   );
+  const selectedItem = sorted.find((item) => item.id === selectedId) || sorted[0];
 
   const highPriorityCount = items.filter(
     (i) => effectiveScore(i) >= HIGH_PRIORITY_THRESHOLD
@@ -65,31 +76,35 @@ export default function InboxPage() {
     : 0;
 
   function handleApprove(id: string) {
-    void approve(id, token, isDemo).then(() => {
-      show({
-        message: "Moved to Resolved",
-        action: {
-          label: "Undo",
-          onClick: () => {
-            void undoLast(token, isDemo);
+    void approve(id, token, isDemo)
+      .then(() => {
+        show({
+          message: "Moved to Resolved",
+          action: {
+            label: "Undo",
+            onClick: () => {
+              void undoLast(token, isDemo);
+            },
           },
-        },
-      });
-    });
+        });
+      })
+      .catch((error) => show(errorMessage(error, "Could not resolve feedback")));
   }
 
   function handleDeny(id: string) {
-    void deny(id, token, isDemo).then(() => {
-      show({
-        message: "Dismissed",
-        action: {
-          label: "Undo",
-          onClick: () => {
-            void undoLast(token, isDemo);
+    void deny(id, token, isDemo)
+      .then(() => {
+        show({
+          message: "Dismissed",
+          action: {
+            label: "Undo",
+            onClick: () => {
+              void undoLast(token, isDemo);
+            },
           },
-        },
-      });
-    });
+        });
+      })
+      .catch((error) => show(errorMessage(error, "Could not dismiss feedback")));
   }
 
   if (loading) {
@@ -101,6 +116,18 @@ export default function InboxPage() {
           <Skeleton variant="inbox-card" />
           <Skeleton variant="inbox-card" />
         </div>
+      </div>
+    );
+  }
+
+  if (error && active) {
+    return (
+      <div>
+        <DashboardHero title="Inbox" />
+        <LoadError
+          message={error}
+          onRetry={() => void loadInbox(active.id, token, isDemo)}
+        />
       </div>
     );
   }
@@ -139,7 +166,7 @@ export default function InboxPage() {
           heading="Inbox is clear"
           description={
             loaded
-              ? "Approved items live in Done. New feedback will appear here, sorted by priority — not recency."
+              ? "Approved items live in Done. New feedback will appear here, sorted by priority - not recency."
               : "Select a project to load feedback."
           }
           action={
@@ -151,16 +178,43 @@ export default function InboxPage() {
           previewLimit={3}
         />
       ) : (
-        <div className="flex flex-col gap-3">
-          {sorted.map((item) => (
-            <InboxCard
-              key={item.id}
-              item={item}
-              onApprove={handleApprove}
-              onDeny={handleDeny}
+        <>
+          <div className="hidden lg:grid grid-cols-[minmax(260px,0.8fr)_minmax(0,1.7fr)] gap-5 items-start">
+            <DecisionQueue
+              items={sorted}
+              selectedId={selectedItem.id}
+              onSelect={setSelectedId}
             />
-          ))}
-        </div>
+            <div className="sticky top-20 min-w-0">
+              <InboxCard
+                key={selectedItem.id}
+                item={selectedItem}
+                onApprove={handleApprove}
+                onDeny={handleDeny}
+                defaultExpanded
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 lg:hidden">
+            {sorted.map((item) => (
+              <InboxCard
+                key={item.id}
+                item={item}
+                onApprove={handleApprove}
+                onDeny={handleDeny}
+              />
+            ))}
+          </div>
+          {hasMore && active && (
+            <LoadMore
+              loaded={items.length}
+              total={total}
+              loading={loadingMore}
+              onLoad={() => void loadMore(active.id, token, isDemo)}
+              context="pending items"
+            />
+          )}
+        </>
       )}
     </div>
   );

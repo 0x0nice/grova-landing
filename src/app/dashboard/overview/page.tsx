@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
 import { useBizStore } from "@/stores/biz-store";
-import { isoWeek, buildInsightEvidence } from "@/lib/biz-helpers";
+import { isoWeek, buildInsightEvidence, feedbackCategory } from "@/lib/biz-helpers";
 import { InsightCard } from "@/components/dashboard/biz/insight-card";
 import { InsightProse } from "@/components/dashboard/biz/insight-prose";
 import { InboxCard } from "@/components/dashboard/dev/inbox-card";
@@ -14,13 +14,15 @@ import { EmptyStatePreview } from "@/components/ui/empty-state-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLastVisit, sinceLabel } from "@/hooks/use-last-visit";
 import { DEMO_BIZ_PENDING } from "@/lib/demo-data";
+import { LoadError } from "@/components/dashboard/load-error";
+import { LoadMore } from "@/components/dashboard/load-more";
 
 const HIGH_PRIORITY_THRESHOLD = 7;
 
 export default function OverviewPage() {
   const { session, isDemo } = useAuth();
   const active = useProjectStore((s) => s.active);
-  const { items, loading, loaded, loadFeedback, approve, deny } = useBizStore();
+  const { items, loading, loaded, error, loadFeedback, loadMore, approve, deny, total, hasMore, loadingMore } = useBizStore();
   const { previousVisit } = useLastVisit(active?.id ?? null);
 
   useEffect(() => {
@@ -41,6 +43,18 @@ export default function OverviewPage() {
             <Skeleton className="h-24" />
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (error && active) {
+    return (
+      <div>
+        <DashboardHero title="Overview" />
+        <LoadError
+          message={error}
+          onRetry={() => void loadFeedback(active.id, session?.access_token || "demo", isDemo)}
+        />
       </div>
     );
   }
@@ -79,7 +93,8 @@ export default function OverviewPage() {
 
   const catCounts: Record<string, number> = {};
   thisWeekItems.forEach((i) => {
-    if (i.type) catCounts[i.type] = (catCounts[i.type] || 0) + 1;
+    const category = feedbackCategory(i);
+    catCounts[category] = (catCounts[category] || 0) + 1;
   });
   const topCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0];
 
@@ -109,7 +124,7 @@ export default function OverviewPage() {
         highThreshold={HIGH_PRIORITY_THRESHOLD}
       />
 
-      {/* Narrative first — small business owners read story before numbers. */}
+      {/* Narrative first - small business owners read story before numbers. */}
       <InsightProse evidence={evidence} />
 
       {/* Metrics grid */}
@@ -121,7 +136,7 @@ export default function OverviewPage() {
         />
         <InsightCard
           label="Top theme"
-          value={topCat ? topCat[0] : "—"}
+          value={topCat ? topCat[0] : "-"}
           subtitle={topCat ? `${topCat[1]} messages` : ""}
         />
         <InsightCard
@@ -140,7 +155,7 @@ export default function OverviewPage() {
       {/* Recent messages */}
       {recent.length > 0 && (
         <div>
-          <span className="block font-mono text-micro text-text3 uppercase tracking-[0.14em] mb-3">
+          <span className="block font-mono text-micro text-text3 mb-3">
             Recent messages
           </span>
           <div className="flex flex-col gap-3">
@@ -158,6 +173,15 @@ export default function OverviewPage() {
             ))}
           </div>
         </div>
+      )}
+      {hasMore && active && (
+        <LoadMore
+          loaded={items.length}
+          total={total}
+          loading={loadingMore}
+          onLoad={() => void loadMore(active.id, session?.access_token || "demo", isDemo)}
+          context="responses"
+        />
       )}
     </div>
   );

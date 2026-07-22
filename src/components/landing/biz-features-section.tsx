@@ -1,83 +1,37 @@
 const features = [
-  {
-    icon: "🎯",
-    title: "Noise filtered automatically",
-    desc: "Grova ships knowing what good feedback looks like. Spam, vague complaints, and unhelpful rants get filtered on day one — no setup required.",
-  },
-  {
-    icon: "📊",
-    title: "Patterns, not just complaints",
-    desc: "Individual feedback is useful. Patterns are powerful. Grova groups related submissions and surfaces trends — \u201Cmultiple customers mentioned parking this month\u201D — so you can spot real issues early.",
-  },
-  {
-    icon: "💡",
-    title: "Smart Actions",
-    desc: "When Grova spots something that needs attention, it doesn\u2019t just flag it — it suggests what to do. Practical, specific next steps based on what your customers are actually saying.",
-  },
-  {
-    icon: "📬",
-    title: "Weekly intelligence brief",
-    desc: "Every week, a summary lands in your inbox: what\u2019s improving, what\u2019s slipping, what customers are asking for, and where to focus. Like having a customer experience analyst on staff — for $19/month.",
-  },
-  {
-    icon: "🔁",
-    title: "Bounce-Back Offers",
-    desc: "Automatically reward customers for their honesty with a perk you choose. Turn every piece of feedback into a reason to come back.",
-  },
-  {
-    icon: "📱",
-    title: "QR codes, built in",
-    desc: "Every project gets a printable QR code that links straight to your feedback form. Put it on receipts, table cards, checkout counters, invoices — wherever your customers are.",
-  },
-  {
-    icon: "🧩",
-    title: "Works on any website",
-    desc: "Squarespace, Wix, WordPress, custom — doesn\u2019t matter. One small script tag and you\u2019re live. No developer needed.",
-  },
-  {
-    icon: "🔒",
-    title: "A private channel",
-    desc: "Your widget and QR code give customers a way to share honest feedback directly with you — not the public internet. The things people won\u2019t say out loud, Grova catches.",
-  },
-  {
-    icon: "⏱️",
-    title: "30 seconds, start to finish",
-    desc: "No app to download. No account to create. Customers tap your QR code or click the widget, share a thought, and they\u2019re done. The easier you make it, the more you hear.",
-  },
-];
+  ["Signal", "Noise filtered automatically", "Weak or abusive responses stay out of the operating queue."],
+  ["Patterns", "Themes across responses", "Related feedback is grouped so repeat issues become visible early."],
+  ["Action", "Specific next steps", "High-value signals can produce a reply, escalation, or follow-up."],
+  ["Channels", "Widget, QR, and direct link", "Collect online, on location, or from a message you already send."],
+  ["Recovery", "Optional bounce-back offers", "Thank customers with a perk you control after they respond."],
+  ["Privacy", "A direct channel", "Customers can tell you privately before frustration becomes a public review."],
+] as const;
 
 export function BizFeaturesSection() {
   return (
-    <section className="py-[68px]">
+    <section className="py-[68px]" aria-labelledby="biz-features-title">
       <div className="grid grid-cols-2 gap-[72px] items-start mb-12 max-md:grid-cols-1 max-md:gap-6">
-        <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text">
-          Everything you need.
+        <h2 id="biz-features-title" className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text">
+          Enough structure.
           <br />
-          <em className="text-text2">Nothing you don&apos;t.</em>
+          <span className="text-text2">No analyst required.</span>
         </h2>
-        <p className="text-[0.98rem] text-text2 leading-[1.85] font-light pt-1">
-          Built for business owners who&apos;d rather run their business than stare
-          at analytics dashboards. No jargon, no complexity, no enterprise
-          nonsense.
+        <p className="text-[0.94rem] text-text2 leading-[1.85] font-light pt-1">
+          Built for operators who need a reliable listening system, not another dashboard that
+          demands attention every morning.
         </p>
       </div>
-      <div className="grid grid-cols-3 border border-border rounded overflow-hidden max-md:grid-cols-1 max-md:[&>*]:border-r-0 max-md:[&>*]:border-b max-md:[&>*]:border-b-border max-md:[&>*:last-child]:border-b-0">
-        {features.map((f, i) => (
-          <div
-            key={i}
-            className={`bg-bg p-[30px_26px] border-r border-border border-b border-b-border [html[data-theme=light]_&]:bg-surface
-              ${(i + 1) % 3 === 0 ? "border-r-0" : ""}
-              ${i >= 6 ? "border-b-0" : ""}
-            `}
-          >
-            <span className="text-[1.18rem] block mb-3.5">{f.icon}</span>
-            <h3 className="font-serif text-[1.12rem] font-normal tracking-[-0.01em] mb-[9px] text-text">
-              {f.title}
-            </h3>
-            <p className="text-[0.87rem] text-text2 leading-[1.8] font-light">{f.desc}</p>
+      <dl className="grid grid-cols-2 border-y border-border max-md:grid-cols-1">
+        {features.map(([label, title, description], index) => (
+          <div key={label} className={`py-7 ${index % 2 === 0 ? "pr-10 border-r border-border" : "pl-10"} ${index < features.length - 2 ? "border-b border-border" : ""} max-md:px-0 max-md:border-r-0 max-md:border-b max-md:last:border-b-0`}>
+            <dt>
+              <span className="text-[0.7rem] text-accent block mb-3">{label}</span>
+              <span className="font-serif text-[1.15rem] text-text block mb-2">{title}</span>
+            </dt>
+            <dd className="text-[0.8rem] text-text2 leading-[1.75]">{description}</dd>
           </div>
         ))}
-      </div>
+      </dl>
     </section>
   );
 }

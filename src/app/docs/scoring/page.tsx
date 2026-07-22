@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Scoring System — Grova Docs",
+  title: "Scoring System - Grova Docs",
   description:
     "How Grova AI triage scoring works, dimension breakdowns, and custom weights.",
 };
@@ -13,7 +13,7 @@ export default function ScoringPage() {
         Scoring System
       </span>
       <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        Triage <em className="text-text2">Scoring.</em>
+        Triage <span className="text-text2">Scoring.</span>
       </h1>
       <p className="text-callout text-text3 font-light mb-10">
         How AI scores feedback and how to customize the weights.
@@ -21,7 +21,7 @@ export default function ScoringPage() {
 
       <div className="prose-grova flex flex-col gap-8">
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             How Scoring Works
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -35,7 +35,7 @@ export default function ScoringPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Developer Dimensions
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -129,7 +129,7 @@ export default function ScoringPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Business Dimensions
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -187,7 +187,7 @@ export default function ScoringPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Score Anchors
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -252,7 +252,7 @@ export default function ScoringPage() {
         </section>
 
         <section>
-          <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+          <h2 className="font-mono text-footnote text-text mb-3">
             Custom Weights
           </h2>
           <p className="font-mono text-callout text-text2 leading-[1.7] mb-4">
@@ -264,7 +264,7 @@ export default function ScoringPage() {
           <pre className="bg-bg2 border border-border rounded p-4 overflow-x-auto font-mono text-footnote text-text2">
 {`PATCH /projects/:id/scoring-weights
 Content-Type: application/json
-x-grova-key: gv_your_project_key
+Authorization: Bearer YOUR_SESSION_TOKEN
 
 {
   "weights": {

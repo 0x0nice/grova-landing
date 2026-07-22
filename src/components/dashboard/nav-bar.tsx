@@ -21,8 +21,8 @@ interface Tab {
 
 const devTabs: Tab[] = [
   { view: "inbox", label: "Inbox", countKey: "inbox" },
-  { view: "done", label: "Approved", countKey: "done" },
-  { view: "archive", label: "Denied", countKey: "archive" },
+  { view: "done", label: "Resolved", countKey: "done" },
+  { view: "archive", label: "Dismissed", countKey: "archive" },
   { view: "settings", label: "Settings" },
   { view: "billing", label: "Billing" },
 ];
@@ -47,11 +47,11 @@ export function NavBar() {
     selectProject,
     setProjects,
   } = useProjectStore();
-  const inboxCount = useInboxStore((s) => s.items.length);
+  const inboxCount = useInboxStore((s) => s.total || s.items.length);
   const resetInbox = useInboxStore((s) => s.reset);
-  const doneCount = useDoneStore((s) => s.items.length);
+  const doneCount = useDoneStore((s) => s.total || s.items.length);
   const resetDone = useDoneStore((s) => s.reset);
-  const archiveCount = useArchiveStore((s) => s.items.length);
+  const archiveCount = useArchiveStore((s) => s.total || s.items.length);
   const resetArchive = useArchiveStore((s) => s.reset);
   const resetBiz = useBizStore((s) => s.reset);
 
@@ -127,12 +127,12 @@ export function NavBar() {
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0 max-md:mr-0 mr-2">
             <Logo size="md" href="/dashboard" />
-            <span className="font-mono text-micro text-text3 uppercase tracking-[0.1em] max-md:hidden">
+            <span className="font-mono text-micro text-text3 max-md:hidden">
               dashboard
             </span>
           </div>
 
-          {/* Tabs — hidden on mobile, shown inline on md+ */}
+          {/* Tabs - hidden on mobile, shown inline on md+ */}
           <div
             className="hidden md:flex items-center gap-1 overflow-x-auto scrollbar-none"
             role="tablist"
@@ -146,7 +146,7 @@ export function NavBar() {
                   aria-selected={isActive}
                   onClick={() => handleTabClick(tab.view)}
                   className={`
-                    font-mono text-footnote uppercase tracking-[0.04em]
+                    font-mono text-footnote
                     px-3 py-2 rounded transition-colors duration-[180ms] cursor-pointer
                     whitespace-nowrap
                     ${
@@ -180,8 +180,8 @@ export function NavBar() {
                                : "border-transparent text-text2 hover:text-text hover:bg-surface/50"
                            }`}
               >
-                <span className="text-[0.9rem] shrink-0 max-md:text-[0.8rem]">
-                  {active?.mode === "developer" ? "🔧" : "🏪"}
+                <span className="font-mono text-[0.5rem] tracking-[0.08em] text-text3 shrink-0">
+                  {active?.mode === "developer" ? "DEV" : "BIZ"}
                 </span>
                 <span className="truncate max-w-[140px] max-md:max-w-[80px]">
                   {projectsLoading ? "Loading..." : active?.name || "Select project"}
@@ -218,8 +218,8 @@ export function NavBar() {
                                       : "text-text2 hover:bg-bg hover:text-text"
                                   }`}
                     >
-                      <span className="text-[0.9rem] shrink-0">
-                        {p.mode === "developer" ? "🔧" : "🏪"}
+                      <span className="font-mono text-[0.5rem] tracking-[0.08em] text-text3 shrink-0 w-7">
+                        {p.mode === "developer" ? "DEV" : "BIZ"}
                       </span>
                       <span className="truncate">{p.name}</span>
                       {active?.id === p.id && (
@@ -253,7 +253,7 @@ export function NavBar() {
             <button
               onClick={handleRefresh}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded
-                         font-mono text-micro uppercase tracking-[0.04em]
+                         font-mono text-micro
                          text-text3 hover:text-text2 hover:bg-surface/50
                          border border-transparent hover:border-border
                          transition-colors duration-[180ms] cursor-pointer
@@ -273,7 +273,7 @@ export function NavBar() {
             <button
               onClick={handleSignOut}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded
-                         font-mono text-micro uppercase tracking-[0.04em]
+                         font-mono text-micro
                          text-text3 hover:text-red hover:bg-red/5
                          border border-transparent hover:border-red/20
                          transition-colors duration-[180ms] cursor-pointer
@@ -289,7 +289,7 @@ export function NavBar() {
           </div>
         </div>
 
-        {/* Mobile tab row — scrollable horizontal tabs */}
+        {/* Mobile tab row - scrollable horizontal tabs */}
         <div
           className="flex md:hidden items-center gap-1 px-3 pb-2 overflow-x-auto scrollbar-none"
           role="tablist"
@@ -303,7 +303,7 @@ export function NavBar() {
                 aria-selected={isActive}
                 onClick={() => handleTabClick(tab.view)}
                 className={`
-                  font-mono text-footnote uppercase tracking-[0.04em]
+                  font-mono text-footnote
                   px-3 py-1.5 rounded transition-colors duration-[180ms] cursor-pointer
                   whitespace-nowrap
                   ${

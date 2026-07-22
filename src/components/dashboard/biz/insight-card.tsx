@@ -17,7 +17,7 @@ export function InsightCard({
         highlight ? "border-accent/30" : "border-border"
       }`}
     >
-      <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2">
+      <span className="block font-mono text-micro text-text3 mb-2">
         {label}
       </span>
       <span className="block font-serif text-[2rem] text-text leading-none mb-1 tabular-nums">

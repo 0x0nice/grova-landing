@@ -50,7 +50,7 @@ export function ActionPreviewModal({
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"preview" | "edit">("preview");
-  const [brandColor, setBrandColor] = useState("#00c87a");
+  const [brandColor, setBrandColor] = useState("#3f7556");
   const [logoUrl, setLogoUrl] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [isInternal, setIsInternal] = useState(false);
@@ -72,7 +72,7 @@ export function ActionPreviewModal({
         const s = settings as Record<string, unknown>;
 
         // Store settings for the preview renderer
-        setBrandColor((s.brand_color as string) || "#00c87a");
+        setBrandColor((s.brand_color as string) || "#3f7556");
         setLogoUrl((s.logo_url as string) || "");
         setOwnerName((s.owner_name as string) || active.name || "The Team");
 
@@ -163,10 +163,10 @@ export function ActionPreviewModal({
   return (
     <Modal open={open} onClose={onClose} title={template.name} maxWidth="640px">
       <div className="flex flex-col gap-4">
-        {/* Recipient email — shown when feedback has no email */}
+        {/* Recipient email - shown when feedback has no email */}
         {needsEmailInput && (
           <div>
-            <label className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-1.5">
+            <label className="block font-mono text-micro text-text3 mb-1.5">
               Recipient email
             </label>
             <input
@@ -184,7 +184,7 @@ export function ActionPreviewModal({
         {/* Pre-filled email display */}
         {customerEmail && (
           <div className="flex items-baseline gap-3">
-            <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em] shrink-0">
+            <span className="font-mono text-micro text-text3 shrink-0">
               To
             </span>
             <span className="font-mono text-footnote text-text2">
@@ -193,9 +193,9 @@ export function ActionPreviewModal({
           </div>
         )}
 
-        {/* Subject — always editable */}
+        {/* Subject - always editable */}
         <div>
-          <label className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-1.5">
+          <label className="block font-mono text-micro text-text3 mb-1.5">
             Subject
           </label>
           <input
@@ -211,7 +211,7 @@ export function ActionPreviewModal({
         <div className="flex items-center gap-1">
           <button
             onClick={() => setMode("preview")}
-            className={`font-mono text-micro uppercase tracking-[0.08em] px-3 py-1.5 rounded transition-colors ${
+            className={`font-mono text-micro px-3 py-1.5 rounded transition-colors ${
               mode === "preview"
                 ? "bg-accent/15 text-accent"
                 : "text-text3 hover:text-text2"
@@ -221,7 +221,7 @@ export function ActionPreviewModal({
           </button>
           <button
             onClick={() => setMode("edit")}
-            className={`font-mono text-micro uppercase tracking-[0.08em] px-3 py-1.5 rounded transition-colors ${
+            className={`font-mono text-micro px-3 py-1.5 rounded transition-colors ${
               mode === "edit"
                 ? "bg-accent/15 text-accent"
                 : "text-text3 hover:text-text2"
@@ -231,7 +231,7 @@ export function ActionPreviewModal({
           </button>
         </div>
 
-        {/* Body — preview iframe or edit textarea */}
+        {/* Body - preview iframe or edit textarea */}
         {mode === "preview" ? (
           <iframe
             srcDoc={previewHtml}

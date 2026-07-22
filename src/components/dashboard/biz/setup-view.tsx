@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { FontSizeControl } from "@/components/ui/font-size-control";
 import { WidgetInstallSection } from "@/components/dashboard/widget-install-section";
 import { QRCodeCanvas } from "qrcode.react";
+import { useAuth } from "@/providers/auth-provider";
 
 /* ------------------------------------------------------------------ */
 /*  Eyeball toggle icon                                                */
@@ -97,7 +98,8 @@ function SectionHeader({
 /* ------------------------------------------------------------------ */
 export function SetupView() {
   const active = useProjectStore((s) => s.active);
-  const { config, loadConfig, saveConfig } = useBizStore();
+  const { session, isDemo } = useAuth();
+  const { config, loadConfig, setConfig, saveConfig } = useBizStore();
   const { show } = useToast();
   const [newCat, setNewCat] = useState("");
   const [dragIdx, setDragIdx] = useState<number | null>(null);
@@ -107,41 +109,50 @@ export function SetupView() {
   const qrRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (active) loadConfig(active.id);
-  }, [active, loadConfig]);
+    if (active && (session?.access_token || isDemo)) {
+      void loadConfig(active.id, session?.access_token || "demo", isDemo);
+    }
+  }, [active, session?.access_token, isDemo, loadConfig]);
 
-  const save = useCallback(
+  const persist = useCallback(
     (updated: BizConfig) => {
-      if (active) saveConfig(active.id, updated);
+      if (active) {
+        void saveConfig(active.id, updated, session?.access_token || "demo", isDemo)
+          .catch(() => show("Could not save business setup"));
+      }
     },
-    [active, saveConfig]
+    [active, session?.access_token, isDemo, saveConfig, show]
   );
 
   function handleNameChange(name: string) {
-    save({ ...config, name });
+    setConfig({ ...config, name });
   }
 
   function handleTypeChange(type: string) {
     const cats = [...(CAT_PRESETS[type] || CAT_PRESETS.default)];
-    save({ ...config, type, categories: cats });
+    persist({ ...config, type, categories: cats });
   }
 
   function addCategory() {
     const val = newCat.trim();
     if (!val || config.categories.includes(val)) return;
-    save({ ...config, categories: [...config.categories, val] });
+    persist({ ...config, categories: [...config.categories, val] });
     setNewCat("");
   }
 
   function removeCategory(idx: number) {
+    if (config.categories.length <= 1) {
+      show("Keep at least one category");
+      return;
+    }
     const cats = [...config.categories];
     cats.splice(idx, 1);
-    save({ ...config, categories: cats });
+    persist({ ...config, categories: cats });
   }
 
   function resetCategories() {
     const cats = [...(CAT_PRESETS[config.type] || CAT_PRESETS.default)];
-    save({ ...config, categories: cats });
+    persist({ ...config, categories: cats });
     show("Categories reset");
   }
 
@@ -154,7 +165,7 @@ export function SetupView() {
     const cats = [...config.categories];
     const [moved] = cats.splice(dragIdx, 1);
     cats.splice(targetIdx, 0, moved);
-    save({ ...config, categories: cats });
+    persist({ ...config, categories: cats });
     setDragIdx(null);
   }
 
@@ -302,7 +313,7 @@ export function SetupView() {
             className="bg-bg2 border border-border rounded-lg p-6
                        [html[data-theme=light]_&]:bg-surface"
           >
-            <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.12em] mb-2">
+            <span className="block font-mono text-footnote text-text3 mb-2">
               Get in touch
             </span>
             <h3 className="font-serif text-callout text-text mb-4">
@@ -340,6 +351,7 @@ export function SetupView() {
               label="Business name"
               value={config.name}
               onChange={(e) => handleNameChange(e.target.value)}
+              onBlur={() => persist(config)}
               placeholder="Corner Bistro"
             />
             <Select
@@ -430,7 +442,7 @@ export function SetupView() {
           mode="business"
           source={active.source || ""}
           apiKey={active.api_key || ""}
-          projectName={active.name}
+          planTier={active.plan_tier}
           businessType={config.type}
           businessName={config.name}
           categories={config.categories}

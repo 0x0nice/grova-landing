@@ -12,13 +12,13 @@ export function StepTrack({ data, onUpdate, onNext, onBack }: StepTrackProps) {
   const tracks = [
     {
       value: "developer" as const,
-      icon: "🔧",
+      icon: "DEV",
       title: "Developer",
       desc: "Bug reports, feature requests, AI triage scoring, AI-ready prompts.",
     },
     {
       value: "business" as const,
-      icon: "🏪",
+      icon: "BIZ",
       title: "Business",
       desc: "Customer sentiment, category insights, suggested replies, trend analysis.",
     },
@@ -30,7 +30,7 @@ export function StepTrack({ data, onUpdate, onNext, onBack }: StepTrackProps) {
         Step 2 of 5
       </span>
       <h2 className="font-serif text-title font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        Choose your <em className="text-text2">track.</em>
+        Choose your <span className="text-text2">track.</span>
       </h2>
       <p className="font-mono text-callout text-text2 leading-[1.7] mb-6">
         This determines your dashboard layout and AI scoring model.
@@ -51,7 +51,7 @@ export function StepTrack({ data, onUpdate, onNext, onBack }: StepTrackProps) {
             `}
           >
             <div className="flex items-center gap-3">
-              <span className="text-[1.4rem]">{t.icon}</span>
+              <span className="font-mono text-[0.6rem] tracking-[0.12em] text-text3 border border-border px-2 py-1">{t.icon}</span>
               <div>
                 <span className="block font-mono text-footnote text-text font-medium">
                   {t.title}

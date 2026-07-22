@@ -26,7 +26,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Sync with the inline script that already set data-theme before hydration
   useEffect(() => {
     const current = document.documentElement.getAttribute("data-theme") as Theme;
-    if (current) setTheme(current);
+    if (current) queueMicrotask(() => setTheme(current));
   }, []);
 
   // Listen for OS preference changes (only if user hasn't set a preference)
@@ -45,7 +45,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       mq.addEventListener("change", handler);
       return () => mq.removeEventListener("change", handler);
     } catch {
-      // matchMedia not available — skip OS preference sync
+      // matchMedia not available - skip OS preference sync
     }
   }, []);
 

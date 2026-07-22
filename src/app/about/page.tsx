@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About — Grova",
+  title: "About - Grova",
   description:
     "Learn about Grova, the AI-powered feedback triage platform for developers and small businesses.",
 };
@@ -17,7 +17,7 @@ export default function AboutPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors uppercase tracking-[0.04em]"
+            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors"
           >
             Back
           </Link>
@@ -30,7 +30,7 @@ export default function AboutPage() {
           About
         </span>
         <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-          What is <em className="text-text2">Grova?</em>
+          What is <span className="text-text2">Grova?</span>
         </h1>
         <p className="text-callout text-text3 font-light mb-10">
           AI-powered feedback triage for developers and small businesses.
@@ -38,7 +38,7 @@ export default function AboutPage() {
 
         <div className="prose-grova flex flex-col gap-8">
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               What is Grova?
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -52,7 +52,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               How It Works
             </h2>
             <div className="flex flex-col gap-4">
@@ -93,7 +93,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               For Developers
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -107,7 +107,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               For Businesses
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -122,7 +122,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               Key Features
             </h2>
             <ul className="font-mono text-callout text-text2 leading-[1.7] list-none p-0 flex flex-col gap-2">

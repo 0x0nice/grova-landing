@@ -1,6 +1,9 @@
-# grova-landing
+# grova-site
 
 Marketing site + dashboard for [grova.dev](https://grova.dev). Next.js 16, App Router, static export.
+
+Read [PROJECT_AUDIT.md](PROJECT_AUDIT.md) for the current product direction,
+architecture, verification evidence, deployment order, and prioritized backlog.
 
 ## Local development
 
@@ -11,21 +14,36 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Deploy
-
-This repo deploys to **grova.dev** via GitHub Pages.
-
-```
-push to main → GitHub Pages builds → 0x0nice.github.io/grova-landing → grova.dev (Cloudflare CNAME)
-```
-
-Pages build typically takes 30–60 seconds. Watch with:
+Use Node 20. Before pushing, run:
 
 ```bash
-gh api repos/0x0nice/grova-landing/pages/builds --jq '.[0]'
+npm run typecheck
+npm run lint
+npm run build
 ```
 
-CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs `tsc --noEmit` and `next build` on every PR and push to `main`, so most regressions are caught before Pages builds.
+## Deploy
+
+This repo deploys to **grova.dev** through the Cloudflare Pages project
+`grova-landing`.
+
+```
+push to main -> Cloudflare Pages builds `npm run build` -> publishes `out/` -> grova.dev
+```
+
+Cloudflare also creates a preview deployment for every branch. Watch recent
+deployments with:
+
+```bash
+npx wrangler pages deployment list --project-name grova-landing
+```
+
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs typechecking,
+linting, a production dependency audit, and the static export on every PR and
+push to `main`.
+
+The repository still has a legacy GitHub Pages configuration. It is not the
+production path for `grova.dev`.
 
 ## Backend
 

@@ -26,6 +26,7 @@ interface InboxCardProps {
   item: FeedbackItem;
   onApprove: (id: string) => void;
   onDeny: (id: string) => void;
+  defaultExpanded?: boolean;
 }
 
 function ActionStatusBadge({ status }: { status: string }) {
@@ -41,7 +42,7 @@ function ActionStatusBadge({ status }: { status: string }) {
   };
   return (
     <span
-      className={`font-mono text-micro uppercase tracking-[0.06em] px-2 py-0.5 rounded ${
+      className={`font-mono text-micro px-2 py-0.5 rounded ${
         styles[status] || "bg-bg2 text-text3"
       }`}
     >
@@ -50,8 +51,8 @@ function ActionStatusBadge({ status }: { status: string }) {
   );
 }
 
-export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
-  const [expanded, setExpanded] = useState(false);
+export function InboxCard({ item, onApprove, onDeny, defaultExpanded = false }: InboxCardProps) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [exiting, setExiting] = useState<"approve" | "deny" | null>(null);
   const [sentActions, setSentActions] = useState<SentAction[]>([]);
   const [actionsLoaded, setActionsLoaded] = useState(false);
@@ -64,25 +65,25 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
   const anchor = scoreAnchor(es);
   const t = item.triage;
 
-  const loadActions = useCallback(() => {
+  const loadActions = useCallback(async () => {
+    await Promise.resolve();
     const token = session?.access_token || "";
     if (isDemo) {
       setSentActions(demoGet(`/actions?feedback_id=${item.id}`) as SentAction[]);
       setActionsLoaded(true);
     } else {
-      getActions(item.id, token)
-        .then((data) => {
-          setSentActions(data);
-          setActionsLoaded(true);
-        })
-        .catch(() => setActionsLoaded(true));
+      try {
+        setSentActions(await getActions(item.id, token));
+      } finally {
+        setActionsLoaded(true);
+      }
     }
   }, [item.id, session?.access_token, isDemo]);
 
   // Lazy-load action history when card is expanded
   useEffect(() => {
     if (expanded && !actionsLoaded) {
-      loadActions();
+      void loadActions();
     }
   }, [expanded, actionsLoaded, loadActions]);
 
@@ -95,7 +96,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
   }
 
   function handleActionSent() {
-    loadActions();
+    void loadActions();
   }
 
   return (
@@ -114,7 +115,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
       <div className="grid grid-cols-[64px_1fr_auto] gap-4 p-4 max-md:grid-cols-[66px_1fr] max-md:gap-3 max-md:p-3">
         {/* Score + mobile actions (stacked) */}
         <div className="flex flex-col items-center gap-2 pt-1">
-          {/* Score — lg on desktop, sm on mobile */}
+          {/* Score - lg on desktop, sm on mobile */}
           <div className="max-md:hidden">
             <ScoreDisplay score={es} size="lg" />
           </div>
@@ -126,19 +127,19 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
           <div className="hidden max-md:flex flex-col gap-1.5 w-full mt-1">
             <button
               onClick={() => handleAction("approve")}
-              className="w-full rounded py-1.5 font-mono text-[0.54rem] font-medium uppercase tracking-[0.04em]
+              className="w-full rounded py-1.5 font-mono text-[0.54rem] font-medium
                          bg-accent-dim text-accent hover:bg-accent hover:text-black
                          transition-all duration-[180ms] cursor-pointer text-center"
             >
-              Approve
+              Resolve
             </button>
             <button
               onClick={() => handleAction("deny")}
-              className="w-full rounded py-1.5 font-mono text-[0.54rem] font-medium uppercase tracking-[0.04em]
+              className="w-full rounded py-1.5 font-mono text-[0.54rem] font-medium
                          bg-orange-dim text-orange hover:bg-orange hover:text-white
                          transition-all duration-[180ms] cursor-pointer text-center"
             >
-              Deny
+              Dismiss
             </button>
           </div>
         </div>
@@ -195,14 +196,14 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
             onClick={() => handleAction("approve")}
             className="text-footnote px-4 py-2"
           >
-            Approve
+            Resolve
           </Button>
           <Button
             variant="deny"
             onClick={() => handleAction("deny")}
             className="text-footnote px-4 py-2"
           >
-            Deny
+            Dismiss
           </Button>
         </div>
       </div>
@@ -211,7 +212,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
       <AnimatePresence>
         {expanded && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
+            initial={defaultExpanded ? false : { height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
@@ -221,7 +222,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
               {/* Score anchor */}
               <div className="flex items-center gap-3">
                 <span
-                  className={`font-mono text-footnote uppercase tracking-[0.04em] ${
+                  className={`font-mono text-footnote ${
                     cls === "high"
                       ? "text-red"
                       : cls === "mid"
@@ -242,7 +243,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
               {/* AI Summary */}
               {t?.summary && (
                 <div>
-                  <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-1.5">
+                  <span className="block font-mono text-micro text-text3 mb-1.5">
                     Summary
                   </span>
                   <p className="font-mono text-footnote text-text2 leading-[1.7]">
@@ -254,7 +255,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
               {/* Reasoning */}
               {t?.reasoning && (
                 <div>
-                  <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-1.5">
+                  <span className="block font-mono text-micro text-text3 mb-1.5">
                     Analysis
                   </span>
                   <p className="font-mono text-footnote text-text2 leading-[1.7]">
@@ -266,7 +267,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
               {/* Sub-scores */}
               {t?.sub_scores && (
                 <div>
-                  <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2.5">
+                  <span className="block font-mono text-micro text-text3 mb-2.5">
                     Score breakdown
                   </span>
                   <SubScoreGrid subScores={t.sub_scores} />
@@ -283,7 +284,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
               {/* Suggested actions */}
               {t?.suggested_actions && t.suggested_actions.length > 0 && (
                 <div>
-                  <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2.5">
+                  <span className="block font-mono text-micro text-text3 mb-2.5">
                     Suggested actions
                   </span>
                   <div className="flex flex-wrap gap-3">
@@ -305,7 +306,7 @@ export function InboxCard({ item, onApprove, onDeny }: InboxCardProps) {
               {/* Action history */}
               {actionsLoaded && sentActions.length > 0 && (
                 <div>
-                  <span className="block font-mono text-micro text-text3 uppercase tracking-[0.12em] mb-2.5">
+                  <span className="block font-mono text-micro text-text3 mb-2.5">
                     Action history
                   </span>
                   <div className="flex flex-col gap-2">

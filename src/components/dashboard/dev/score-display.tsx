@@ -18,7 +18,7 @@ export function ScoreDisplay({ score, size = "lg" }: ScoreDisplayProps) {
       >
         {score.toFixed(1)}
       </span>
-      <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em] mt-1">
+      <span className="font-mono text-micro text-text3 mt-1">
         score
       </span>
     </div>

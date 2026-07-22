@@ -48,7 +48,7 @@ export function Sidebar() {
     <>
       <aside className="flex flex-col border-r border-border bg-bg h-full overflow-hidden">
         <div className="px-4 pt-5 pb-3">
-          <span className="font-mono text-micro text-text3 uppercase tracking-[0.14em]">
+          <span className="font-mono text-micro text-text3">
             My Projects
           </span>
         </div>
@@ -78,8 +78,8 @@ export function Sidebar() {
                   }
                 `}
               >
-                <span className="text-[1rem] shrink-0">
-                  {p.mode === "developer" ? "🔧" : "🏪"}
+                <span className="font-mono text-[0.52rem] tracking-[0.08em] text-text3 shrink-0 w-7">
+                  {p.mode === "developer" ? "DEV" : "BIZ"}
                 </span>
                 <span className="font-mono text-footnote truncate">
                   {p.name}

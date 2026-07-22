@@ -11,7 +11,7 @@ const API = process.env.NEXT_PUBLIC_API_URL!;
 function OnboardingGuard() {
   const { session, loading, isDemo } = useAuth();
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const [projectsChecked, setProjectsChecked] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -34,17 +34,15 @@ function OnboardingGuard() {
           if (Array.isArray(projects) && projects.length > 0) {
             router.push("/dashboard");
           } else {
-            setChecking(false);
+            setProjectsChecked(true);
           }
         })
-        .catch(() => setChecking(false));
-    } else {
-      // Demo mode — skip check
-      setChecking(false);
+        .catch(() => setProjectsChecked(true));
     }
   }, [loading, session, isDemo, router]);
 
-  if (loading || checking) {
+  const checking = loading || (!!session && !isDemo && !projectsChecked);
+  if (checking) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
         <Skeleton className="w-48 h-6" />

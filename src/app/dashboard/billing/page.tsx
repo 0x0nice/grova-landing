@@ -6,7 +6,7 @@ import { useProjectStore } from "@/stores/project-store";
 import { EmptyState } from "@/components/ui/empty-state";
 import { apiGet, apiPost } from "@/lib/api";
 
-/* ── Tier definitions (display only — no Stripe IDs needed) ── */
+/* ── Tier definitions (display only - no Stripe IDs needed) ── */
 
 interface Tier {
   name: string;
@@ -23,7 +23,7 @@ const DEV_TIERS: Tier[] = [
     key: "free",
     price: "$0",
     period: "forever",
-    features: ["1 project", "50 feedback/mo", "AI triage", "Basic scoring"],
+    features: ["1 project", "25 feedback/mo", "AI triage", "Scoring", "Feedback widget"],
   },
   {
     name: "Solo",
@@ -31,11 +31,11 @@ const DEV_TIERS: Tier[] = [
     price: "$19",
     period: "/month",
     features: [
-      "3 projects",
-      "500 feedback/mo",
-      "AI triage + actions",
-      "AI prompts",
-      "Email alerts",
+      "1 project",
+      "Unlimited feedback",
+      "Everything in Free",
+      "Custom triage rules",
+      "No Grova badge",
     ],
     popular: true,
   },
@@ -45,8 +45,8 @@ const DEV_TIERS: Tier[] = [
     price: "$49",
     period: "/month",
     features: [
-      "10 projects",
-      "2,000 feedback/mo",
+      "Unlimited projects",
+      "Unlimited feedback",
       "Everything in Solo",
       "Priority support",
       "Custom scoring",
@@ -59,11 +59,10 @@ const DEV_TIERS: Tier[] = [
     period: "/month",
     features: [
       "Unlimited projects",
-      "10,000 feedback/mo",
+      "Unlimited feedback",
       "Everything in Builder",
-      "Team members",
-      "API access",
-      "White-label widgets",
+      "Unbranded widgets",
+      "Priority support",
     ],
   },
 ];
@@ -74,7 +73,7 @@ const BIZ_TIERS: Tier[] = [
     key: "biz_free",
     price: "$0",
     period: "forever",
-    features: ["1 location", "50 feedback/mo", "AI categorization", "Weekly digest"],
+    features: ["1 location", "50 feedback/mo", "AI categorization", "Widget, QR code, and direct link"],
   },
   {
     name: "Essentials",
@@ -83,10 +82,10 @@ const BIZ_TIERS: Tier[] = [
     period: "/month",
     features: [
       "1 location",
-      "500 feedback/mo",
+      "Unlimited feedback",
       "Suggested replies",
-      "Trend analysis",
-      "Email alerts",
+      "Custom categories",
+      "Smart Actions",
     ],
     popular: true,
   },
@@ -97,10 +96,10 @@ const BIZ_TIERS: Tier[] = [
     period: "/month",
     features: [
       "3 locations",
-      "2,000 feedback/mo",
+      "Unlimited feedback",
       "Everything in Essentials",
       "Custom categories",
-      "Priority support",
+      "Suggested replies and Smart Actions",
     ],
   },
   {
@@ -110,11 +109,10 @@ const BIZ_TIERS: Tier[] = [
     period: "/month",
     features: [
       "Unlimited locations",
-      "10,000 feedback/mo",
+      "Unlimited feedback",
       "Everything in Growth",
-      "Team access",
-      "API access",
-      "Custom integrations",
+      "Unbranded widget",
+      "Priority support",
     ],
   },
 ];
@@ -195,7 +193,7 @@ export default function BillingPage() {
         );
         if (!cancelled) setBilling(data);
       } catch {
-        // API may return 503 if Stripe not configured — fall back to free
+        // API may return 503 if Stripe not configured - fall back to free
         if (!cancelled) setBilling(null);
       } finally {
         if (!cancelled) setLoading(false);
@@ -300,7 +298,7 @@ export default function BillingPage() {
       <div className="bg-surface border border-border rounded p-5 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.12em] mb-1">
+            <span className="block font-mono text-footnote text-text3 mb-1">
               Current Plan
             </span>
             {loading ? (
@@ -318,7 +316,7 @@ export default function BillingPage() {
                 disabled={isDemo || actionLoading === "manage"}
                 className="font-mono text-footnote text-text3 hover:text-text2
                            px-4 py-2 rounded border border-border hover:border-border2
-                           transition-colors cursor-pointer uppercase tracking-[0.04em]
+                           transition-colors cursor-pointer
                            disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 {actionLoading === "manage" ? "Opening..." : "Manage Subscription"}
@@ -328,18 +326,18 @@ export default function BillingPage() {
         </div>
         {billing?.plan_status === "past_due" && (
           <p className="font-mono text-footnote text-red mt-3">
-            Payment past due — please update your payment method to keep your plan active.
+            Payment past due - please update your payment method to keep your plan active.
           </p>
         )}
         {isDemo && (
           <p className="font-mono text-footnote text-orange mt-3">
-            Demo mode — billing actions are disabled.
+            Demo mode - billing actions are disabled.
           </p>
         )}
       </div>
 
       {/* Plan grid */}
-      <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.12em] mb-4">
+      <span className="block font-mono text-footnote text-text3 mb-4">
         Available Plans
       </span>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -361,14 +359,14 @@ export default function BillingPage() {
             >
               {tier.popular && (
                 <span
-                  className={`font-mono text-micro uppercase tracking-[0.08em] mb-2 ${
+                  className={`font-mono text-micro mb-2 ${
                     isBiz ? "text-orange" : "text-accent"
                   }`}
                 >
                   Most Popular
                 </span>
               )}
-              <span className="font-mono text-callout text-text uppercase tracking-[0.04em]">
+              <span className="font-mono text-callout text-text">
                 {tier.name}
               </span>
               <div className="mt-2 mb-4">
@@ -391,14 +389,14 @@ export default function BillingPage() {
                 ))}
               </ul>
               {isCurrent ? (
-                <span className="font-mono text-footnote text-text3 uppercase tracking-[0.04em] text-center py-2">
+                <span className="font-mono text-footnote text-text3 text-center py-2">
                   Current Plan
                 </span>
               ) : isFree && currentOrder > 0 ? (
                 <button
                   onClick={handleManage}
                   disabled={isDemo || !!actionLoading}
-                  className="font-mono text-footnote uppercase tracking-[0.04em] py-2.5 rounded
+                  className="font-mono text-footnote py-2.5 rounded
                     transition-all cursor-pointer text-center
                     border border-border text-text3 hover:border-border2 hover:text-text2
                     disabled:opacity-30 disabled:cursor-not-allowed"
@@ -410,7 +408,7 @@ export default function BillingPage() {
                   onClick={() => handleUpgrade(tier.key)}
                   disabled={isDemo || !!actionLoading}
                   className={`
-                    font-mono text-footnote uppercase tracking-[0.04em] py-2.5 rounded
+                    font-mono text-footnote py-2.5 rounded
                     transition-all cursor-pointer text-center
                     ${
                       tier.popular
@@ -438,7 +436,7 @@ export default function BillingPage() {
 
       {/* Usage section */}
       <div className="mt-8 bg-surface border border-border rounded p-5">
-        <span className="block font-mono text-footnote text-text3 uppercase tracking-[0.12em] mb-4">
+        <span className="block font-mono text-footnote text-text3 mb-4">
           This Month&apos;s Usage
         </span>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -500,7 +498,7 @@ export default function BillingPage() {
               <span className="block h-7 w-20 bg-border/30 rounded animate-pulse" />
             ) : (
               <span className="font-mono text-footnote text-text2">
-                {periodEnd || "—"}
+                {periodEnd || "-"}
               </span>
             )}
           </div>

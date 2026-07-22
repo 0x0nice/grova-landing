@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import type { Project } from "@/types/project";
 import { apiGet, apiPost } from "@/lib/api";
+import { errorMessage } from "@/lib/errors";
 
 interface ProjectState {
   projects: Project[];
   active: Project | null;
   loading: boolean;
+  error: string | null;
 
   loadProjects: (token: string) => Promise<void>;
   selectProject: (project: Project) => void;
@@ -14,19 +16,26 @@ interface ProjectState {
     token: string
   ) => Promise<Project>;
   setProjects: (projects: Project[]) => void;
+  reset: () => void;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   projects: [],
   active: null,
   loading: false,
+  error: null,
 
   loadProjects: async (token) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const projects = await apiGet<Project[]>("/projects", token);
-      set({ projects, loading: false });
-      if (projects.length > 0 && !get().active) {
+      const current = get().active;
+      const currentMatch = current
+        ? projects.find((project) => project.id === current.id)
+        : null;
+
+      set({ projects, loading: false, active: currentMatch || null });
+      if (projects.length > 0 && !currentMatch) {
         // Restore previously selected project from localStorage
         let restored = false;
         try {
@@ -41,8 +50,9 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         } catch {}
         if (!restored) set({ active: projects[0] });
       }
-    } catch {
-      set({ loading: false });
+      if (projects.length === 0) set({ active: null });
+    } catch (error) {
+      set({ loading: false, error: errorMessage(error, "Could not load projects") });
     }
   },
 
@@ -63,4 +73,5 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   },
 
   setProjects: (projects) => set({ projects }),
+  reset: () => set({ projects: [], active: null, loading: false, error: null }),
 }));

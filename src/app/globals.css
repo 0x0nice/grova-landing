@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 /* ===================================================================
-   GROVA DESIGN TOKENS — Tailwind v4 CSS-first configuration
+   GROVA DESIGN TOKENS - Tailwind v4 CSS-first configuration
    Source of truth: grova-landing/DESIGN-SYSTEM.md
    =================================================================== */
 
 @theme inline {
   /* --- Typography --- */
-  --font-serif: var(--font-instrument-serif), serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-serif: "Sentient", "Iowan Old Style", Georgia, serif;
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   /* --- Static Colors (don't change with theme) --- */
-  --color-accent: #00c87a;
-  --color-accent-dim: rgba(0, 200, 122, 0.1);
-  --color-orange: #e8640a;
-  --color-orange-dim: rgba(232, 100, 10, 0.1);
-  --color-red: #ff6b6b;
-  --color-red-dim: rgba(255, 107, 107, 0.1);
-  --color-green: #16a34a;
-  --color-green-dim: rgba(22, 163, 74, 0.1);
+  --color-accent: #3f7556;
+  --color-accent-dim: rgba(63, 117, 86, 0.12);
+  --color-orange: #a9562e;
+  --color-orange-dim: rgba(169, 86, 46, 0.12);
+  --color-red: #b85a5a;
+  --color-red-dim: rgba(184, 90, 90, 0.1);
+  --color-green: #397d50;
+  --color-green-dim: rgba(57, 125, 80, 0.1);
   --color-blue: #64a0ff;
   --color-purple: #c88cff;
 
@@ -69,7 +70,6 @@
   --shadow-none: none;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.24);
-  --shadow-glow-accent: 0 0 0 4px color-mix(in oklch, var(--color-accent) 15%, transparent);
 
   /* --- Section/row rhythm --- */
   --gap-row: 12px;
@@ -78,7 +78,7 @@
 }
 
 /* ===================================================================
-   Typography Scale — uses @theme (not inline) so utilities emit
+   Typography Scale - uses @theme (not inline) so utilities emit
    var(--text-*) references instead of hardcoded values.
    This allows --font-scale to work at runtime.
    =================================================================== */
@@ -133,30 +133,30 @@
   --border2: #2e2e2e;
   --text: #ffffff;
   --text2: #c0c0c0;
-  --text3: #606060;
+  --text3: #8a8a8a;
 }
 
 /* ===================================================================
    THEME: Light
    =================================================================== */
 [data-theme="light"] {
-  --bg: #f8f8f6;
-  --bg2: #efefec;
-  --surface: #ffffff;
+  --bg: #f0f3ef;
+  --bg2: #e4e9e3;
+  --surface: #f9fbf8;
   --surface-raised: #ffffff;
-  --surface-hover: #f3f3f0;
-  --surface-active: #e9e9e6;
-  --border: #d4d4d0;
-  --border2: #c0c0bc;
+  --surface-hover: #e9eee8;
+  --surface-active: #dde5dd;
+  --border: #cbd3ca;
+  --border2: #aeb9ad;
   --text: #080808;
   --text2: #333333;
-  --text3: #888888;
+  --text3: #626a61;
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.10);
 }
 
 /* ===================================================================
-   FONT SCALE — runtime multiplier for accessibility text sizing
+   FONT SCALE - runtime multiplier for accessibility text sizing
    Overrides @theme inline values with calc() so slider works in real-time.
    Default --font-scale: 1 (presets: 0.88 / 1 / 1.14 / 1.28)
    =================================================================== */
@@ -190,10 +190,13 @@
   }
 
   body {
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: url("/grain.svg");
+    background-repeat: repeat;
+    background-size: 160px 160px;
     color: var(--text);
-    font-family: var(--font-geist-mono), monospace;
-    font-weight: 300;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1;
@@ -202,11 +205,23 @@
   }
 
   .font-serif {
+    font-family: "Sentient", "Iowan Old Style", Georgia, serif;
     font-feature-settings: "kern", "liga", "calt", "dlig";
+  }
+
+  code,
+  pre,
+  kbd,
+  samp {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   }
 
   .tabular-nums {
     font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .decision-artifact {
+    clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%);
   }
 
   /* Scrollbar */
@@ -221,7 +236,7 @@
     border-radius: 3px;
   }
 
-  /* Focus ring — accent green, with subtle breathing animation */
+  /* Focus ring - accent green, with subtle breathing animation */
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
@@ -240,7 +255,7 @@
 
   /* Selection */
   ::selection {
-    background: rgba(0, 200, 122, 0.25);
+    background: rgba(63, 117, 86, 0.32);
     color: var(--text);
   }
 
@@ -253,14 +268,12 @@
     display: none;
   }
 
-  /* Hero fade-up animation — pure CSS, works without JS hydration */
+  /* Motion never gates visibility; content remains readable if animation stalls. */
   @keyframes fadeUp {
     from {
-      opacity: 0;
       transform: translateY(14px);
     }
     to {
-      opacity: 1;
       transform: translateY(0);
     }
   }
@@ -282,22 +295,22 @@
    TRACK-AWARE COLOR OVERRIDES
    =================================================================== */
 :root {
-  --track-accent: #00c87a;
-  --track-accent-dim: rgba(0, 200, 122, 0.1);
+  --track-accent: #3f7556;
+  --track-accent-dim: rgba(63, 117, 86, 0.12);
 }
 
 [data-track="dev"] {
-  --track-accent: #e8640a;
-  --track-accent-dim: rgba(232, 100, 10, 0.1);
+  --track-accent: #a9562e;
+  --track-accent-dim: rgba(169, 86, 46, 0.12);
 }
 
 [data-track="biz"] {
-  --track-accent: #00c87a;
-  --track-accent-dim: rgba(0, 200, 122, 0.1);
+  --track-accent: #3f7556;
+  --track-accent-dim: rgba(63, 117, 86, 0.12);
 }
 
 /* ===================================================================
-   FONT SIZE SLIDER — Apple Dynamic Type style
+   FONT SIZE SLIDER - Apple Dynamic Type style
    =================================================================== */
 .font-size-slider {
   -webkit-appearance: none;
@@ -324,12 +337,7 @@
 }
 
 .font-size-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.12);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
-}
-
-.font-size-slider::-webkit-slider-thumb:active {
-  transform: scale(1.05);
+  background: var(--text2);
 }
 
 .font-size-slider::-moz-range-thumb {

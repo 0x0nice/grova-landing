@@ -65,11 +65,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             role="status"
             aria-live="polite"
             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[200]
-                       bg-text text-bg font-mono text-callout
-                       rounded shadow-lg
+                       bg-text text-bg text-callout
+                       rounded
                        inline-flex items-center"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 8 }}
+            animate={{ y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.18 }}
           >
@@ -82,7 +82,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                   dismiss();
                 }}
                 className="self-stretch px-4 py-3 border-l border-bg/15
-                           font-mono text-footnote uppercase tracking-[0.04em]
+                           font-mono text-footnote
                            text-accent hover:bg-bg/5 active:bg-bg/10
                            transition-colors duration-[180ms] cursor-pointer rounded-r"
               >

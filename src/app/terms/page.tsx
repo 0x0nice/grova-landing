@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Grova",
+  title: "Terms of Service - Grova",
   description: "Terms of Service for Grova, the feedback triage platform.",
 };
 
@@ -16,7 +16,7 @@ export default function TermsPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors uppercase tracking-[0.04em]"
+            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors"
           >
             Back
           </Link>
@@ -29,7 +29,7 @@ export default function TermsPage() {
           Legal
         </span>
         <h1 className="font-serif text-[clamp(1.75rem,3.2vw,2.4rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-          Terms of <em className="text-text2">Service.</em>
+          Terms of <span className="text-text2">Service.</span>
         </h1>
         <p className="text-callout text-text3 font-light mb-10">
           Last updated: February 24, 2026
@@ -37,7 +37,7 @@ export default function TermsPage() {
 
         <div className="prose-grova flex flex-col gap-8">
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               1. Acceptance of Terms
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -49,7 +49,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               2. Description of Service
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -61,7 +61,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               3. Account Registration
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -73,7 +73,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               4. Acceptable Use
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -86,7 +86,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               5. Data & Content
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -99,7 +99,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               6. Billing & Subscriptions
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -111,7 +111,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               7. Service Availability
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -123,7 +123,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               8. Limitation of Liability
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -136,7 +136,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               9. Termination
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
@@ -148,7 +148,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-mono text-footnote text-text uppercase tracking-[0.08em] mb-3">
+            <h2 className="font-mono text-footnote text-text mb-3">
               10. Contact
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">

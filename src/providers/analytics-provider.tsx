@@ -1,12 +1,12 @@
 "use client";
 
-// PostHog analytics stub — currently a no-op.
+// PostHog analytics stub - currently a no-op.
 // When you're ready to enable analytics:
 //   1. npm install posthog-js
 //   2. Set NEXT_PUBLIC_POSTHOG_KEY in .env.local
 //   3. Uncomment the dynamic import in AnalyticsProvider below
 
-let posthogInstance: {
+const posthogInstance: {
   capture: (event: string, properties?: Record<string, unknown>) => void;
 } | null = null;
 

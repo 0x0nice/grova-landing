@@ -9,11 +9,12 @@
  *   <script src="https://grova.dev/grova-widget.js" data-source="my-app"></script>
  *
  * Optional attributes:
- *   data-source   — identifies your app in the Grova inbox  (default: hostname)
- *   data-position — "right" or "left"                       (default: "right")
- *   data-api-url  — override the API endpoint               (default: https://grova-api-production.up.railway.app/feedback)
- *   data-key      — your Grova project API key for per-project routing
- *   data-no-badge — hide the "Powered by Grova" footer link
+ *   data-source   - identifies your app in the Grova inbox  (default: hostname)
+ *   data-position - "right" or "left"                       (default: "right")
+ *   data-api-url  - override the API endpoint               (default: https://grova-api-production.up.railway.app/feedback)
+ *   data-key      - your Grova project API key for per-project routing
+ *   data-no-badge - hide the "Powered by Grova" footer link
+ *   data-unbranded - hide Grova identity in the panel header
  */
 (function () {
   'use strict';
@@ -99,22 +100,24 @@
   const script = document.currentScript || document.querySelector('script[data-source][src*="grova"]');
   const API    = script?.getAttribute('data-api-url') || 'https://grova-api-production.up.railway.app/feedback';
   const apiKey = script?.getAttribute('data-key') || null;
+  const voiceEnabled = script?.getAttribute('data-voice') === 'true';
   const noBadge = script?.hasAttribute('data-no-badge') || false;
+  const unbranded = script?.hasAttribute('data-unbranded') || false;
   const SOURCE = script?.dataset.source   || window.location.hostname;
   const SIDE   = script?.dataset.position === 'left' ? 'left' : 'right';
   const TRANSCRIBE_URL = API.replace(/\/feedback\/?$/, '/feedback/transcribe');
 
   // ── Fonts ────────────────────────────────────────────────────────────────
 
-  if (!document.querySelector('link[href*="Inter"]')) {
+  if (!document.querySelector('link[href*="api.fontshare.com"]')) {
     const preconnect = document.createElement('link');
     preconnect.rel  = 'preconnect';
-    preconnect.href = 'https://fonts.googleapis.com';
+    preconnect.href = 'https://api.fontshare.com';
     document.head.appendChild(preconnect);
 
     const fonts = document.createElement('link');
     fonts.rel   = 'stylesheet';
-    fonts.href  = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap';
+    fonts.href  = 'https://api.fontshare.com/v2/css?f[]=sentient@400,500&display=swap';
     fonts.setAttribute('data-grova', '1');
     document.head.appendChild(fonts);
   }
@@ -131,18 +134,18 @@
   style.setAttribute('data-grova', '1');
   style.textContent = [
     // ── Design system ──
-    '.gv-root{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;position:fixed;bottom:24px;' + SIDE + ':24px;z-index:99999;--gv-bg:#1a1a1e;--gv-surface:#242428;--gv-border:rgba(255,255,255,0.08);--gv-border2:rgba(255,255,255,0.12);--gv-text:#f5f5f7;--gv-text2:#a1a1aa;--gv-text3:#52525b;--gv-green:#00c87a;--gv-shadow:0 8px 60px rgba(0,0,0,0.5),0 2px 16px rgba(0,0,0,0.25)}',
-    '.gv-root.gv-light{--gv-bg:#f4f4f5;--gv-surface:#ffffff;--gv-border:rgba(0,0,0,0.06);--gv-border2:rgba(0,0,0,0.10);--gv-text:#18181b;--gv-text2:#3f3f46;--gv-text3:#a1a1aa;--gv-green:#00b36b;--gv-shadow:0 8px 40px rgba(0,0,0,0.08),0 2px 12px rgba(0,0,0,0.04)}',
+    '.gv-root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;position:fixed;bottom:24px;' + SIDE + ':24px;z-index:99999;--gv-bg:#151715;--gv-surface:#202320;--gv-border:rgba(255,255,255,0.09);--gv-border2:rgba(255,255,255,0.14);--gv-text:#f5f6f4;--gv-text2:#b5bbb5;--gv-text3:#858d85;--gv-green:#3f7556;--gv-shadow:0 10px 24px rgba(0,0,0,0.34)}',
+    '.gv-root.gv-light{--gv-bg:#e7ece6;--gv-surface:#f9fbf8;--gv-border:rgba(38,55,42,0.10);--gv-border2:rgba(38,55,42,0.17);--gv-text:#151915;--gv-text2:#424a43;--gv-text3:#687069;--gv-green:#3f7556;--gv-shadow:0 10px 24px rgba(36,51,40,0.12)}',
     // ── Trigger ──
-    '.gv-trigger{align-items:center;background:var(--gv-green);border:none;border-radius:999px;box-shadow:0 4px 24px rgba(0,200,122,0.3);color:#000;cursor:pointer;display:flex;font-family:inherit;font-size:0.72rem;font-weight:500;gap:8px;letter-spacing:0.04em;padding:12px 20px;text-transform:uppercase;transition:opacity 0.15s,box-shadow 0.15s,background 0.15s,color 0.15s;white-space:nowrap}',
-    '.gv-trigger:hover{box-shadow:0 6px 28px rgba(0,200,122,0.5);opacity:0.9}',
-    '.gv-trigger-open{background:var(--gv-surface);box-shadow:var(--gv-shadow);color:var(--gv-text2)}',
-    '.gv-trigger-open:hover{box-shadow:var(--gv-shadow);opacity:1;color:var(--gv-text)}',
+    '.gv-trigger{align-items:center;background:var(--gv-green);border:none;border-radius:6px;color:#fff;cursor:pointer;display:flex;font-family:inherit;font-size:0.78rem;font-weight:600;gap:8px;padding:11px 16px;transition:background 0.15s,color 0.15s;white-space:nowrap}',
+    '.gv-trigger:hover{background:#3e6e53}',
+    '.gv-trigger-open{background:var(--gv-surface);color:var(--gv-text2)}',
+    '.gv-trigger-open:hover{background:var(--gv-bg);color:var(--gv-text)}',
     // ── Backdrop ──
     '.gv-backdrop{display:none}',
     '@media(max-width:640px){.gv-backdrop{background:rgba(0,0,0,0.55);bottom:0;display:block;left:0;opacity:0;pointer-events:none;position:fixed;right:0;top:0;transition:opacity 0.22s ease;z-index:99998}.gv-backdrop.gv-open{opacity:1;pointer-events:all}}',
     // ── Panel ──
-    '.gv-panel{background:var(--gv-surface);border:1px solid var(--gv-border);border-radius:20px;bottom:52px;box-shadow:var(--gv-shadow);opacity:0;overflow:hidden;pointer-events:none;position:absolute;' + SIDE + ':0;transform:translateY(10px);transition:opacity 0.18s ease,transform 0.18s ease;width:360px}',
+    '.gv-panel{background:var(--gv-surface);border:1px solid var(--gv-border);border-radius:12px;bottom:52px;box-shadow:var(--gv-shadow);opacity:0;overflow:hidden;pointer-events:none;position:absolute;' + SIDE + ':0;transform:translateY(10px);transition:opacity 0.18s ease,transform 0.18s ease;width:360px}',
     '.gv-panel.gv-open{opacity:1;pointer-events:all;transform:translateY(0)}',
     '@media(max-width:640px){.gv-root{bottom:20px;' + SIDE + ':20px}.gv-panel{border-radius:20px 20px 0 0;border-bottom:none;bottom:0;left:0;max-height:82dvh;overflow-y:auto;position:fixed;right:0;transform:translateY(100%);transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);width:100%;z-index:99999;-webkit-overflow-scrolling:touch}.gv-panel.gv-open{opacity:1;transform:translateY(0)}.gv-panel::before{background:var(--gv-border2);border-radius:3px;content:"";display:block;height:4px;margin:12px auto 0;width:36px}}',
     // ── Inner ──
@@ -150,15 +153,13 @@
     '@media(max-width:640px){.gv-inner{padding:16px 20px 20px}}',
     // ── Header ──
     '.gv-header{align-items:flex-start;display:flex;justify-content:space-between;margin-bottom:0}',
-    '.gv-eyebrow{color:var(--gv-green);font-size:0.65rem;font-weight:500;letter-spacing:0.1em;margin-bottom:5px;text-transform:uppercase}',
+    '.gv-eyebrow{color:var(--gv-green);font-size:0.7rem;font-weight:600;margin-bottom:5px}',
     '.gv-logo{align-items:center;display:flex;gap:8px}',
     '.gv-logo-mark{background:var(--gv-green);border-radius:50%;flex-shrink:0;height:12px;margin-top:2px;width:12px}',
-    '.gv-logo-name{color:var(--gv-text);font-family:"Instrument Serif",Georgia,"Times New Roman",serif;font-size:1.45rem;font-weight:400;letter-spacing:-0.02em;line-height:1}',
+    '.gv-logo-name{color:var(--gv-text);font-family:"Sentient",Georgia,"Times New Roman",serif;font-size:1.45rem;font-weight:400;letter-spacing:-0.02em;line-height:1}',
     // ── Close button (circular) ──
-    '.gv-close{align-items:center;background:rgba(255,255,255,0.06);border:none;border-radius:50%;color:var(--gv-text3);cursor:pointer;display:flex;font-size:0.9rem;height:28px;justify-content:center;line-height:1;transition:background 0.15s,color 0.15s;width:28px}',
-    '.gv-close:hover{background:rgba(255,255,255,0.12);color:var(--gv-text)}',
-    '.gv-light .gv-close{background:rgba(0,0,0,0.04)}',
-    '.gv-light .gv-close:hover{background:rgba(0,0,0,0.08)}',
+    '.gv-close{align-items:center;background:none;border:none;color:var(--gv-text3);cursor:pointer;display:flex;font-size:0.9rem;height:28px;justify-content:center;line-height:1;transition:color 0.15s;width:28px}',
+    '.gv-close:hover{color:var(--gv-text)}',
     // ── Segmented control ──
     '.gv-seg{background:var(--gv-bg);border-radius:12px;display:flex;gap:2px;padding:3px;position:relative}',
     '.gv-seg-btn{background:none;border:none;border-radius:10px;color:var(--gv-text3);cursor:pointer;flex:1;font-family:inherit;font-size:0.75rem;font-weight:500;letter-spacing:0.02em;padding:8px 0;position:relative;transition:color 0.2s;z-index:1}',
@@ -170,16 +171,16 @@
     '.gv-textarea{min-height:100px;resize:none}',
     '@media(max-width:640px){.gv-textarea{min-height:110px;font-size:1rem}.gv-email{font-size:1rem}}',
     '.gv-textarea::placeholder,.gv-email::placeholder{color:var(--gv-text3)}',
-    '.gv-textarea:focus,.gv-email:focus{border-color:var(--gv-green);box-shadow:0 0 0 3px rgba(0,200,122,0.15)}',
+    '.gv-textarea:focus,.gv-email:focus{border-color:var(--gv-green)}',
     // ── Textarea wrap + mic FAB ──
     '.gv-textarea-wrap{position:relative}',
-    '.gv-mic{align-items:center;background:var(--gv-green);border:none;border-radius:50%;bottom:10px;box-shadow:0 2px 12px rgba(0,200,122,0.35);color:#000;cursor:pointer;display:flex;height:36px;justify-content:center;position:absolute;right:10px;transition:box-shadow 0.2s,transform 0.15s;width:36px;z-index:1}',
-    '.gv-mic:hover{box-shadow:0 4px 20px rgba(0,200,122,0.5);transform:scale(1.05)}',
+    '.gv-mic{align-items:center;background:var(--gv-green);border:none;border-radius:50%;bottom:10px;color:#fff;cursor:pointer;display:flex;height:36px;justify-content:center;position:absolute;right:10px;transition:background 0.15s;width:36px;z-index:1}',
+    '.gv-mic:hover{background:#3e6e53}',
     '.gv-mic svg{width:16px;height:16px}',
     // ── Submit ──
-    '.gv-submit{background:var(--gv-green);border:none;border-radius:999px;box-sizing:border-box;color:#000;cursor:pointer;font-family:inherit;font-size:0.8rem;font-weight:600;letter-spacing:0.03em;padding:14px;transition:box-shadow 0.2s,filter 0.15s;width:100%}',
+    '.gv-submit{background:var(--gv-green);border:none;border-radius:6px;box-sizing:border-box;color:#fff;cursor:pointer;font-family:inherit;font-size:0.84rem;font-weight:600;padding:14px;transition:background 0.15s;width:100%}',
     '@media(max-width:640px){.gv-submit{font-size:0.9rem;padding:16px;margin-bottom:env(safe-area-inset-bottom,0px)}}',
-    '.gv-submit:hover:not(:disabled){filter:brightness(1.1);box-shadow:0 4px 24px rgba(0,200,122,0.4)}',
+    '.gv-submit:hover:not(:disabled){background:#3e6e53}',
     '.gv-submit:disabled{cursor:not-allowed;opacity:0.35;filter:none;box-shadow:none}',
     // ── Screenshot toggle ──
     '.gv-screenshot-row{align-items:center;display:flex;gap:12px}',
@@ -195,11 +196,11 @@
     '.gv-rec-header{align-items:center;display:flex;gap:8px}',
     '.gv-rec-dot{animation:gv-pulse 1.4s ease-in-out infinite;background:#ff4444;border-radius:50%;flex-shrink:0;height:8px;width:8px}',
     '@keyframes gv-pulse{0%,100%{opacity:1}50%{opacity:0.3}}',
-    '.gv-rec-label{color:#ff4444;font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase}',
+    '.gv-rec-label{color:#c45757;font-size:0.7rem;font-weight:600}',
     '.gv-rec-time{color:var(--gv-text2);font-size:0.8rem;font-variant-numeric:tabular-nums;margin-left:auto}',
     '.gv-waveform{height:48px;width:100%}',
     '.gv-rec-actions{display:flex;gap:8px;justify-content:center}',
-    '.gv-rec-btn{background:none;border:1px solid var(--gv-border2);border-radius:999px;color:var(--gv-text3);cursor:pointer;font-family:inherit;font-size:0.7rem;font-weight:500;letter-spacing:0.04em;padding:8px 20px;text-transform:uppercase;transition:border-color 0.15s,color 0.15s,background 0.15s}',
+    '.gv-rec-btn{background:none;border:1px solid var(--gv-border2);border-radius:6px;color:var(--gv-text3);cursor:pointer;font-family:inherit;font-size:0.72rem;font-weight:600;padding:8px 20px;transition:border-color 0.15s,color 0.15s,background 0.15s}',
     '.gv-rec-btn:hover{border-color:var(--gv-text3);color:var(--gv-text2)}',
     '.gv-rec-stop{background:#ff4444;border-color:#ff4444;color:#fff}',
     '.gv-rec-stop:hover{background:#cc3333;border-color:#cc3333;color:#fff}',
@@ -207,19 +208,19 @@
     '.gv-transcribing{align-items:center;background:var(--gv-bg);border:1px solid var(--gv-border2);border-radius:12px;display:flex;flex-direction:column;gap:10px;padding:24px 16px}',
     '.gv-transcribing-spinner{animation:gv-spin 1s linear infinite;border:2px solid var(--gv-border2);border-radius:50%;border-top-color:var(--gv-green);height:24px;width:24px}',
     '@keyframes gv-spin{to{transform:rotate(360deg)}}',
-    '.gv-transcribing-text{color:var(--gv-text3);font-size:0.72rem;letter-spacing:0.04em;text-transform:uppercase}',
+    '.gv-transcribing-text{color:var(--gv-text3);font-size:0.72rem}',
     // ── Voice review ──
     '.gv-voice-label{align-items:center;display:flex;gap:6px;justify-content:space-between}',
-    '.gv-voice-tag{color:var(--gv-text3);font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase}',
+    '.gv-voice-tag{color:var(--gv-text3);font-size:0.68rem}',
     '.gv-rerecord{background:none;border:none;color:var(--gv-text3);cursor:pointer;font-family:inherit;font-size:0.68rem;letter-spacing:0.04em;padding:2px 0;text-decoration:none;transition:color 0.15s}',
     '.gv-rerecord:hover{color:var(--gv-text2)}',
     '.gv-voice-err{color:#ff6b6b;font-size:0.72rem;line-height:1.5;margin:-4px 0}',
     // ── Success ──
     '.gv-success{align-items:center;display:flex;flex-direction:column;gap:10px;padding:40px 24px;text-align:center}',
-    '.gv-success-check{align-items:center;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.28);border-radius:50%;color:var(--gv-green);display:flex;font-size:1.1rem;height:44px;justify-content:center;width:44px}',
-    '.gv-success-title{color:var(--gv-text);font-family:"Instrument Serif",Georgia,serif;font-size:1.3rem;font-style:italic;font-weight:400;letter-spacing:-0.01em;margin:0}',
+    '.gv-success-check{align-items:center;color:var(--gv-green);display:flex;font-size:1.4rem;height:32px;justify-content:center;width:32px}',
+    '.gv-success-title{color:var(--gv-text);font-family:"Sentient",Georgia,serif;font-size:1.3rem;font-weight:400;letter-spacing:-0.01em;margin:0}',
     '.gv-success-sub{color:var(--gv-text3);font-size:0.78rem;line-height:1.65;margin:0}',
-    '.gv-success-close{background:none;border:1px solid var(--gv-border);border-radius:999px;color:var(--gv-text3);cursor:pointer;font-family:inherit;font-size:0.72rem;letter-spacing:0.04em;margin-top:6px;padding:10px 24px;transition:border-color 0.15s,color 0.15s}',
+    '.gv-success-close{background:none;border:1px solid var(--gv-border);border-radius:6px;color:var(--gv-text3);cursor:pointer;font-family:inherit;font-size:0.74rem;margin-top:6px;padding:10px 24px;transition:border-color 0.15s,color 0.15s}',
     '@media(max-width:640px){.gv-success-close{font-size:0.8rem;padding:12px 28px;margin-bottom:env(safe-area-inset-bottom,0px)}}',
     '.gv-success-close:hover{border-color:var(--gv-border2);color:var(--gv-text2)}',
     // ── Footer ──
@@ -279,7 +280,7 @@
   let audioDuration  = 0;
   let transcriptionProvider = '';
 
-  const micAvailable = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  const micAvailable = voiceEnabled && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 
   function formatTime(sec) {
     const m = Math.floor(sec / 60);
@@ -432,7 +433,7 @@
         const x = i * (barW + gap) + gap;
         const y = (h - barH) / 2;
 
-        ctx.fillStyle = 'rgba(0,200,122,' + (0.3 + val * 0.7) + ')';
+        ctx.fillStyle = 'rgba(74,128,98,' + (0.3 + val * 0.7) + ')';
         ctx.beginPath();
         if (ctx.roundRect) {
           ctx.roundRect(x, y, barW, barH, 2);
@@ -541,10 +542,10 @@
       '<div class="gv-header">' +
         '<div>' +
           '<div class="gv-eyebrow">Feedback</div>' +
-          '<div class="gv-logo">' +
+          (unbranded ? '' : '<div class="gv-logo">' +
             '<div class="gv-logo-mark"></div>' +
             '<span class="gv-logo-name">grova</span>' +
-          '</div>' +
+          '</div>') +
         '</div>' +
         '<button class="gv-close" id="gv-x" aria-label="Close">\u00d7</button>' +
       '</div>' +
@@ -553,14 +554,14 @@
       (showExtras ?
         '<input class="gv-email" id="gv-email" type="email" placeholder="Email (optional)" />' +
         '<div class="gv-screenshot-row">' +
-          '<div class="gv-toggle gv-toggle-on" id="gv-toggle" role="switch" aria-checked="true" tabindex="0"></div>' +
-          '<input type="checkbox" id="gv-screenshot" checked style="display:none" />' +
-          '<span class="gv-screenshot-text">Attach screenshot</span>' +
+          '<div class="gv-toggle" id="gv-toggle" role="switch" aria-checked="false" tabindex="0"></div>' +
+          '<input type="checkbox" id="gv-screenshot" style="display:none" />' +
+          '<span class="gv-screenshot-text">Include a screenshot of this page</span>' +
         '</div>' : '') +
       (status === 'error' ? '<p class="gv-err">Something went wrong \u2014 try again.</p>' : '') +
       '<button class="gv-submit" id="gv-sub"' + (disableSubmit ? ' disabled' : '') + '>Send Feedback</button>' +
     '</div>' +
-    '<div class="gv-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">grova.dev</a></div>';
+    (noBadge ? '' : '<div class="gv-footer">Powered by <a href="https://grova.dev" target="_blank" rel="noreferrer">grova.dev</a></div>');
   }
 
   function renderPanel() {
@@ -810,7 +811,10 @@
 
   // ── Event listeners ──────────────────────────────────────────────────────
 
-  trigger.addEventListener('click', function () { isOpen ? close() : open(); });
+  trigger.addEventListener('click', function () {
+    if (isOpen) close();
+    else open();
+  });
   backdrop.addEventListener('click', close);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen) close(); });
   document.addEventListener('mousedown', function (e) {

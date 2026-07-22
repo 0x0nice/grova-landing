@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<
       return (
         <div className="flex items-center justify-center min-h-screen bg-bg text-text font-mono">
           <div className="text-center space-y-4 px-6">
-            <span className="text-[2rem] block">⚠️</span>
+            <span className="font-mono text-[0.62rem] text-red tracking-[0.16em] uppercase block">Application error</span>
             <h1 className="font-serif text-title text-text">
               Something went wrong.
             </h1>

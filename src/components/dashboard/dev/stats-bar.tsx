@@ -26,7 +26,7 @@ export function StatsBar({ items }: StatsBarProps) {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline gap-2">
-      <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em]">
+      <span className="font-mono text-micro text-text3">
         {label}
       </span>
       <span className="font-serif text-callout text-text tabular-nums">{value}</span>

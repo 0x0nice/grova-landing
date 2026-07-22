@@ -19,7 +19,7 @@ export function Input({
       {label && (
         <label
           htmlFor={id}
-          className="font-mono text-footnote text-text2 uppercase"
+          className="text-footnote text-text2"
         >
           {label}
         </label>
@@ -28,11 +28,10 @@ export function Input({
         id={id}
         className={`
           w-full bg-bg2 border rounded px-4 py-3
-          font-mono text-body text-text
+          text-body text-text
           placeholder:text-text3
-          transition-all duration-[180ms] ease
+          transition-colors duration-[180ms] ease
           focus:outline-none focus:border-accent
-          focus:shadow-[0_0_0_4px_color-mix(in_oklch,var(--color-accent)_15%,transparent)]
           ${error ? "border-red" : "border-border"}
           ${className}
         `}

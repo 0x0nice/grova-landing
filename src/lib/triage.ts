@@ -55,20 +55,20 @@ export function dimLabel(key: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-/** Action type to emoji icon mapping */
+/** Compact action code for dense operational UI */
 export function actionIcon(type: string): string {
   const map: Record<string, string> = {
-    recovery_email: "🔄",
-    thank_you_email: "⭐",
-    review_redirect: "⭐",
-    internal_flag: "🏷️",
-    direct_reply: "💬",
-    escalation_alert: "🚨",
-    follow_up_reminder: "🔔",
-    refund_suggestion: "💰",
-    operational_change: "⚙️",
+    recovery_email: "RE",
+    thank_you_email: "TY",
+    review_redirect: "RV",
+    internal_flag: "FL",
+    direct_reply: "RP",
+    escalation_alert: "HI",
+    follow_up_reminder: "FU",
+    refund_suggestion: "RF",
+    operational_change: "OP",
   };
-  return map[type] || "📋";
+  return map[type] || "AC";
 }
 
 /** Relative time from ISO date string */

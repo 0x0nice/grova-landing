@@ -17,7 +17,7 @@ export default function DashboardIndex() {
         active.mode === "developer" ? "inbox" : "overview";
       router.replace(`/dashboard/${defaultView}${params}`);
     } else {
-      // No project selected — go to inbox by default
+      // No project selected - go to inbox by default
       router.replace(`/dashboard/inbox${params}`);
     }
   }, [active, isDemo, router]);

@@ -1,55 +1,56 @@
 const steps = [
   {
-    badge: "once",
+    badge: "Set up once",
     num: "01",
-    title: "Drop in the widget",
-    desc: "One script tag on any site. Your users get a feedback button. Set plain-English triage rules for what good feedback looks like.",
+    title: "Place the capture point",
+    desc: "Add one script tag, then set the plain-English rule Grova should use to distinguish a useful signal from noise.",
   },
   {
-    badge: "automatic",
+    badge: "Runs continuously",
     num: "02",
-    title: "AI triages everything",
-    desc: "Every submission is scored 1\u201310, categorised, and filtered. Spam and noise gets dropped. Real issues get a structured fix brief written up.",
+    title: "Let evidence accumulate",
+    desc: "Every submission is enriched, scored, and grouped with related signals. Weak reports stay quiet; material ones rise.",
   },
   {
-    badge: "your call",
+    badge: "You keep control",
     num: "03",
-    title: "Approve. Then build.",
-    desc: "A clean inbox ranked by priority. Approve an item and the fix brief is ready to paste into your AI editor. Done in minutes.",
+    title: "Make the call",
+    desc: "Review the ranked brief, resolve or dismiss it, and move approved work into the editor or issue tracker you already use.",
   },
 ];
 
 export function StepsSection() {
   return (
-    <section className="py-[68px]">
+    <section className="py-[72px]" aria-labelledby="steps-title">
       <div className="grid grid-cols-2 gap-[72px] items-start mb-12 max-md:grid-cols-1 max-md:gap-6">
-        <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text">
+        <h2 id="steps-title" className="font-serif text-[clamp(1.75rem,3.2vw,2.6rem)] font-normal tracking-[-0.02em] leading-[1.1] text-text">
           Kill the noise.
           <br />
-          <em className="text-text2">Ship what matters.</em>
+          <span className="text-text2">Protect the build loop.</span>
         </h2>
         <p className="text-[0.98rem] text-text2 leading-[1.85] font-light pt-1">
-          Most feedback is junk. Vague complaints, duplicate requests, one-off edge cases.
-          Grova filters automatically so only real, actionable issues reach you — pre-scored
-          and ready to act on.
+          A feedback tool earns its place when it reduces decisions, not when it creates another
+          queue to maintain. Grova is built around that constraint.
         </p>
       </div>
-      <div className="grid grid-cols-3 border border-border rounded overflow-hidden max-md:grid-cols-1 max-md:[&>*]:border-r-0 max-md:[&>*]:border-b max-md:[&>*]:border-b-border max-md:[&>*:last-child]:border-b-0">
-        {steps.map((s) => (
-          <div key={s.num} className="bg-bg p-[28px_22px] border-r border-border last:border-r-0 [html[data-theme=light]_&]:bg-surface">
-            <span className="text-[0.62rem] text-orange tracking-[0.12em] uppercase block mb-3">
-              {s.badge}
-            </span>
-            <div className="font-serif text-[2.4rem] text-text leading-none mb-4 font-normal opacity-15">
-              {s.num}
+
+      <ol className="border-t border-border">
+        {steps.map((step) => (
+          <li
+            key={step.num}
+            className="grid grid-cols-[72px_220px_1fr] gap-8 py-7 border-b border-border items-start max-md:grid-cols-[46px_1fr] max-md:gap-x-4 max-md:gap-y-2"
+          >
+            <span className="font-serif text-[1.8rem] text-text3 leading-none">{step.num}</span>
+            <div>
+              <span className="text-[0.68rem] text-orange block mb-2">
+                {step.badge}
+              </span>
+              <h3 className="font-serif text-[1.12rem] text-text leading-[1.2]">{step.title}</h3>
             </div>
-            <h3 className="font-serif text-[1.18rem] font-normal tracking-[-0.01em] mb-2.5 text-text leading-[1.2]">
-              {s.title}
-            </h3>
-            <p className="text-[0.87rem] text-text2 leading-[1.8] font-light">{s.desc}</p>
-          </div>
+            <p className="text-[0.86rem] text-text2 leading-[1.75] max-md:col-start-2">{step.desc}</p>
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }

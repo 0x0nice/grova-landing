@@ -1,70 +1,33 @@
 const steps = [
-  {
-    num: "01",
-    icon: "💬",
-    title: "Customers share feedback",
-    desc: "Through a widget on your website, a QR code at your register, or a simple link you share. Easy for them, automatic for you.",
-    tag: "auto" as const,
-  },
-  {
-    num: "02",
-    icon: "🧠",
-    title: "AI reads and scores it",
-    desc: "Every submission is analyzed for urgency, theme, and sentiment. Spam and noise get dropped automatically.",
-    tag: "auto" as const,
-  },
-  {
-    num: "03",
-    icon: "📊",
-    title: "Patterns get surfaced",
-    desc: "Grova spots trends across submissions — \"3 people mentioned slow service on Fridays\" — so you see what matters.",
-    tag: "auto" as const,
-  },
-  {
-    num: "04",
-    icon: "📥",
-    title: "A brief lands in your inbox",
-    desc: "A clear, plain-English summary of what needs attention, what\u2019s improving, and what customers are saying. Weekly or as issues arise.",
-    tag: "auto" as const,
-  },
-  {
-    num: "05",
-    icon: "✅",
-    title: "You decide what to act on",
-    desc: "No pressure. Review the brief, handle what makes sense, ignore what doesn\u2019t. You stay in control.",
-    tag: "you" as const,
-  },
+  { num: "01", stage: "Invite", title: "Customers get a private, low-friction channel", owner: "automatic" },
+  { num: "02", stage: "Read", title: "Each response is scored for urgency and theme", owner: "automatic" },
+  { num: "03", stage: "Connect", title: "Repeated signals become visible patterns", owner: "automatic" },
+  { num: "04", stage: "Brief", title: "The important changes arrive in plain English", owner: "automatic" },
+  { num: "05", stage: "Act", title: "You choose what the business does next", owner: "you" },
 ];
-
-function Tag({ type }: { type: "auto" | "you" }) {
-  const cls =
-    type === "auto"
-      ? "text-accent border-accent/30 bg-accent/[0.07]"
-      : "text-orange border-orange/30 bg-orange/[0.07]";
-  return (
-    <span className={`text-[0.6rem] tracking-[0.09em] uppercase px-1.5 py-[2px] rounded-pill inline-block border ${cls}`}>
-      {type}
-    </span>
-  );
-}
 
 export function BizPipelineSection() {
   return (
-    <section className="py-[52px]" id="pipeline">
-      <span className="block text-caption text-text3 tracking-[0.16em] uppercase mb-5">
-        How it works
-      </span>
-      <div className="grid grid-cols-5 border border-border rounded overflow-hidden max-lg:grid-cols-3 max-lg:[&>*:nth-child(3)]:border-r-0 max-lg:[&>*:nth-child(-n+3)]:border-b max-lg:[&>*:nth-child(-n+3)]:border-b-border max-md:grid-cols-1 max-md:[&>*]:border-r-0 max-md:[&>*]:border-b max-md:[&>*]:border-b-border max-md:[&>*:last-child]:border-b-0">
-        {steps.map((s) => (
-          <div key={s.num} className="p-[18px_14px] border-r border-border last:border-r-0">
-            <span className="text-[0.62rem] text-text3 tracking-[0.1em] block mb-2">{s.num}</span>
-            <span className="text-[1rem] block mb-[7px]">{s.icon}</span>
-            <span className="text-footnote text-text font-medium block leading-[1.4] mb-1.5">{s.title}</span>
-            <p className="text-[0.78rem] text-text2 leading-[1.7] font-light mb-[9px]">{s.desc}</p>
-            <Tag type={s.tag} />
-          </div>
-        ))}
+    <section className="py-[58px]" id="pipeline" aria-labelledby="biz-pipeline-title">
+      <div className="grid grid-cols-[0.85fr_1.15fr] gap-16 items-end mb-8 max-md:grid-cols-1 max-md:gap-4">
+        <h2 id="biz-pipeline-title" className="font-serif text-[clamp(2rem,4vw,3.4rem)] leading-[1] text-text">
+          Listening becomes useful when the loop closes.
+        </h2>
+        <p className="text-[0.88rem] text-text2 leading-[1.75] max-w-[620px] justify-self-end max-md:justify-self-start">
+          Grova collects the response, connects it to related feedback, and turns it into a
+          decision without asking you to become an analyst.
+        </p>
       </div>
+      <ol className="grid grid-cols-5 border-y border-border max-lg:grid-cols-3 max-md:grid-cols-1">
+        {steps.map((step) => (
+          <li key={step.num} className="py-5 pr-5 border-r border-border last:border-r-0 max-md:border-r-0 max-md:border-b max-md:last:border-b-0 max-md:grid max-md:grid-cols-[48px_82px_1fr] max-md:items-baseline max-md:gap-3">
+            <span className="text-[0.62rem] text-text3 tracking-[0.12em] block mb-7 max-md:mb-0">{step.num}</span>
+            <span className="font-serif text-[1rem] text-text block mb-2 max-md:mb-0">{step.stage}</span>
+            <span className="text-[0.76rem] text-text2 leading-[1.55] block pr-2">{step.title}</span>
+            <span className="text-[0.68rem] text-accent block mt-4 max-md:col-start-3 max-md:mt-1">{step.owner}</span>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }

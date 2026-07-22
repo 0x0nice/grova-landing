@@ -142,7 +142,10 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
         metadata: meta,
       };
       // Only attach project_id for real projects (not demo)
-      if (!isDemo) body.project_id = project.id;
+      if (!isDemo) {
+        body.project_id = project.id;
+        body.api_key = apiKey;
+      }
 
       const res = await fetch(`${API}/feedback`, {
         method: "POST",
@@ -200,7 +203,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
     return (
       <div className="w-full max-w-[400px] flex flex-col items-center gap-4 py-12 text-center">
         <span className="font-serif text-[1.1rem] text-text3">grova</span>
-        <h1 className="font-serif text-title text-text italic">
+        <h1 className="font-serif text-title text-text">
           Link not found
         </h1>
         <p className="text-body text-text3 leading-[1.7]">
@@ -215,7 +218,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
     return (
       <div className="w-full max-w-[400px] flex flex-col items-center gap-4 py-12 text-center">
         <span className="font-serif text-[1.1rem] text-text3">grova</span>
-        <h1 className="font-serif text-title text-text italic">
+        <h1 className="font-serif text-title text-text">
           Something went wrong
         </h1>
         <p className="text-body text-text3 leading-[1.7]">
@@ -236,12 +239,12 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
     return (
       <div className="w-full max-w-[400px] flex flex-col py-8">
         <span className="font-serif text-[1.1rem] text-text3 mb-8">grova</span>
-        <h1 className="font-serif text-title text-text italic leading-[1.2] mb-2">
+        <h1 className="font-serif text-title text-text leading-[1.2] mb-2">
           How was your experience
           {project?.name ? (
             <>
               {" "}at{" "}
-              <span className="text-text not-italic">{project.name}</span>
+              <span className="text-text">{project.name}</span>
             </>
           ) : null}
           ?
@@ -257,7 +260,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
                 bg-surface border border-border2
                 font-mono text-body text-text2
                 text-left transition-all duration-150
-                active:scale-[0.98] hover:border-text3"
+                hover:border-text3"
             >
               {cat}
             </button>
@@ -322,7 +325,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Your email (optional — so we can follow up)"
+          placeholder="Your email (optional - so we can follow up)"
           className="w-full mt-3 px-4 py-3 rounded-[8px] bg-surface border border-border2
             font-mono text-body text-text placeholder:text-text3
             focus:outline-none focus:border-text3
@@ -342,9 +345,9 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
           disabled={!canSubmit}
           className="w-full mt-5 py-3.5 rounded-[8px] font-mono text-body font-medium
             transition-all duration-150
-            bg-accent text-black
+            bg-accent text-white
             disabled:opacity-40 disabled:cursor-not-allowed
-            active:scale-[0.98]"
+            active:brightness-90"
           style={{ paddingBottom: "calc(0.875rem + env(safe-area-inset-bottom, 0px))" }}
         >
           {status === "sending" ? "Sending\u2026" : "Send Feedback"}
@@ -359,7 +362,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
   return (
     <div className="w-full max-w-[400px] flex flex-col items-center py-12 text-center">
       {/* Success icon */}
-      <div className="w-14 h-14 rounded-full bg-accent/15 flex items-center justify-center mb-5">
+      <div className="w-14 h-14 flex items-center justify-center mb-5">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-accent">
           <path
             d="M20 6L9 17l-5-5"
@@ -371,7 +374,7 @@ export function QrFeedbackForm({ apiKey }: { apiKey: string }) {
         </svg>
       </div>
 
-      <h1 className="font-serif text-title text-text italic mb-2">Thank you!</h1>
+      <h1 className="font-serif text-title text-text mb-2">Thank you!</h1>
       <p className="text-body text-text3 leading-[1.7] mb-8">
         Your feedback helps{" "}
         {project?.name ? (

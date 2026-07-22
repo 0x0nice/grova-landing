@@ -1,6 +1,6 @@
 // ── README PARSER ──
 // Extracts structured context from a project README for AI prompt generation.
-// Pure utility — regex/keyword matching, no API calls.
+// Pure utility - regex/keyword matching, no API calls.
 
 export interface ProjectContextParsed {
   techStack: string[];
@@ -158,7 +158,7 @@ export function parseProjectContext(raw: string): ProjectContextParsed {
     }
   }
 
-  // Extract project description — first non-heading, non-empty paragraph
+  // Extract project description - first non-heading, non-empty paragraph
   const lines = raw.split("\n");
   for (const line of lines) {
     const trimmed = line.trim();

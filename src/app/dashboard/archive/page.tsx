@@ -7,11 +7,13 @@ import { useArchiveStore } from "@/stores/archive-store";
 import { ArchiveCard } from "@/components/dashboard/dev/archive-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadError } from "@/components/dashboard/load-error";
+import { LoadMore } from "@/components/dashboard/load-more";
 
 export default function ArchivePage() {
   const { session, isDemo } = useAuth();
   const active = useProjectStore((s) => s.active);
-  const { items, loading, loaded, loadArchive, restore } = useArchiveStore();
+  const { items, loading, loaded, error, loadArchive, loadMore, restore, total, hasMore, loadingMore } = useArchiveStore();
 
   useEffect(() => {
     if (active && (session?.access_token || isDemo) && !loaded) {
@@ -27,6 +29,15 @@ export default function ArchivePage() {
         <Skeleton className="w-full h-12" />
         <Skeleton className="w-full h-12" />
       </div>
+    );
+  }
+
+  if (error && active) {
+    return (
+      <LoadError
+        message={error}
+        onRetry={() => void loadArchive(active.id, session?.access_token || "demo", isDemo)}
+      />
     );
   }
 
@@ -49,6 +60,9 @@ export default function ArchivePage() {
           onRestore={(id) => restore(id, token, isDemo)}
         />
       ))}
+      {hasMore && active && (
+        <LoadMore loaded={items.length} total={total} loading={loadingMore} onLoad={() => void loadMore(active.id, token, isDemo)} context="dismissed items" />
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Share Your Feedback",
-  description: "Quick feedback form — takes less than 60 seconds.",
+  description: "Quick feedback form - takes less than 60 seconds.",
   robots: "noindex, nofollow",
 };
 

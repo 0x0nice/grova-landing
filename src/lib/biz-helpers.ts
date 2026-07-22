@@ -1,5 +1,13 @@
 import type { FeedbackItem } from "@/types/feedback";
 
+/** Business reporting follows the AI triage category, with intake type only as fallback. */
+export function feedbackCategory(item: FeedbackItem): string {
+  const value = item.triage?.category?.trim() || item.type?.trim() || "Other";
+  return value
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
 /** ISO 8601 week string (e.g., "2026-W08") */
 export function isoWeek(dateStr: string): string {
   const d = new Date(dateStr);
@@ -27,7 +35,7 @@ export function trendArrow(
   lastWk: number
 ): { sym: string; cls: "trend-up" | "trend-down" | "trend-steady"; note?: string } {
   if (lastWk === 0 && thisWk === 0)
-    return { sym: "—", cls: "trend-steady" };
+    return { sym: "-", cls: "trend-steady" };
   if (lastWk === 0)
     return { sym: "↑", cls: "trend-up", note: "first time" };
   const delta = (thisWk - lastWk) / lastWk;
@@ -41,13 +49,13 @@ export function buildWeeklyData(items: FeedbackItem[]) {
   const byWeek = new Map<string, Map<string, number>>();
   items.forEach((item) => {
     const wk = isoWeek(item.created_at);
-    const cat = item.type || "Other";
+    const cat = feedbackCategory(item);
     if (!byWeek.has(wk)) byWeek.set(wk, new Map());
     const wm = byWeek.get(wk)!;
     wm.set(cat, (wm.get(cat) || 0) + 1);
   });
   const weeks = [...byWeek.keys()].sort().slice(-8);
-  const cats = [...new Set(items.map((i) => i.type).filter(Boolean))] as string[];
+  const cats = [...new Set(items.map(feedbackCategory))];
   return { byWeek, weeks, cats };
 }
 
@@ -83,7 +91,7 @@ export interface InsightEvidence {
   needsReply?: number;
 }
 
-/** Build evidence for the InsightProse component — specific facts, not pre-baked sentences. */
+/** Build evidence for the InsightProse component - specific facts, not pre-baked sentences. */
 export function buildInsightEvidence(
   items: FeedbackItem[],
   opts?: { previousVisit?: Date | null; sinceLabel?: string }
@@ -105,16 +113,17 @@ export function buildInsightEvidence(
     }
   }
 
-  // Top theme — pick from this-week if available, else from full set
+  // Top theme - pick from this-week if available, else from full set
   const sourceForTheme = thisWeek.length > 0 ? thisWeek : items;
   const catCounts: Record<string, number> = {};
   sourceForTheme.forEach((i) => {
-    if (i.type) catCounts[i.type] = (catCounts[i.type] || 0) + 1;
+    const category = feedbackCategory(i);
+    catCounts[category] = (catCounts[category] || 0) + 1;
   });
   const top = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0];
   if (top) {
     const [category, count] = top;
-    const lastCnt = lastWeek.filter((i) => i.type === category).length;
+    const lastCnt = lastWeek.filter((i) => feedbackCategory(i) === category).length;
     const trArrow = trendArrow(count, lastCnt);
     const trend: InsightEvidence["topTheme"] extends infer T
       ? T extends { trend: infer U }
@@ -129,9 +138,9 @@ export function buildInsightEvidence(
             ? "down"
             : "steady";
 
-    // Pick a representative quote — shortest message in the cluster (most quotable).
+    // Pick a representative quote - shortest message in the cluster (most quotable).
     const themeItems = sourceForTheme
-      .filter((i) => i.type === category)
+      .filter((i) => feedbackCategory(i) === category)
       .filter((i) => i.message && i.message.length > 0)
       .sort((a, b) => a.message.length - b.message.length);
     const quote = themeItems[0]?.message;
@@ -149,7 +158,7 @@ export function buildInsightEvidence(
 
 /** Chart colors for categories */
 export const CHART_COLORS = [
-  "#00c87a",
+  "#3f7556",
   "#e8640a",
   "#3b82f6",
   "#ec4899",

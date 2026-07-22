@@ -28,7 +28,7 @@ export default function DocsLayout({
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors uppercase tracking-[0.04em]"
+            className="font-mono text-footnote text-text3 hover:text-text2 transition-colors"
           >
             Back
           </Link>

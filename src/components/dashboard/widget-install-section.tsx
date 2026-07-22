@@ -36,7 +36,7 @@ interface WidgetInstallSectionProps {
   mode: "developer" | "business";
   source: string;
   apiKey: string;
-  projectName: string;
+  planTier?: string;
   businessType?: string;
   businessName?: string;
   categories?: string[];
@@ -46,9 +46,20 @@ interface WidgetInstallSectionProps {
 /* ------------------------------------------------------------------ */
 /*  Snippet builders                                                   */
 /* ------------------------------------------------------------------ */
-function buildDevSnippet(source: string, apiKey: string): string {
-  let s = `<script\n  src="https://grova.dev/grova-widget.js"\n  data-source="${source || "your-app"}"`;
+function escapeAttribute(value: string): string {
+  return value.replace(/[&"<>]/g, (character) => ({
+    "&": "&amp;",
+    '"': "&quot;",
+    "<": "&lt;",
+    ">": "&gt;",
+  })[character]!);
+}
+
+function buildDevSnippet(source: string, apiKey: string, hideBadge = false, unbranded = false): string {
+  let s = `<script\n  src="https://grova.dev/grova-widget.js"\n  data-source="${escapeAttribute(source || "your-app")}"`;
   if (apiKey) s += `\n  data-key="${apiKey}"`;
+  if (hideBadge) s += `\n  data-no-badge`;
+  if (unbranded) s += `\n  data-unbranded`;
   s += `\n></script>`;
   return s;
 }
@@ -58,13 +69,15 @@ function buildBizSnippet(
   apiKey: string,
   businessType?: string,
   businessName?: string,
-  categories?: string[]
+  categories?: string[],
+  unbranded = false
 ): string {
-  let s = `<script\n  src="https://grova.dev/grova-business-widget.js"\n  data-source="${source || "your-business"}"`;
+  let s = `<script\n  src="https://grova.dev/grova-business-widget.js"\n  data-source="${escapeAttribute(source || "your-business")}"`;
   if (apiKey) s += `\n  data-key="${apiKey}"`;
   if (businessType && businessType !== "default") s += `\n  data-business-type="${businessType}"`;
-  if (businessName) s += `\n  data-name="${businessName.replace(/"/g, "&quot;")}"`;
-  if (categories?.length) s += `\n  data-categories="${categories.join(",")}"`;
+  if (businessName) s += `\n  data-name="${escapeAttribute(businessName)}"`;
+  if (categories?.length) s += `\n  data-categories="${escapeAttribute(categories.join(","))}"`;
+  if (unbranded) s += `\n  data-no-badge\n  data-unbranded`;
   s += `\n></script>`;
   return s;
 }
@@ -78,7 +91,7 @@ function buildDevPrompt(source: string): string {
 
 ${snippet}
 
-IMPORTANT: Replace YOUR_API_KEY with your actual Grova API key. You can find it in your dashboard settings. Do not commit the API key to a public repository — use an environment variable if needed.
+IMPORTANT: Replace YOUR_API_KEY with your actual Grova API key. You can find it in your dashboard settings. Do not commit the API key to a public repository - use an environment variable if needed.
 
 Choose the right approach for this project's framework:
 
@@ -110,8 +123,8 @@ Add the <script> tag before </body> on each page.
 
 Important:
 - Replace YOUR_API_KEY with your real key before deploying
-- Do NOT modify the data-source value — it identifies your Grova project
-- The widget renders a floating feedback button automatically — no extra CSS or HTML needed
+- Do NOT modify the data-source value - it identifies your Grova project
+- The widget renders a floating feedback button automatically - no extra CSS or HTML needed
 - After adding it, run the dev server and verify the widget appears in the bottom-right corner`;
 }
 
@@ -126,7 +139,7 @@ function buildBizPrompt(
 
 ${snippet}
 
-IMPORTANT: Replace YOUR_API_KEY with your actual Grova API key. You can find it in your dashboard under Setup. Do not commit the API key to a public repository — use an environment variable if needed.
+IMPORTANT: Replace YOUR_API_KEY with your actual Grova API key. You can find it in your dashboard under Setup. Do not commit the API key to a public repository - use an environment variable if needed.
 
 Choose the right approach for this site's platform:
 
@@ -158,8 +171,8 @@ Add the <script> tag before </body> on each page.
 
 Important:
 - Replace YOUR_API_KEY with your real key before deploying
-- Do NOT modify the other data- attribute values — they are configured for your business
-- The widget renders a floating review button automatically — no extra CSS or HTML needed
+- Do NOT modify the other data- attribute values - they are configured for your business
+- The widget renders a floating review button automatically - no extra CSS or HTML needed
 - After adding it, visit your site and verify the widget appears in the bottom-right corner`;
 }
 
@@ -170,7 +183,7 @@ export function WidgetInstallSection({
   mode,
   source,
   apiKey,
-  projectName,
+  planTier,
   businessType,
   businessName,
   categories,
@@ -180,10 +193,12 @@ export function WidgetInstallSection({
   const [promptCopied, setPromptCopied] = useState(false);
 
   const isDev = mode === "developer";
+  const unbranded = planTier === "agency" || planTier === "biz_multi";
+  const hideBadge = unbranded || ["solo", "builder"].includes(planTier || "");
 
   const snippet = isDev
-    ? buildDevSnippet(source, apiKey)
-    : buildBizSnippet(source, apiKey, businessType, businessName, categories);
+    ? buildDevSnippet(source, apiKey, hideBadge, unbranded)
+    : buildBizSnippet(source, apiKey, businessType, businessName, categories, unbranded);
 
   const aiPrompt = isDev
     ? buildDevPrompt(source)
@@ -220,7 +235,7 @@ export function WidgetInstallSection({
       {/* ── Embed Snippet ── */}
       <div className="mb-5">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em]">
+          <span className="font-mono text-micro text-text3">
             Embed Snippet
           </span>
           <button
@@ -252,7 +267,7 @@ export function WidgetInstallSection({
 
       {/* ── Quick Start Steps ── */}
       <div className="mb-5">
-        <span className="block font-mono text-micro text-text3 uppercase tracking-[0.08em] mb-2">
+        <span className="block font-mono text-micro text-text3 mb-2">
           Quick Start
         </span>
         <ol className="list-decimal list-inside flex flex-col gap-1.5 font-mono text-footnote text-text2 leading-[1.7]">
@@ -262,7 +277,7 @@ export function WidgetInstallSection({
             <code className="text-accent">&lt;/body&gt;</code> tag, or into your
             layout file.
           </li>
-          <li>Deploy — the widget appears automatically.</li>
+          <li>Deploy - the widget appears automatically.</li>
         </ol>
         <p className="font-mono text-micro text-text3 mt-2">
           {isDev
@@ -277,7 +292,7 @@ export function WidgetInstallSection({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">
               <SparklesIcon />
-              <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em]">
+              <span className="font-mono text-micro text-text3">
                 AI-Assisted Install
               </span>
             </div>

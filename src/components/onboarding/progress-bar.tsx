@@ -16,7 +16,7 @@ export function ProgressBar({ steps, current }: ProgressBarProps) {
           />
           <span
             className={`
-              font-mono text-micro uppercase tracking-[0.08em] transition-colors duration-300
+              font-mono text-micro transition-colors duration-300
               ${i <= current ? "text-text2" : "text-text3"}
               ${i === current ? "text-accent" : ""}
             `}

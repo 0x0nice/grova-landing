@@ -167,12 +167,12 @@ function buildInvestigationHints(
   // Page URL → find the route
   if (item.page) {
     const page = item.page === "/" ? "the root/index page" : `\`${item.page}\``;
-    hints.push(`This was reported on ${page} — locate the route or component that renders this page.`);
+    hints.push(`This was reported on ${page} - locate the route or component that renders this page.`);
   }
 
   // Screenshot available
   if (item.screenshot) {
-    hints.push("A screenshot was captured with this report — review it for visual context.");
+    hints.push("A screenshot was captured with this report - review it for visual context.");
   }
 
   // Tech-stack-aware hints
@@ -202,7 +202,7 @@ function buildInvestigationHints(
       hints.push(`Reported on a mobile device${m.viewport ? ` (${m.viewport})` : ""}. This may be a responsive layout issue.`);
     }
     if (m.browser && /safari/i.test(m.browser) && category === "bug") {
-      hints.push("Reported in Safari — check for Safari-specific quirks (flexbox gaps, autofill behavior, date parsing, etc.).");
+      hints.push("Reported in Safari - check for Safari-specific quirks (flexbox gaps, autofill behavior, date parsing, etc.).");
     }
   }
 
@@ -381,7 +381,7 @@ function buildFooter(item: FeedbackItem): string {
   const anchor = scoreAnchor(es);
   const scope = scopeLabel(t?.sub_scores?.scope_estimate);
 
-  const parts = [`**Priority:** ${es}/10 — ${anchor}`];
+  const parts = [`**Priority:** ${es}/10 - ${anchor}`];
   if (sig > 1) parts[0] += ` | ${sig} users reported`;
 
   if (t?.recommended_action) {

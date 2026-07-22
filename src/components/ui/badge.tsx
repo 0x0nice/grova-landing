@@ -19,7 +19,7 @@ export function Badge({ type, className = "" }: BadgeProps) {
     <span
       className={`
         inline-flex items-center rounded px-2 py-0.5
-        font-mono text-micro uppercase tracking-[0.1em] font-semibold
+        text-micro font-semibold
         ${colors} ${className}
       `}
     >

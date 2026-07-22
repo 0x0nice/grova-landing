@@ -86,7 +86,7 @@ export function DoneCard({ item, projectContext }: DoneCardProps) {
           >
             <div className="border-t border-border p-4">
               <div className="flex items-center justify-between mb-3">
-                <span className="font-mono text-micro text-text3 uppercase tracking-[0.12em]">
+                <span className="font-mono text-micro text-text3">
                   Generated prompt
                 </span>
                 <button

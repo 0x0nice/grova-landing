@@ -39,7 +39,7 @@ export function FilterTabs({ items, active, onChange }: FilterTabsProps) {
             aria-selected={isActive}
             onClick={() => onChange(f.key)}
             className={`
-              font-mono text-footnote uppercase tracking-[0.04em]
+              font-mono text-footnote
               px-3 py-1.5 rounded transition-colors duration-[180ms] cursor-pointer
               ${
                 isActive

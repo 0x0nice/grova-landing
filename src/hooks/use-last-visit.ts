@@ -31,13 +31,13 @@ export function useLastVisit(projectId: string | null | undefined): {
       const stored = window.localStorage.getItem(key);
       const parsed = stored ? Number(stored) : NaN;
       // localStorage read deliberately happens in effect (client-only)
-      // to avoid SSR hydration mismatch — matches the project pattern in
+      // to avoid SSR hydration mismatch - matches the project pattern in
       // theme-provider and track-provider.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviousVisit(Number.isFinite(parsed) ? new Date(parsed) : null);
       window.localStorage.setItem(key, String(Date.now()));
     } catch {
-      // localStorage may be unavailable (Safari private mode, etc.) — silently skip.
+      // localStorage may be unavailable (Safari private mode, etc.) - silently skip.
     }
   }, [projectId]);
 

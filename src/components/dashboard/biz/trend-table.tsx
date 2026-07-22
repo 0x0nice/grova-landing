@@ -17,16 +17,16 @@ export function TrendTable({ byWeek, weeks, cats }: TrendTableProps) {
       <table className="w-full font-mono text-callout">
         <thead>
           <tr className="border-b border-border">
-            <th className="text-left text-text3 text-footnote uppercase tracking-[0.08em] py-2 pr-4">
+            <th className="text-left text-text3 text-footnote py-2 pr-4">
               Category
             </th>
-            <th className="text-right text-text3 text-footnote uppercase tracking-[0.08em] py-2 px-4">
+            <th className="text-right text-text3 text-footnote py-2 px-4">
               This week
             </th>
-            <th className="text-right text-text3 text-footnote uppercase tracking-[0.08em] py-2 px-4">
+            <th className="text-right text-text3 text-footnote py-2 px-4">
               Last week
             </th>
-            <th className="text-right text-text3 text-footnote uppercase tracking-[0.08em] py-2 pl-4">
+            <th className="text-right text-text3 text-footnote py-2 pl-4">
               Trend
             </th>
           </tr>

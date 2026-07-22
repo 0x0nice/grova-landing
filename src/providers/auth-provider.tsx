@@ -10,6 +10,7 @@ import {
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import { resetAppState } from "@/stores/reset-app-state";
 
 interface AuthContextValue {
   session: Session | null;
@@ -46,9 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for demo mode
     const params = new URLSearchParams(window.location.search);
     if (params.has("demo")) {
-      setIsDemo(true);
-      setSession({ access_token: "demo" } as Session);
-      setLoading(false);
+      queueMicrotask(() => {
+        resetAppState();
+        setIsDemo(true);
+        setSession({ access_token: "demo" } as Session);
+        setLoading(false);
+      });
       return;
     }
 
@@ -57,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       !process.env.NEXT_PUBLIC_SUPABASE_URL ||
       !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     ) {
-      setLoading(false);
+      queueMicrotask(() => setLoading(false));
       return;
     }
 
@@ -72,7 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") resetAppState();
       setSession(session);
       if (session) setIsDemo(false);
     });
@@ -87,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
     });
     if (error) throw error;
+    resetAppState();
     setSession(data.session);
     setIsDemo(false);
     return data.session!;
@@ -100,7 +106,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
-    // Demo mode has no real Supabase session — clear local state only.
+    resetAppState();
+    // Demo mode has no real Supabase session - clear local state only.
     if (isDemo) {
       setSession(null);
       setIsDemo(false);
@@ -108,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     // If Supabase isn't configured (e.g. static export without env vars
     // baked in), there's nothing to sign out from server-side. Don't
-    // throw — just clear local state.
+    // throw - just clear local state.
     if (
       !process.env.NEXT_PUBLIC_SUPABASE_URL ||
       !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

@@ -54,7 +54,7 @@ export function StepInstall({ data, onNext, onBack }: StepInstallProps) {
         Step 4 of 5
       </span>
       <h2 className="font-serif text-title font-normal tracking-[-0.02em] leading-[1.1] text-text mb-2">
-        Install the <em className="text-text2">widget.</em>
+        Install the <span className="text-text2">widget.</span>
       </h2>
       <p className="font-mono text-callout text-text2 leading-[1.7] mb-6">
         Paste this snippet before the closing{" "}
@@ -66,14 +66,14 @@ export function StepInstall({ data, onNext, onBack }: StepInstallProps) {
               you want the feedback widget to appear. It loads a small JavaScript
               file that renders a floating button in the corner of the page.
               <br /><br />
-              Works with any framework — React, Next.js, plain HTML, etc.
+              Works with any framework - React, Next.js, plain HTML, etc.
               Just paste it before <code className="text-accent bg-bg px-1 rounded">&lt;/body&gt;</code>.
             </>
           ) : (
             <>
               Add this <strong className="text-text">script tag</strong> to your website
               to show a feedback button for your customers. It works on any
-              website — Squarespace, WordPress, Wix, or plain HTML.
+              website - Squarespace, WordPress, Wix, or plain HTML.
               <br /><br />
               Just paste it right before the <code className="text-accent bg-bg px-1 rounded">&lt;/body&gt;</code> closing
               tag in your site&apos;s HTML.
@@ -85,21 +85,21 @@ export function StepInstall({ data, onNext, onBack }: StepInstallProps) {
       {/* Snippet breakdown */}
       <div className="mb-4">
         <div className="flex items-center gap-1 mb-2">
-          <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em]">
+          <span className="font-mono text-micro text-text3">
             Embed Snippet
           </span>
           <HelpTip>
             This is the code you paste into your website. Each attribute
             tells the widget how to connect to your Grova project:
             <br /><br />
-            <strong className="text-text">src</strong> — loads the widget script
+            <strong className="text-text">src</strong> - loads the widget script
             <br />
-            <strong className="text-text">data-source</strong> — links feedback
+            <strong className="text-text">data-source</strong> - links feedback
             to your project (matches the source identifier you chose)
             {data.apiKey && (
               <>
                 <br />
-                <strong className="text-text">data-key</strong> — your API key
+                <strong className="text-text">data-key</strong> - your API key
                 that authenticates the widget
               </>
             )}
@@ -123,7 +123,7 @@ export function StepInstall({ data, onNext, onBack }: StepInstallProps) {
       {data.apiKey && (
         <div className="mb-6 p-3 bg-bg border border-border rounded">
           <div className="flex items-center justify-between mb-1">
-            <span className="font-mono text-micro text-text3 uppercase tracking-[0.08em] flex items-center">
+            <span className="font-mono text-micro text-text3 flex items-center">
               Your API Key
               <HelpTip>
                 This key authenticates the widget on your site. It&apos;s included in the

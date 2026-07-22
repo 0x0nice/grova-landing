@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { instrumentSerif, geistMono } from "@/lib/fonts";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { FontSizeProvider } from "@/providers/font-size-provider";
 import { AnalyticsProvider } from "@/providers/analytics-provider";
@@ -13,13 +12,13 @@ import "./globals.css";
 initSentry();
 
 export const metadata: Metadata = {
-  title: "Grova — Smart feedback for local businesses",
+  title: "Grova - Feedback in. A decision out.",
   description:
-    "Collect honest customer feedback with a simple widget and QR code. AI filters the noise and sends you a plain-English brief each week.",
+    "Turn raw product feedback into ranked evidence, likely cause, priority, and a clear next action.",
   openGraph: {
-    title: "Grova — Smart feedback for local businesses",
+    title: "Grova - Feedback in. A decision out.",
     description:
-      "Collect honest customer feedback with a simple widget and QR code. AI filters the noise and sends you a plain-English brief each week.",
+      "Turn raw product feedback into ranked evidence, likely cause, priority, and a clear next action.",
     url: "https://grova.dev",
     siteName: "Grova",
     images: [
@@ -27,16 +26,16 @@ export const metadata: Metadata = {
         url: "https://grova.dev/og.png",
         width: 1200,
         height: 630,
-        alt: "Grova — Smart feedback for your business",
+        alt: "Grova feedback decision brief",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Grova — Smart feedback for local businesses",
+    title: "Grova - Feedback in. A decision out.",
     description:
-      "Collect honest customer feedback with a simple widget and QR code. AI filters the noise and sends you a plain-English brief each week.",
+      "Turn raw product feedback into ranked evidence, likely cause, priority, and a clear next action.",
     images: ["https://grova.dev/og.png"],
   },
 };
@@ -50,10 +49,15 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dark"
-      className={`${instrumentSerif.variable} ${geistMono.variable}`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=sentient@400,500&display=swap"
+        />
         {/* Prevent flash of wrong theme before React hydrates */}
         <script
           dangerouslySetInnerHTML={{

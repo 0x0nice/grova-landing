@@ -2,8 +2,7 @@
 // Pure function that renders email HTML for the dashboard preview.
 // MIRROR: Keep in sync with grova-api/src/email-templates.js
 
-const FONT_SERIF =
-  "'Instrument Serif', Georgia, 'Times New Roman', serif";
+const FONT_SERIF = "Georgia, 'Times New Roman', serif";
 const FONT_SANS =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 
@@ -148,12 +147,10 @@ export interface EmailRenderOptions {
  * Used for the preview iframe in the dashboard.
  */
 export function renderEmailPreviewHtml(opts: EmailRenderOptions): string {
-  const brandColor = opts.brandColor || "#00c87a";
+  const brandColor = opts.brandColor || "#3f7556";
   const logoUrl = opts.logoUrl || "";
   const ownerName = opts.ownerName || "The Team";
   const isInternal = opts.isInternal || false;
-  const accentColor = isInternal ? "#ef4444" : brandColor;
-
   const bodyHtml = bodyToHtml(opts.body, brandColor);
 
   const logoBlock = logoUrl
@@ -166,30 +163,25 @@ export function renderEmailPreviewHtml(opts: EmailRenderOptions): string {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <title>${esc(opts.subject || "")}</title>
   <style>
-    body { margin:0; padding:0; background:#f8f8f6; -webkit-text-size-adjust:100%; }
+    body { margin:0; padding:0; background:#f0f3ef; -webkit-text-size-adjust:100%; }
     a { color: ${brandColor}; }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#f8f8f6;font-family:${FONT_SANS};-webkit-font-smoothing:antialiased;">
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f8f8f6;padding:32px 12px;">
+<body style="margin:0;padding:0;background:#f0f3ef;font-family:${FONT_SANS};-webkit-font-smoothing:antialiased;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f0f3ef;padding:32px 12px;">
     <tr>
       <td align="center">
         <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:560px;">
-          <!-- Accent top bar -->
-          <tr>
-            <td style="height:2px;background:${accentColor};border-radius:4px 4px 0 0;font-size:0;line-height:0;">&nbsp;</td>
-          </tr>
           <!-- Card -->
           <tr>
-            <td style="background:#ffffff;border-left:1px solid #e8e8e5;border-right:1px solid #e8e8e5;border-bottom:1px solid #e8e8e5;border-radius:0 0 4px 4px;">
+            <td style="background:#ffffff;border:1px solid #d8e0d8;border-radius:6px;">
               <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
                 ${logoBlock}
                 ${
                   isInternal
-                    ? `<tr><td style="padding:28px 36px 0;"><span style="display:inline-block;padding:4px 12px;background:#fef2f2;color:#dc2626;border-radius:4px;font-family:${FONT_SANS};font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;">Internal &mdash; Do not forward</span></td></tr>`
+                    ? `<tr><td style="padding:28px 36px 0;"><span style="display:inline-block;padding:4px 10px;background:#fef2f2;color:#b91c1c;border-radius:3px;font-family:${FONT_SANS};font-size:12px;font-weight:600;">Internal - do not forward</span></td></tr>`
                     : ""
                 }
                 <tr>
@@ -213,7 +205,7 @@ export function renderEmailPreviewHtml(opts: EmailRenderOptions): string {
                             Sent on behalf of ${esc(ownerName)}
                           </p>
                           <p style="margin:0 0 10px;font-family:${FONT_SANS};font-size:12px;color:#bbb;line-height:1.5;">
-                            <span style="display:inline-block;width:6px;height:6px;background:#00c87a;border-radius:50%;vertical-align:middle;margin-right:4px;"></span>
+                            <span style="display:inline-block;width:6px;height:6px;background:#3f7556;border-radius:50%;vertical-align:middle;margin-right:4px;"></span>
                             <span style="vertical-align:middle;">Powered by <a href="https://grova.dev" style="color:#999;text-decoration:none;">Grova</a></span>
                           </p>
                           <p style="margin:0;">
