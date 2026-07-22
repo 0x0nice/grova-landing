@@ -25,11 +25,11 @@ export function Sidebar() {
   useEffect(() => {
     if (isDemo) {
       setProjects(DEMO_PROJECTS);
-      if (!active) selectProject(DEMO_PROJECTS[0]);
+      if (!useProjectStore.getState().active) selectProject(DEMO_PROJECTS[0]);
     } else if (session?.access_token) {
-      loadProjects(session.access_token);
+      void loadProjects(session.access_token);
     }
-  }, [session?.access_token, isDemo, loadProjects, setProjects, selectProject, active]);
+  }, [session?.access_token, isDemo, loadProjects, setProjects, selectProject]);
 
   function handleSelect(project: (typeof projects)[number]) {
     // Reset all view stores so data reloads for the new project

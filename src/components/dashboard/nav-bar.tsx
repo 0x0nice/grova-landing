@@ -68,15 +68,17 @@ export function NavBar() {
   const tabs = active?.mode === "business" ? bizTabs : devTabs;
   const currentView = pathname.split("/").pop() || "inbox";
 
-  // Load projects (moved from Sidebar)
+  // Load projects once for the current auth context. `active` deliberately is not
+  // a dependency: loadProjects refreshes that object, which previously caused an
+  // endless request/loading loop across the dashboard.
   useEffect(() => {
     if (isDemo) {
       setProjects(DEMO_PROJECTS);
-      if (!active) selectProject(DEMO_PROJECTS[0]);
+      if (!useProjectStore.getState().active) selectProject(DEMO_PROJECTS[0]);
     } else if (session?.access_token) {
-      loadProjects(session.access_token);
+      void loadProjects(session.access_token);
     }
-  }, [session?.access_token, isDemo, loadProjects, setProjects, selectProject, active]);
+  }, [session?.access_token, isDemo, loadProjects, setProjects, selectProject]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -184,7 +186,7 @@ export function NavBar() {
                   {active?.mode === "developer" ? "DEV" : "BIZ"}
                 </span>
                 <span className="truncate max-w-[140px] max-md:max-w-[80px]">
-                  {projectsLoading ? "Loading..." : active?.name || "Select project"}
+                  {active?.name || (projectsLoading ? "Loading..." : "Select project")}
                 </span>
                 <svg
                   className={`w-3 h-3 text-text3 transition-transform duration-150 shrink-0 ${

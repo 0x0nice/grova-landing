@@ -121,6 +121,7 @@ export function SettingsView() {
   const [keyCopied, setKeyCopied] = useState(false);
   const [qrLinkCopied, setQrLinkCopied] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
+  const activeId = active?.id;
 
   useEffect(() => {
     if (!active) return;
@@ -134,21 +135,31 @@ export function SettingsView() {
 
   // Load action settings when project changes
   useEffect(() => {
-    if (!active) return;
+    if (!activeId) return;
+    let cancelled = false;
     setSettingsLoading(true);
+    setActionSettings(null);
     const token = session?.access_token || "";
     if (isDemo) {
       setActionSettings(
-        demoGet(`/projects/${active.id}/action-settings`) as ActionSettings
+        demoGet(`/projects/${activeId}/action-settings`) as ActionSettings
       );
       setSettingsLoading(false);
     } else {
-      getActionSettings(active.id, token)
-        .then(setActionSettings)
+      getActionSettings(activeId, token)
+        .then((settings) => {
+          if (!cancelled) setActionSettings(settings);
+        })
         .catch(() => {})
-        .finally(() => setSettingsLoading(false));
+        .finally(() => {
+          if (!cancelled) setSettingsLoading(false);
+        });
     }
-  }, [active, session?.access_token, isDemo]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeId, session?.access_token, isDemo]);
 
   async function handleSave() {
     if (!active) return;

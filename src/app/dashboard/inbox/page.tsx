@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
 import { useInboxStore } from "@/stores/inbox-store";
-import { effectiveScore } from "@/lib/triage";
+import { effectiveScore, signalCount } from "@/lib/triage";
 import { FilterTabs } from "@/components/dashboard/dev/filter-tabs";
-import { StatsBar } from "@/components/dashboard/dev/stats-bar";
 import { InboxCard } from "@/components/dashboard/dev/inbox-card";
 import { DashboardHero } from "@/components/dashboard/dashboard-hero";
-import { DashboardPulse } from "@/components/dashboard/dashboard-pulse";
 import { EmptyStatePreview } from "@/components/ui/empty-state-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
@@ -74,6 +72,12 @@ export default function InboxPage() {
         (i) => new Date(i.created_at).getTime() > previousVisit.getTime()
       ).length
     : 0;
+  const scores = items.map(effectiveScore);
+  const averageScore = scores.length
+    ? scores.reduce((sum, score) => sum + score, 0) / scores.length
+    : 0;
+  const peakScore = scores.length ? Math.max(...scores) : 0;
+  const multiSignalCount = items.filter((item) => signalCount(item) > 1).length;
 
   function handleApprove(id: string) {
     void approve(id, token, isDemo)
@@ -133,32 +137,36 @@ export default function InboxPage() {
   }
 
   const isEmpty = sorted.length === 0;
-  const heroSubtitle = isEmpty
-    ? loaded
-      ? "Your triage queue is empty."
-      : "Loading…"
-    : sinceCount > 0 && visitLabel
-      ? `${items.length} pending · ${highPriorityCount} high priority · ${sinceCount} new since ${visitLabel}`
-      : `${items.length} pending · ${highPriorityCount} high priority`;
-
   return (
     <div>
-      <DashboardHero title="Inbox" subtitle={heroSubtitle} />
+      <header className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4 lg:overflow-x-auto scrollbar-none">
+        <div className="flex items-baseline gap-2 shrink-0">
+          <h1 className="font-serif text-title text-text leading-none">Inbox</h1>
+          <span className="font-mono text-micro text-text3 tabular-nums">
+            {loaded ? `${items.length} pending` : "Loading"}
+          </span>
+        </div>
 
-      {!isEmpty && (
-        <DashboardPulse
-          items={items}
-          previousVisit={previousVisit}
-          highThreshold={HIGH_PRIORITY_THRESHOLD}
-        />
-      )}
-
-      {items.length > 0 && (
-        <>
-          <FilterTabs items={items} active={filter} onChange={setFilter} />
-          <StatsBar items={filtered} />
-        </>
-      )}
+        {items.length > 0 && (
+          <>
+            <FilterTabs
+              items={items}
+              active={filter}
+              onChange={setFilter}
+              className="mb-0 shrink-0"
+            />
+            <div className="flex items-baseline gap-4 lg:ml-auto shrink-0 font-mono text-micro text-text3 tabular-nums whitespace-nowrap">
+              {sinceCount > 0 && visitLabel && (
+                <span className="text-accent">+{sinceCount} since {visitLabel}</span>
+              )}
+              <span><strong className="font-normal text-text">{highPriorityCount}</strong> high</span>
+              <span><strong className="font-normal text-text">{averageScore.toFixed(1)}</strong> avg</span>
+              <span><strong className="font-normal text-text">{peakScore.toFixed(1)}</strong> peak</span>
+              <span><strong className="font-normal text-text">{multiSignalCount}</strong> multi-signal</span>
+            </div>
+          </>
+        )}
+      </header>
 
       {isEmpty ? (
         <EmptyStatePreview

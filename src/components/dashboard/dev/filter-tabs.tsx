@@ -8,6 +8,7 @@ interface FilterTabsProps {
   items: FeedbackItem[];
   active: Filter;
   onChange: (filter: Filter) => void;
+  className?: string;
 }
 
 const filters: { key: Filter; label: string }[] = [
@@ -26,9 +27,9 @@ function countFor(items: FeedbackItem[], filter: Filter): number {
   return items.filter((i) => i.type === filter).length;
 }
 
-export function FilterTabs({ items, active, onChange }: FilterTabsProps) {
+export function FilterTabs({ items, active, onChange, className = "" }: FilterTabsProps) {
   return (
-    <div className="flex items-center gap-1 mb-4 overflow-x-auto scrollbar-none" role="tablist">
+    <div className={`flex items-center gap-1 mb-4 overflow-x-auto scrollbar-none ${className}`} role="tablist">
       {filters.map((f) => {
         const count = countFor(items, f.key);
         const isActive = active === f.key;

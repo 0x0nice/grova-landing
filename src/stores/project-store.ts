@@ -19,6 +19,8 @@ interface ProjectState {
   reset: () => void;
 }
 
+let projectLoadVersion = 0;
+
 export const useProjectStore = create<ProjectState>((set, get) => ({
   projects: [],
   active: null,
@@ -26,9 +28,16 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   error: null,
 
   loadProjects: async (token) => {
+    // React can run mount effects more than once in development. More importantly,
+    // consumers should never be able to start overlapping project refreshes: each
+    // response replaces `active` with a fresh object and used to create a reload
+    // loop in the dashboard shell.
+    if (get().loading) return;
+    const loadVersion = ++projectLoadVersion;
     set({ loading: true, error: null });
     try {
       const projects = await apiGet<Project[]>("/projects", token);
+      if (loadVersion !== projectLoadVersion) return;
       const current = get().active;
       const currentMatch = current
         ? projects.find((project) => project.id === current.id)
@@ -52,6 +61,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       }
       if (projects.length === 0) set({ active: null });
     } catch (error) {
+      if (loadVersion !== projectLoadVersion) return;
       set({ loading: false, error: errorMessage(error, "Could not load projects") });
     }
   },
@@ -73,5 +83,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   },
 
   setProjects: (projects) => set({ projects }),
-  reset: () => set({ projects: [], active: null, loading: false, error: null }),
+  reset: () => {
+    projectLoadVersion += 1;
+    set({ projects: [], active: null, loading: false, error: null });
+  },
 }));
