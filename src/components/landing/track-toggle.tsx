@@ -3,7 +3,12 @@
 import { useRef, useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { useTrack } from "@/hooks/use-track";
 
-export function TrackToggle() {
+interface TrackToggleProps {
+  showLabel?: boolean;
+  mobile?: boolean;
+}
+
+export function TrackToggle({ showLabel = true, mobile = false }: TrackToggleProps) {
   const { track, setTrack } = useTrack();
   const containerRef = useRef<HTMLDivElement>(null);
   const devRef = useRef<HTMLButtonElement>(null);
@@ -33,10 +38,12 @@ export function TrackToggle() {
   }, [updateIndicator]);
 
   return (
-    <div className="flex items-center">
-      <span className="text-[0.7rem] text-text3 px-2.5 pl-4 shrink-0 leading-none">
-        for
-      </span>
+    <div className="flex items-center" role="group" aria-label="Choose Grova mode">
+      {showLabel && (
+        <span className="text-[0.7rem] text-text3 px-2.5 pl-4 shrink-0 leading-none">
+          for
+        </span>
+      )}
       <div
         ref={containerRef}
         className="relative flex bg-surface border border-border2 rounded-pill p-[3px] gap-[2px]"
@@ -57,7 +64,7 @@ export function TrackToggle() {
           onClick={() => setTrack("biz")}
           className={`
             relative z-10 border-none rounded-pill cursor-pointer text-[0.7rem] font-medium
-            px-3 py-[5px] leading-none whitespace-nowrap
+            px-3 ${mobile ? "min-h-9 py-2" : "py-[5px]"} leading-none whitespace-nowrap
             transition-colors duration-300
             ${track === "biz" ? "text-black" : "bg-transparent text-text3 hover:text-text2"}
           `}
@@ -70,7 +77,7 @@ export function TrackToggle() {
           onClick={() => setTrack("dev")}
           className={`
             relative z-10 border-none rounded-pill cursor-pointer text-[0.7rem] font-medium
-            px-3 py-[5px] leading-none whitespace-nowrap
+            px-3 ${mobile ? "min-h-9 py-2" : "py-[5px]"} leading-none whitespace-nowrap
             transition-colors duration-300
             ${track === "dev" ? "text-white" : "bg-transparent text-text3 hover:text-text2"}
           `}
