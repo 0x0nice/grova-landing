@@ -46,8 +46,7 @@ export function PipelineSection() {
             Grova should think like your team does.
           </p>
           <p className="text-[0.82rem] text-text2 leading-[1.75]">
-            Paid plans let you define what matters, what can wait, and how a useful build brief
-            should be structured.
+            Define what matters, what can wait, and how a useful build brief should be structured.
           </p>
         </div>
         <blockquote className="bg-surface px-6 py-5 self-center">

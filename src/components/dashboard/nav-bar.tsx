@@ -25,7 +25,6 @@ const devTabs: Tab[] = [
   { view: "done", label: "History", countKey: "done" },
   { view: "archive", label: "Dismissed", countKey: "archive" },
   { view: "settings", label: "Settings" },
-  { view: "billing", label: "Billing" },
 ];
 
 const bizTabs: Tab[] = [
@@ -33,7 +32,6 @@ const bizTabs: Tab[] = [
   { view: "categories", label: "Categories" },
   { view: "trends", label: "Trends" },
   { view: "setup", label: "Setup" },
-  { view: "billing", label: "Billing" },
 ];
 
 export function NavBar() {

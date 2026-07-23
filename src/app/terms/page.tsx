@@ -100,13 +100,11 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-mono text-footnote text-text mb-3">
-              6. Billing & Subscriptions
+              6. Current Access
             </h2>
             <p className="font-mono text-callout text-text2 leading-[1.7]">
-              Paid plans are billed monthly via Stripe. You may cancel at any
-              time; cancellation takes effect at the end of the current billing
-              period. Refunds are handled on a case-by-case basis. Free tier
-              usage is subject to the limits described on our pricing page.
+              Grova is currently offered free of charge. We will provide notice
+              before making any material change to the terms of access.
             </p>
           </section>
 

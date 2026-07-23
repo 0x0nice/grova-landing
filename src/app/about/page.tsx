@@ -139,8 +139,7 @@ export default function AboutPage() {
                 Team collaboration through organizations with role-based access
               </li>
               <li>
-                Tiered plans from free to pro, with usage-based limits on
-                feedback and actions
+                The complete current workflow is available to every account
               </li>
               <li>
                 Email delivery tracking with open and click analytics

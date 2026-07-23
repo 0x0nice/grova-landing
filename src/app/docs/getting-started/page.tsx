@@ -29,8 +29,8 @@ export default function GettingStartedPage() {
             <Link href="/login?mode=signup" className="text-accent hover:underline">
               grova.dev
             </Link>
-            . You can sign up with email or continue with Google. No credit card
-            required for the free tier.
+            . You can sign up with email or continue with Google. Grova is
+            currently free to use.
           </p>
         </section>
 

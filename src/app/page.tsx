@@ -8,13 +8,12 @@ import { Hero } from "@/components/landing/hero";
 import { PipelineSection } from "@/components/landing/pipeline-section";
 import { StepsSection } from "@/components/landing/steps-section";
 import { FeaturesGrid } from "@/components/landing/features-grid";
-import { PricingGrid } from "@/components/landing/pricing-grid";
 import { BizPipelineSection } from "@/components/landing/biz-pipeline-section";
 import { BizStopGuessingSection } from "@/components/landing/biz-stop-guessing-section";
 import { BizThreeStepsSection } from "@/components/landing/biz-three-steps-section";
 import { BizBounceBackSection } from "@/components/landing/biz-bounce-back-section";
 import { BizFeaturesSection } from "@/components/landing/biz-features-section";
-import { CTASection } from "@/components/landing/cta-section";
+import { FreeAccessSection } from "@/components/landing/free-access-section";
 import { Footer } from "@/components/landing/footer";
 import Script from "next/script";
 
@@ -49,9 +48,6 @@ function LandingContent() {
             <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <FeaturesGrid />
             </div>
-            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
-              <PricingGrid />
-            </div>
           </motion.div>
         ) : (
           <motion.div key="biz-sections" {...sectionFade}>
@@ -70,16 +66,13 @@ function LandingContent() {
             <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
               <BizFeaturesSection />
             </div>
-            <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
-              <PricingGrid />
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Shared CTA + Footer */}
+      {/* Shared free-access close + footer */}
       <div className="max-w-[1120px] mx-auto px-10 max-md:px-5">
-        <CTASection />
+        <FreeAccessSection />
         <Footer />
       </div>
     </>

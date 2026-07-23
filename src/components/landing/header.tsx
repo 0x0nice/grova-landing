@@ -39,7 +39,7 @@ export function Header() {
                        transition-colors duration-[180ms]
                        hover:brightness-90`}
           >
-            Start free
+            Create account
           </Link>
           <ThemeToggle />
         </div>

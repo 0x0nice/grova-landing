@@ -116,15 +116,6 @@ export default function ApiReferencePage() {
                     Send the AI-suggested action without modification.
                   </td>
                 </tr>
-                <tr className="border-b border-border">
-                  <td className="py-2 pr-4">
-                    <code className="text-accent">GET</code>
-                  </td>
-                  <td className="py-2 pr-4">/billing/status</td>
-                  <td className="py-2">
-                    Check current plan, usage, and billing status.
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
