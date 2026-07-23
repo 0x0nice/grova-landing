@@ -5,6 +5,7 @@ import { DEMO_DEV_PENDING } from "@/lib/demo-data";
 import { errorMessage } from "@/lib/errors";
 
 export type ChangeFilter = "attention" | "working" | "proof" | "released" | "dismissed" | "all";
+export type ChangeLoadMode = "initial" | "manual" | "background";
 
 function demoChanges(): ChangePackage[] {
   return DEMO_DEV_PENDING.map((feedback, index) => ({
@@ -62,7 +63,7 @@ interface ChangeState {
   page: number;
   total: number;
   hasMore: boolean;
-  load: (projectId: string, token: string, isDemo: boolean, refresh?: boolean) => Promise<void>;
+  load: (projectId: string, token: string, isDemo: boolean, mode?: ChangeLoadMode) => Promise<void>;
   select: (id: string) => void;
   setFilter: (filter: ChangeFilter) => void;
   approve: (
@@ -99,10 +100,14 @@ export const useChangeStore = create<ChangeState>((set, get) => ({
   total: 0,
   hasMore: false,
 
-  load: async (projectId, token, isDemo, refresh = false) => {
+  load: async (projectId, token, isDemo, mode = "initial") => {
     const version = ++loadVersion;
     const firstLoad = !get().loaded;
-    set({ loading: firstLoad, refreshing: !firstLoad || refresh, error: null });
+    set({
+      loading: firstLoad,
+      refreshing: !firstLoad && mode === "manual",
+      error: mode === "background" ? get().error : null,
+    });
     try {
       const result = isDemo
         ? {
@@ -122,13 +127,14 @@ export const useChangeStore = create<ChangeState>((set, get) => ({
         loading: false,
         refreshing: false,
         loaded: true,
+        error: null,
       });
     } catch (error) {
       if (version !== loadVersion) return;
       set({
         loading: false,
         refreshing: false,
-        error: errorMessage(error, "Could not load changes"),
+        error: mode === "background" ? get().error : errorMessage(error, "Could not load changes"),
       });
     }
   },

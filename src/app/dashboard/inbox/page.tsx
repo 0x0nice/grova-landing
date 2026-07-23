@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { useProjectStore } from "@/stores/project-store";
 import { changeMatchesFilter, useChangeStore } from "@/stores/change-store";
@@ -24,12 +24,49 @@ export default function InboxPage() {
   const { show } = useToast();
   const token = session?.access_token || "demo";
   const [mobileDetailId, setMobileDetailId] = useState<string | null>(null);
+  const knownItems = useRef<{ projectId: string; ids: Set<string> } | null>(null);
+  const lastBackgroundCheck = useRef(0);
 
   useEffect(() => {
     if (active && (session?.access_token || isDemo) && !loaded) {
       void load(active.id, token, isDemo);
     }
   }, [active, session?.access_token, isDemo, loaded, load, token]);
+
+  useEffect(() => {
+    if (!active || !loaded) return;
+    const previous = knownItems.current;
+    if (!previous || previous.projectId !== active.id) {
+      knownItems.current = { projectId: active.id, ids: new Set(items.map(item => item.id)) };
+      return;
+    }
+    const arrived = items.filter(item => !previous.ids.has(item.id));
+    knownItems.current = { projectId: active.id, ids: new Set(items.map(item => item.id)) };
+    if (arrived.length === 1) show("New feedback is ready for review");
+    if (arrived.length > 1) show(`${arrived.length} new feedback items are ready for review`);
+  }, [active, items, loaded, show]);
+
+  useEffect(() => {
+    if (!active || !session?.access_token || isDemo) return;
+    const check = () => {
+      if (document.visibilityState !== "visible") return;
+      const now = Date.now();
+      if (now - lastBackgroundCheck.current < 10_000) return;
+      lastBackgroundCheck.current = now;
+      void load(active.id, token, false, "background");
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") check();
+    };
+    const timer = window.setInterval(check, 60_000);
+    window.addEventListener("focus", check);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", check);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [active, session?.access_token, isDemo, load, token]);
 
   const visible = useMemo(
     () => items.filter(item => changeMatchesFilter(item.status, filter)),
@@ -152,7 +189,7 @@ export default function InboxPage() {
           {active && (
             <button
               type="button"
-              onClick={() => void load(active.id, token, isDemo, true)}
+              onClick={() => void load(active.id, token, isDemo, "manual")}
               disabled={refreshing}
               className="text-text3 hover:text-text transition-colors cursor-pointer disabled:opacity-50"
             >
@@ -165,7 +202,7 @@ export default function InboxPage() {
       {error && active && (
         <div className="mb-4 bg-red-dim px-4 py-3 text-footnote text-red flex items-center justify-between gap-4">
           <span>{error}. Existing change data is still shown.</span>
-          <button type="button" onClick={() => void load(active.id, token, isDemo, true)} className="font-medium cursor-pointer">
+          <button type="button" onClick={() => void load(active.id, token, isDemo, "manual")} className="font-medium cursor-pointer">
             Retry
           </button>
         </div>
