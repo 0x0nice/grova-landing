@@ -19,18 +19,18 @@ export function PipelineSection() {
         </p>
       </div>
 
-      <ol className="grid grid-cols-5 border-y border-border max-lg:grid-cols-3 max-md:grid-cols-1">
+      <ol className="grid grid-cols-5 max-lg:grid-cols-3 max-md:grid-cols-1">
         {steps.map((step) => (
           <li
             key={step.num}
-            className="relative py-5 pr-5 border-r border-border last:border-r-0 max-md:border-r-0 max-md:border-b max-md:last:border-b-0 max-md:grid max-md:grid-cols-[48px_82px_1fr] max-md:items-baseline max-md:gap-3"
+            className="relative flex h-full flex-col py-5 pr-5 max-md:grid max-md:grid-cols-[48px_82px_1fr] max-md:items-baseline max-md:gap-3"
           >
             <span className="text-[0.62rem] text-text3 tracking-[0.12em] block mb-7 max-md:mb-0">
               {step.num}
             </span>
             <span className="font-serif text-[1rem] text-text block mb-2 max-md:mb-0">{step.stage}</span>
             <span className="text-[0.76rem] text-text2 leading-[1.55] block pr-2">{step.title}</span>
-            <span className="text-[0.68rem] text-orange block mt-4 max-md:col-start-3 max-md:mt-1">
+            <span className="mt-auto block pt-4 text-[0.68rem] text-orange max-md:col-start-3 max-md:mt-1 max-md:pt-0">
               {step.owner}
             </span>
           </li>
